@@ -1,6 +1,6 @@
 from setuptools import setup, Extension
 
-VERSION_MAJOR = 2
+VERSION_MAJOR = 1
 VERSION_MINOR = 0
 VERSION_PATCH = 0
 VERSION = '.'.join(map(str, [VERSION_MAJOR,
@@ -18,5 +18,5 @@ cvarda = Extension('cvarda',
 
 setup(name = 'cvarda',
       version = VERSION,
-      description = 'Variant frequency database',
+      description = 'Varda2 Variant frequency database C library',
       ext_modules = [cvarda])

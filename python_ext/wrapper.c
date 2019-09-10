@@ -6,19 +6,41 @@
 
 
 static PyObject*
-init(PyObject* const restrict self, PyObject* const restrict args)
+insert_region(PyObject* const restrict self,
+              PyObject* const restrict args)
 {
     (void) self;
-    (void) args;
 
-    return Py_BuildValue("i", 0);
-} // init
+    size_t sample_id = 0;
+    char const* restrict reference = NULL;
+    size_t len = 0;
+    size_t start = 0;
+    size_t end = 0;
+    size_t phase = 0;
+
+    if (!PyArg_ParseTuple(args, "ns#nnn", &sample_id,
+                                          &reference,
+                                          &len,
+                                          &start,
+                                          &end,
+                                          &phase))
+    {
+        return NULL;
+    } // if
+
+    (void) fprintf(stderr, "ok\n");
+
+
+    return Py_BuildValue("n", 0);
+} // insert_region
 
 
 static PyMethodDef methods[] =
 {
-    {"init", init, METH_VARARGS,
-     "Docstring...\n"},
+    {"insert_region", insert_region, METH_VARARGS,
+     "insert_region(sample_id, reference, start, end, phase)\n\n"
+     "Inserts a new region [start, end) for sample sample_id on the "
+     "reference sequence. Phasing information."},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // methods
@@ -28,7 +50,7 @@ static struct PyModuleDef module =
 {
     PyModuleDef_HEAD_INIT,
     "cvarda",
-    "Variant frequency database\n",
+    "Varda2 Variant frequency database C library\n",
     -1,
     methods,
     NULL,
@@ -49,6 +71,7 @@ int
 main(int argc, char* argv[])
 {
     (void) argc;
+
     wchar_t* const restrict program = Py_DecodeLocale(argv[0], NULL);
     if (NULL == program)
     {
