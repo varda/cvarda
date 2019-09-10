@@ -28,6 +28,11 @@ insert_region(PyObject* const restrict self,
         return NULL;
     } // if
 
+    if (end > 42) {
+        PyErr_SetString(PyExc_ValueError, "Region end out of bound.");
+        return NULL;
+    }
+
     (void) fprintf(stderr, "ok\n");
 
 
