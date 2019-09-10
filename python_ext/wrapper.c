@@ -11,12 +11,12 @@ insert_region(PyObject* const restrict self,
 {
     (void) self;
 
-    size_t sample_id = 0;
+    Py_ssize_t sample_id = 0;
     char const* restrict reference = NULL;
-    size_t len = 0;
-    size_t start = 0;
-    size_t end = 0;
-    size_t phase = 0;
+    Py_ssize_t len = 0;
+    Py_ssize_t start = 0;
+    Py_ssize_t end = 0;
+    Py_ssize_t phase = 0;
 
     if (!PyArg_ParseTuple(args, "ns#nnn", &sample_id,
                                           &reference,
