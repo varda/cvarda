@@ -22,7 +22,8 @@ vrd_pool_init(size_t const capacity, size_t const obj_size);
 
 
 void
-vrd_pool_destroy(vrd_Pool* restrict* const restrict pool);
+vrd_pool_destroy(vrd_Pool* restrict* const restrict pool,
+                 void (*dealloc)(void* restrict));
 
 
 size_t

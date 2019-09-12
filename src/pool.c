@@ -45,13 +45,21 @@ vrd_pool_init(size_t const capacity, size_t const obj_size)
 
 
 void
-vrd_pool_destroy(struct Pool* restrict* const restrict pool)
+vrd_pool_destroy(struct Pool* restrict* const restrict pool,
+                 void (*dealloc)(void* restrict))
 {
     if (NULL == pool || NULL == *pool)
     {
         return;
     } // if
 
+    if (NULL != dealloc)
+    {
+        for (size_t i = 0; i < (*pool)->next; ++i)
+        {
+            dealloc(vrd_pool_deref(*pool, i));
+        } // for
+    } // if
     free((*pool)->data);
     free(*pool);
     *pool = NULL;

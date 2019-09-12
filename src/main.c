@@ -48,7 +48,7 @@ main(int argc, char* argv[])
     if (NULL == trie)
     {
         (void) fprintf(stderr, "vrd_trie_init() failed\n");
-        vrd_pool_destroy(&pool);
+        vrd_pool_destroy(&pool, free);
         return EXIT_FAILURE;
     } // if
 
@@ -57,7 +57,7 @@ main(int argc, char* argv[])
     {
         (void) fprintf(stderr, "vrd_pool_alloc() failed\n");
         vrd_trie_destroy(&trie);
-        vrd_pool_destroy(&pool);
+        vrd_pool_destroy(&pool, free);
         return EXIT_FAILURE;
     } // if
 
@@ -68,16 +68,18 @@ main(int argc, char* argv[])
     a[2] = 'r';
     a[3] = '1';
 
+    fprintf(stderr, "a = %p\n", (void*) a);
+
     if ((size_t) -1 == vrd_trie_insert(trie, 4, "chr1", el))
     {
         (void) fprintf(stderr, "vrd_trie_insert() failed\n");
         vrd_trie_destroy(&trie);
-        vrd_pool_destroy(&pool);
+        vrd_pool_destroy(&pool, free);
         return EXIT_FAILURE;
     } // if
 
     vrd_trie_destroy(&trie);
-    vrd_pool_destroy(&pool);
+    vrd_pool_destroy(&pool, free);
 
     return EXIT_SUCCESS;
 } // main
