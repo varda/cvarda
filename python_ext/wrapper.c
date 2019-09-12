@@ -1,17 +1,50 @@
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>     // Py*, METH_VARARGS
+#include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include "../include/varda.h"
 
+#include <stddef.h>     // size_t
 #include <stdio.h>      // fprintf
-#include <stdlib.h>     // NULL, EXIT_*
+#include <stdlib.h>     // NULL, EXIT_*, malloc
 
 
 typedef struct
 {
     PyObject_HEAD
-    //vrd_trie* restrict trie;
+    char* restrict data;
 } RegionTableObject;
+
+
+static PyObject*
+RegionTable_new(PyTypeObject* type, PyObject* args, PyObject* kwds)
+{
+    (void) args;
+    (void) kwds;
+
+    RegionTableObject* const restrict self = (RegionTableObject*) type->tp_alloc(type, 0);
+    size_t const size = 1ULL << 30;
+    self->data = malloc(size);
+    if (NULL == self->data)
+    {
+        Py_TYPE(self)->tp_free((PyObject*) self);
+        return PyErr_NoMemory();
+    } // if
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        self->data[i] = i % 256;
+    } // for
+
+    return (PyObject*) self;
+} // RegionTable_new
+
+
+static void
+RegionTable_dealloc(RegionTableObject* self)
+{
+    free(self->data);
+    Py_TYPE(self)->tp_free((PyObject *) self);
+} // RegionTable_dealloc
 
 
 static PyTypeObject RegionTable =
@@ -22,7 +55,8 @@ static PyTypeObject RegionTable =
     .tp_basicsize = sizeof(RegionTableObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_new = PyType_GenericNew
+    .tp_new = RegionTable_new,
+    .tp_dealloc = (destructor) RegionTable_dealloc
 }; // RegionTable
 
 
