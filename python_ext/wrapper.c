@@ -1,50 +1,102 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
-#include "../include/varda.h"
+#include "../include/varda.h"   // vrd_*
 
 #include <stddef.h>     // size_t
 #include <stdio.h>      // fprintf
 #include <stdlib.h>     // NULL, EXIT_*, malloc
 
 
+enum
+{
+    ASCII_SIZE = 95
+}; // constants
+
+
+static inline size_t
+ascii_to_idx(char const ch)
+{
+    if (isprint(ch))
+    {
+        return ch - ' ';
+    } // if
+    return 256;
+} // ascii_to_idx
+
+
 typedef struct
 {
     PyObject_HEAD
-    char* restrict data;
+    vrd_Trie* restrict trie;
 } RegionTableObject;
 
 
 static PyObject*
-RegionTable_new(PyTypeObject* type, PyObject* args, PyObject* kwds)
+RegionTable_new(PyTypeObject* const restrict type,
+                PyObject* const restrict args,
+                PyObject* const restrict kwds)
 {
     (void) args;
     (void) kwds;
 
     RegionTableObject* const restrict self = (RegionTableObject*) type->tp_alloc(type, 0);
-    size_t const size = 1ULL << 30;
-    self->data = malloc(size);
-    if (NULL == self->data)
+
+    self->trie = vrd_trie_init(ASCII_SIZE, ascii_to_idx);
+    if (NULL == self->trie)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        return PyErr_NoMemory();
+        PyErr_SetString(PyExc_RuntimeError, "RegionTable: vrd_trie_init() failed");
+        return NULL;
     } // if
-
-    for (size_t i = 0; i < size; ++i)
-    {
-        self->data[i] = i % 256;
-    } // for
 
     return (PyObject*) self;
 } // RegionTable_new
 
 
 static void
-RegionTable_dealloc(RegionTableObject* self)
+RegionTable_dealloc(RegionTableObject* const restrict self)
 {
-    free(self->data);
+    vrd_trie_destroy(&self->trie);
     Py_TYPE(self)->tp_free((PyObject *) self);
 } // RegionTable_dealloc
+
+
+static PyObject*
+RegionTable_load(RegionTableObject* const restrict self,
+                 PyObject* const restrict args)
+{
+    char const* restrict reference_id = NULL;
+    char const* restrict path = NULL;
+    size_t len = 0;
+
+    if (!PyArg_ParseTuple(args, "s#s", &reference_id, &len, &path))
+    {
+        return NULL;
+    } // if
+
+    // TODO: load an index from path
+    void* const restrict index = NULL;
+
+    void* const restrict result = vrd_trie_insert(self->trie, len, reference_id, index);
+
+    if (0 == result)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "RegionTable.load(): vrd_trie_insert() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // RegionTable_load
+
+
+static PyMethodDef RegionTable_methods[] =
+{
+    {"load", (PyCFunction) RegionTable_load, METH_VARARGS,
+     "Docstring..."},
+
+    {NULL}  // sentinel
+}; // RegionTable_methods
 
 
 static PyTypeObject RegionTable =
@@ -56,7 +108,8 @@ static PyTypeObject RegionTable =
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_new = RegionTable_new,
-    .tp_dealloc = (destructor) RegionTable_dealloc
+    .tp_dealloc = (destructor) RegionTable_dealloc,
+    .tp_methods = RegionTable_methods
 }; // RegionTable
 
 

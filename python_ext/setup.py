@@ -10,7 +10,7 @@ VERSION = '.'.join(map(str, [VERSION_MAJOR,
 
 
 cvarda = Extension('cvarda',
-                   sources = ['wrapper.c'],
+                   sources = ['wrapper.c', '../src/trie.c'],
                    define_macros = [('VRD_VERSION_MAJOR', VERSION_MAJOR),
                                     ('VRD_VERSION_MINOR', VERSION_MINOR),
                                     ('VRD_VERSION_PATCH', VERSION_PATCH)],
