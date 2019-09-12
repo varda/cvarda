@@ -1,51 +1,33 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*, METH_VARARGS
 
+#include "../include/varda.h"
+
 #include <stdio.h>      // fprintf
 #include <stdlib.h>     // NULL, EXIT_*
 
 
-static PyObject*
-insert_region(PyObject* const restrict self,
-              PyObject* const restrict args)
+typedef struct
 {
-    (void) self;
-
-    Py_ssize_t sample_id = 0;
-    char const* restrict reference = NULL;
-    Py_ssize_t len = 0;
-    Py_ssize_t start = 0;
-    Py_ssize_t end = 0;
-    Py_ssize_t phase = 0;
-
-    if (!PyArg_ParseTuple(args, "ns#nnn", &sample_id,
-                                          &reference,
-                                          &len,
-                                          &start,
-                                          &end,
-                                          &phase))
-    {
-        return NULL;
-    } // if
-
-    if (end > 42) {
-        PyErr_SetString(PyExc_ValueError, "Region end out of bound.");
-        return NULL;
-    }
-
-    (void) fprintf(stderr, "ok\n");
+    PyObject_HEAD
+    //vrd_trie* restrict trie;
+} RegionTableObject;
 
 
-    return Py_BuildValue("n", 0);
-} // insert_region
+static PyTypeObject RegionTable =
+{
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "cvarda.RegionTable",
+    .tp_doc = "Docstring...",
+    .tp_basicsize = sizeof(RegionTableObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew
+}; // RegionTable
 
 
 static PyMethodDef methods[] =
 {
-    {"insert_region", insert_region, METH_VARARGS,
-     "insert_region(sample_id, reference, start, end, phase)\n\n"
-     "Inserts a new region [start, end) for sample sample_id on the "
-     "reference sequence. Phasing information."},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // methods
@@ -53,22 +35,32 @@ static PyMethodDef methods[] =
 
 static struct PyModuleDef module =
 {
-    PyModuleDef_HEAD_INIT,
-    "cvarda",
-    "Varda2 Variant frequency database C library\n",
-    -1,
-    methods,
-    NULL,
-    NULL,
-    NULL,
-    NULL
+    .m_base = PyModuleDef_HEAD_INIT,
+    .m_name = "cvarda",
+    .m_doc = "Varda2 Variant frequency database C library",
+    .m_size = -1,
+    .m_methods = methods
 }; // module
 
 
 PyMODINIT_FUNC
 PyInit_cvarda(void)
 {
-    return PyModule_Create(&module);
+    if (0 > PyType_Ready(&RegionTable))
+    {
+        return NULL;
+    } // if
+
+    PyObject* const restrict mod = PyModule_Create(&module);
+    if (NULL == mod)
+    {
+        return NULL;
+    } // if
+
+    Py_INCREF(&RegionTable);
+    PyModule_AddObject(mod, "RegionTable", (PyObject*) &RegionTable);
+
+    return mod;
 } // PyInit_cvarda
 
 

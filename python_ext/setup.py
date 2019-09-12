@@ -9,9 +9,9 @@ VERSION = '.'.join(map(str, [VERSION_MAJOR,
 
 cvarda = Extension('cvarda',
                    sources = ['wrapper.c'],
-                   define_macros = [('VERSION_MAJOR', VERSION_MAJOR),
-                                    ('VERSION_MINOR', VERSION_MINOR),
-                                    ('VERION_PATCH', VERSION_PATCH)],
+                   define_macros = [('VRD_VERSION_MAJOR', VERSION_MAJOR),
+                                    ('VRD_VERSION_MINOR', VERSION_MINOR),
+                                    ('VRD_VERSION_PATCH', VERSION_PATCH)],
                    extra_compile_args = ['-Wextra',
                                          '-Wpedantic',
                                          '-std=c99'])
@@ -19,4 +19,5 @@ cvarda = Extension('cvarda',
 setup(name = 'cvarda',
       version = VERSION,
       description = 'Varda2 Variant frequency database C library',
-      ext_modules = [cvarda])
+      ext_modules = [cvarda],
+      include_package_data = True)
