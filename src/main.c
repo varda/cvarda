@@ -23,11 +23,6 @@ ascii_to_idx(char const ch)
 } // ascii_to_idx
 
 
-#include "../include/alloc.h"
-
-
-
-
 int
 main(int argc, char* argv[])
 {
@@ -43,7 +38,7 @@ main(int argc, char* argv[])
                                                         minor,
                                                         patch);
 
-    char* a = vrd_alloc(&vrd_malloc, 5);
+    char* const restrict a = vrd_alloc(&vrd_malloc, 5);
 
     a[0] = 'h';
     a[1] = 'e';
@@ -58,8 +53,13 @@ main(int argc, char* argv[])
 
     vrd_Alloc* restrict pool = vrd_pool_init(1000, sizeof(int));
 
-    vrd_alloc(pool, 1);
+    void* const restrict ptr = vrd_alloc(pool, 1);
 
+    int* const restrict b = vrd_deref(pool, ptr);
+    *b = 6;
+
+    fprintf(stderr, "b = %d\n", *b);
+    fprintf(stderr, "b = %d\n", *(int*) vrd_deref(pool, ptr));
 
     vrd_pool_destroy(&pool);
 
