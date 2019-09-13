@@ -38,31 +38,26 @@ main(int argc, char* argv[])
                                                         minor,
                                                         patch);
 
-    char* const restrict a = vrd_alloc(&vrd_malloc, 5);
+    vrd_Alloc* restrict pool = vrd_pool_init(100, 8 + ASCII_SIZE * 8);
+    if (NULL == pool)
+    {
+        (void) fprintf(stderr, "vrd_pool_init() failed\n");
+        return EXIT_FAILURE;
+    } // if
 
-    a[0] = 'h';
-    a[1] = 'e';
-    a[2] = 'l';
-    a[3] = 'o';
-    a[4] = '\0';
+    vrd_Trie* restrict trie = vrd_trie_init(pool, ASCII_SIZE, ascii_to_idx);
+    if (NULL == trie)
+    {
+        (void) fprintf(stderr, "vrd_trie_init() failed\n");
+        vrd_pool_destroy(&pool);
+        return EXIT_FAILURE;
+    } // if
 
-    fprintf(stderr, "a = %s\n", a);
-    fprintf(stderr, "a = %s\n", (char*) vrd_deref(&vrd_malloc, a));
+    int a = 4;
 
-    vrd_dealloc(&vrd_malloc, a);
+    //vrd_trie_insert(trie, 4, "chr1", &a);
 
-    vrd_Alloc* restrict pool = vrd_pool_init(0, sizeof(int));
-
-    void* const restrict ptr = vrd_alloc(pool, 1);
-
-    int* const restrict b = vrd_deref(pool, ptr);
-    *b = 6;
-
-    fprintf(stderr, "b = %d\n", *b);
-    fprintf(stderr, "ptr = %zu\n", (size_t) ptr);
-    fprintf(stderr, "b = %d\n", *(int*) vrd_deref(pool, ptr));
-
-
+    vrd_trie_destroy(&trie);
     vrd_pool_destroy(&pool);
 
     return EXIT_SUCCESS;

@@ -88,9 +88,9 @@ struct Pool
 
 static inline void*
 pool_alloc(struct Alloc* const restrict alloc,
-           size_t const num)
+           size_t const unused)
 {
-    (void) num;
+    (void) unused;
     struct Pool* const restrict pool = (struct Pool*) alloc;
     void* const restrict ptr = (void*) pool->next;
     pool->next += 1;
