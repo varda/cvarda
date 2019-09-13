@@ -36,6 +36,12 @@ vrd_trie_insert(vrd_Trie* const restrict trie,
                 void* const restrict data);
 
 
+void*
+vrd_trie_find(vrd_Trie const* const restrict trie,
+              size_t const len,
+              char const str[len]);
+
+
 #ifdef __cplusplus
 
 } // extern "C"

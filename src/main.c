@@ -45,7 +45,7 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
-    vrd_Trie* restrict trie = vrd_trie_init(pool, ASCII_SIZE, ascii_to_idx);
+    vrd_Trie* restrict trie = vrd_trie_init(&vrd_malloc, ASCII_SIZE, ascii_to_idx);
     if (NULL == trie)
     {
         (void) fprintf(stderr, "vrd_trie_init() failed\n");
@@ -55,7 +55,7 @@ main(int argc, char* argv[])
 
     int a = 4;
 
-    //vrd_trie_insert(trie, 4, "chr1", &a);
+    vrd_trie_insert(trie, 4, "chr1", &a);
 
     vrd_trie_destroy(&trie);
     vrd_pool_destroy(&pool);

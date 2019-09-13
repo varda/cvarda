@@ -33,7 +33,9 @@ trie_init_node(vrd_Alloc* const restrict alloc,
                size_t const alpha_size)
 {
     // Overflow prevented by sensible values of MAX_ALPHA_SIZE
-    void* const restrict ptr = vrd_alloc(alloc, sizeof(struct Trie_Node) + alpha_size * sizeof(void*));
+    void* const restrict ptr =
+        vrd_alloc(alloc, sizeof(struct Trie_Node) +
+                         alpha_size * sizeof(void*));
     if (NULL == ptr)
     {
         return NULL;
@@ -131,7 +133,6 @@ vrd_trie_insert(struct Trie* const restrict trie,
     } // if
 
     struct Trie_Node* restrict tmp = trie->root;
-
     for (size_t i = 0; i < len; ++i)
     {
         size_t const idx = trie->to_index(str[i]);
@@ -142,7 +143,6 @@ vrd_trie_insert(struct Trie* const restrict trie,
 
         struct Trie_Node* const restrict node =
             vrd_deref(trie->alloc, tmp);
-
         if (NULL == node->child[idx])
         {
             node->child[idx] = trie_init_node(trie->alloc,
@@ -161,3 +161,38 @@ vrd_trie_insert(struct Trie* const restrict trie,
 
     return node->data;
 } // vrd_trie_insert
+
+
+void*
+vrd_trie_find(vrd_Trie const* const restrict trie,
+              size_t const len,
+              char const str[len])
+{
+    if (NULL == trie)
+    {
+        return NULL;
+    } // if
+
+    struct Trie_Node* restrict tmp = trie->root;
+    for (size_t i = 0; i < len; ++i)
+    {
+        size_t const idx = trie->to_index(str[i]);
+        if (MAX_ALPHA_SIZE <= idx)
+        {
+            return NULL;
+        } // if
+
+        struct Trie_Node* const restrict node =
+            vrd_deref(trie->alloc, tmp);
+        if (NULL == node->child[idx])
+        {
+            return NULL;
+        } // if
+
+        tmp = node->child[idx];
+    } // for
+
+    struct Trie_Node* const restrict node = vrd_deref(trie->alloc, tmp);
+
+    return node->data;
+} // vrd_trie_find
