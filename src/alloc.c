@@ -52,7 +52,7 @@ vrd_Alloc vrd_malloc =
 }; // vrd_malloc
 
 
-void*
+inline void*
 vrd_alloc(struct Alloc* const restrict alloc,
           size_t const size)
 {
@@ -60,7 +60,7 @@ vrd_alloc(struct Alloc* const restrict alloc,
 } // vrd_alloc
 
 
-void
+inline void
 vrd_dealloc(struct Alloc* const restrict alloc,
             void* const restrict ptr)
 {
@@ -68,7 +68,7 @@ vrd_dealloc(struct Alloc* const restrict alloc,
 } // vrd_dealloc
 
 
-void*
+inline void*
 vrd_deref(struct Alloc const* const restrict alloc,
           void* const restrict ptr)
 {
@@ -92,12 +92,6 @@ pool_alloc(struct Alloc* const restrict alloc,
 {
     (void) num;
     struct Pool* const restrict pool = (struct Pool*) alloc;
-
-    if (NULL == pool || pool->capacity <= pool->next)
-    {
-        return NULL;
-    } // if
-
     void* const restrict ptr = (void*) pool->next;
     pool->next += 1;
     return ptr;
@@ -119,12 +113,6 @@ pool_deref(struct Alloc const* const restrict alloc,
 {
     struct Pool* const restrict pool = (struct Pool*) alloc;
     size_t const idx = (size_t) ptr;
-
-    if (NULL == pool || pool->next <= idx)
-    {
-        return NULL;
-    } // if
-
     return (char*) pool->pool + idx * pool->obj_size;
 } // pool_alloc
 
@@ -132,7 +120,9 @@ pool_deref(struct Alloc const* const restrict alloc,
 vrd_Alloc*
 vrd_pool_init(size_t const capacity, size_t const obj_size)
 {
-    if (SIZE_MAX / obj_size <= capacity)
+    if (SIZE_MAX / obj_size <= capacity ||
+        0 == capacity ||
+        0 == obj_size)
     {
         return NULL;
     } // if
@@ -157,7 +147,7 @@ vrd_pool_init(size_t const capacity, size_t const obj_size)
 
     alloc->capacity = capacity;
     alloc->obj_size = obj_size;
-    alloc->next = 0;
+    alloc->next = 1; // if we skip the 0-th element, we can use NULL
 
     return (vrd_Alloc*) alloc;
 } // vrd_pool_init

@@ -51,7 +51,7 @@ main(int argc, char* argv[])
 
     vrd_dealloc(&vrd_malloc, a);
 
-    vrd_Alloc* restrict pool = vrd_pool_init(1000, sizeof(int));
+    vrd_Alloc* restrict pool = vrd_pool_init(0, sizeof(int));
 
     void* const restrict ptr = vrd_alloc(pool, 1);
 
@@ -59,7 +59,9 @@ main(int argc, char* argv[])
     *b = 6;
 
     fprintf(stderr, "b = %d\n", *b);
+    fprintf(stderr, "ptr = %zu\n", (size_t) ptr);
     fprintf(stderr, "b = %d\n", *(int*) vrd_deref(pool, ptr));
+
 
     vrd_pool_destroy(&pool);
 

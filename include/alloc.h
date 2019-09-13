@@ -18,22 +18,26 @@ typedef struct Alloc vrd_Alloc;
 
 
 void*
-vrd_alloc(vrd_Alloc* const restrict alloc, size_t const size);
+vrd_alloc(vrd_Alloc* const restrict alloc,
+          size_t const size);
 
 
 void
-vrd_dealloc(vrd_Alloc* const restrict alloc, void* const restrict ptr);
+vrd_dealloc(vrd_Alloc* const restrict alloc,
+            void* const restrict ptr);
 
 
 void*
-vrd_deref(vrd_Alloc const* const restrict alloc, void* const restrict ptr);
+vrd_deref(vrd_Alloc const* const restrict alloc,
+          void* const restrict ptr);
 
 
 extern vrd_Alloc vrd_malloc;
 
 
 vrd_Alloc*
-vrd_pool_init(size_t const capacity, size_t const obj_size);
+vrd_pool_init(size_t const capacity,
+              size_t const obj_size);
 
 
 void
