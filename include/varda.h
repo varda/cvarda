@@ -11,8 +11,8 @@ extern "C"
 #endif
 
 
-#include "pool.h"   // vrd_Pool, vrd_pool_*
-#include "trie.h"   // vrd_Trie, vrd_trie_*
+#include "alloc.h"      // vrd_Alloc, vrd_alloc, vrd_dealloc, vrd_deref,
+                        // vrd_pool_*
 
 
 static inline void

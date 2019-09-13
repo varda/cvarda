@@ -1,6 +1,7 @@
 #include <ctype.h>      // isprint
+#include <stdint.h>     // SIZE_MAX
 #include <stdio.h>      // fprintf, stderr
-#include <stdlib.h>     // EXIT_*
+#include <stdlib.h>     // EXIT_*, malloc, free
 
 #include "../include/varda.h"   // vrd_*
 
@@ -22,6 +23,11 @@ ascii_to_idx(char const ch)
 } // ascii_to_idx
 
 
+#include "../include/alloc.h"
+
+
+
+
 int
 main(int argc, char* argv[])
 {
@@ -37,49 +43,25 @@ main(int argc, char* argv[])
                                                         minor,
                                                         patch);
 
-    vrd_Pool* restrict pool = vrd_pool_init(1000, sizeof(char*));
-    if (NULL == pool)
-    {
-        (void) fprintf(stderr, "vrd_pool_init() failed\n");
-        return EXIT_FAILURE;
-    } // if
+    char* a = vrd_alloc(&vrd_malloc, 5);
 
-    vrd_Trie* restrict trie = vrd_trie_init(ASCII_SIZE, ascii_to_idx);
-    if (NULL == trie)
-    {
-        (void) fprintf(stderr, "vrd_trie_init() failed\n");
-        vrd_pool_destroy(&pool, free);
-        return EXIT_FAILURE;
-    } // if
+    a[0] = 'h';
+    a[1] = 'e';
+    a[2] = 'l';
+    a[3] = 'o';
+    a[4] = '\0';
 
-    size_t const el = vrd_pool_alloc(pool);
-    if ((size_t) -1 == el)
-    {
-        (void) fprintf(stderr, "vrd_pool_alloc() failed\n");
-        vrd_trie_destroy(&trie);
-        vrd_pool_destroy(&pool, free);
-        return EXIT_FAILURE;
-    } // if
+    fprintf(stderr, "a = %s\n", a);
+    fprintf(stderr, "a = %s\n", (char*) vrd_deref(&vrd_malloc, a));
 
-    char* a = vrd_pool_deref(pool, el);
-    a = malloc(4);
-    a[0] = 'c';
-    a[1] = 'h';
-    a[2] = 'r';
-    a[3] = '1';
+    vrd_dealloc(&vrd_malloc, a);
 
-    fprintf(stderr, "a = %p\n", (void*) a);
+    vrd_Alloc* restrict pool = vrd_pool_init(1000, sizeof(int));
 
-    if ((size_t) -1 == vrd_trie_insert(trie, 4, "chr1", el))
-    {
-        (void) fprintf(stderr, "vrd_trie_insert() failed\n");
-        vrd_trie_destroy(&trie);
-        vrd_pool_destroy(&pool, free);
-        return EXIT_FAILURE;
-    } // if
+    vrd_alloc(pool, 1);
 
-    vrd_trie_destroy(&trie);
-    vrd_pool_destroy(&pool, free);
+
+    vrd_pool_destroy(&pool);
 
     return EXIT_SUCCESS;
 } // main
