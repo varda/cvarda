@@ -1,7 +1,7 @@
 #include <ctype.h>      // isprint
 #include <stdint.h>     // SIZE_MAX
 #include <stdio.h>      // fprintf, stderr
-#include <stdlib.h>     // EXIT_*, malloc, free
+#include <stdlib.h>     // EXIT_*, malloc, free, rand
 
 #include "../include/varda.h"   // vrd_*
 
@@ -38,27 +38,20 @@ main(int argc, char* argv[])
                                                         minor,
                                                         patch);
 
-    vrd_Alloc* restrict pool = vrd_pool_init(100, 8 + ASCII_SIZE * 8);
-    if (NULL == pool)
+    vrd_AVL_Tree* restrict tree = vrd_avl_init(1000);
+
+    vrd_avl_print(stderr, tree);
+
+    for (int i = 0; i < 10; ++i)
     {
-        (void) fprintf(stderr, "vrd_pool_init() failed\n");
-        return EXIT_FAILURE;
-    } // if
+        int const data = rand() % 100;
+        (void) fprintf(stderr, "inserting: %d\n", data);
+        vrd_avl_insert(tree, data, 0);
 
-    vrd_Trie* restrict trie = vrd_trie_init(&vrd_malloc, ASCII_SIZE, ascii_to_idx);
-    if (NULL == trie)
-    {
-        (void) fprintf(stderr, "vrd_trie_init() failed\n");
-        vrd_pool_destroy(&pool);
-        return EXIT_FAILURE;
-    } // if
+        vrd_avl_print(stderr, tree);
+    } // for
 
-    int a = 4;
-
-    vrd_trie_insert(trie, 4, "chr1", &a);
-
-    vrd_trie_destroy(&trie);
-    vrd_pool_destroy(&pool);
+    vrd_avl_destroy(&tree);
 
     return EXIT_SUCCESS;
 } // main

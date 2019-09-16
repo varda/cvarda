@@ -1,4 +1,5 @@
-#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t
+#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
+                        // uintptr_t
 #include <stdlib.h>     // NULL, malloc, free
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_alloc, vrd_dealloc,
@@ -48,8 +49,8 @@ avl_node_init(vrd_Alloc* const restrict alloc,
     node->balance = 0;
     node->sample = sample;
 
-    return (uint32_t) (size_t) ptr;
-} // avl_node32_init
+    return (uint32_t) (uintptr_t) ptr;
+} // avl_node_init
 
 
 vrd_AVL_Tree*
@@ -100,7 +101,7 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value,
                uint32_t const sample)
 {
-#define DEREF(ptr) ((struct AVL_Node*) vrd_deref(tree->alloc, (void*) (size_t) (ptr)))
+#define DEREF(ptr) ((struct AVL_Node*) vrd_deref(tree->alloc, (void*) (uintptr_t) (ptr)))
 
     if (NULL == tree)
     {
@@ -137,8 +138,7 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
             k = 0;
         } // if
 
-        uint32_t const cmp = value - DEREF(p)->value;
-        dir = cmp > 0;
+        dir = value > DEREF(p)->value;
         if (1 == dir)
         {
             cache |= UINT64_C(1) << k;
@@ -261,3 +261,39 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
     return n;
 #undef DEREF
 } // vrd_avl_insert
+
+
+#include <stdio.h>      // FILE*, fprintf
+
+
+static size_t
+avl_node_print(FILE* const restrict stream,
+               vrd_Alloc* const restrict alloc,
+               uint32_t const root,
+               int const indent)
+{
+    enum { INDENT = 8 };
+
+    if (0 == root)
+    {
+        return 0;
+    } // if
+
+    struct AVL_Node* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
+
+    return avl_node_print(stream, alloc, node->child[RIGHT], indent + INDENT) +
+           fprintf(stream, "%*s%zu (%2d)\n", indent, "", (size_t) node->value, node->balance) +
+           avl_node_print(stream, alloc, node->child[LEFT], indent + INDENT);
+} // avl_node_print
+
+
+size_t
+vrd_avl_print(FILE* const restrict stream,
+          vrd_AVL_Tree const* const restrict tree)
+{
+    if (NULL == tree)
+    {
+        return 0;
+    } // if
+    return avl_node_print(stream, tree->alloc, tree->root, 0);
+} // vrd_avl_print
