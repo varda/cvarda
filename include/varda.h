@@ -13,7 +13,8 @@ extern "C"
 
 #include "alloc.h"      // vrd_Alloc, vrd_alloc, vrd_dealloc, vrd_deref,
                         // vrd_pool_*
-#include "trie.h"       // vrd_trie_*
+#include "avl_tree.h"   // vrd_AVL_Tree, vrd_avl_*
+#include "trie.h"       // vrd_Trie, vrd_trie_*
 
 
 static inline void

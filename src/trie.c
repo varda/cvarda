@@ -3,7 +3,7 @@
 
 #include "../include/alloc.h"   // vrd_Alloc, vrd_alloc, vrd_dealloc,
                                 // vrd_deref
-#include "../include/trie.h"    // vrd_trie_*
+#include "../include/trie.h"    // vrd_Trie, vrd_trie_*
 
 
 enum
