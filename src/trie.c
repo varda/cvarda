@@ -49,7 +49,7 @@ trie_init_node(vrd_Alloc* const restrict alloc,
         node->child[i] = NULL;
     } // for
 
-    return ptr;
+    return node;
 } // trie_init_node
 
 
@@ -79,7 +79,7 @@ vrd_trie_init(vrd_Alloc* const restrict alloc,
               size_t const alpha_size,
               size_t (*to_index)(char const))
 {
-    if (MAX_ALPHA_SIZE < alpha_size || 1 > alpha_size)
+    if (NULL == alloc || MAX_ALPHA_SIZE < alpha_size || 1 > alpha_size)
     {
         return NULL;
     } // if

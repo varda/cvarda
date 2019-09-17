@@ -104,6 +104,7 @@ pool_dealloc(struct Alloc* const restrict alloc,
 {
     (void) alloc;
     (void) ptr;
+    // Do nothing
 } // pool_dealloc
 
 
