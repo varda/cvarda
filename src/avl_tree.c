@@ -90,7 +90,8 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value,
                uint32_t const sample)
 {
-#define PTR_DEREF(ptr) ((struct AVL_Node*) vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
+#define DEREF(ptr) ((struct AVL_Node*) \
+vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 
     if (NULL == tree)
@@ -109,25 +110,26 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
     // limiting to height 64 becomes a problem after allocating 413 TiB
     // at the earliest; it allows for a minimum of
     // 27,777,890,035,287 nodes
-    uint64_t path = 0; // bit-path to first non-zero balance ancestor
+    uint64_t path = 0; // bit-path to first unbalanced ancestor
     int len = 0; // length of the path
     int dir = 0;
 
     uint32_t tmp_par = tree->root; // parent of tmp
     uint32_t tmp = tree->root;
 
-    uint32_t unbal = tree->root; // first non-zero balance ancestor of tmp
+    uint32_t unbal = tree->root; // first unbalanced ancestor of tmp
     uint32_t unbal_par = tree->root; // parent of unbalanced
 
 
     // Insert a new node at the BST position
     while (0 != tmp)
     {
-        int64_t const cmp = (int64_t) value - (int64_t) PTR_DEREF(tmp)->value;
+        int64_t const cmp = (int64_t) value -
+                            (int64_t) DEREF(tmp)->value;
 
-        if (0 != PTR_DEREF(tmp)->balance)
+        if (0 != DEREF(tmp)->balance)
         {
-            // this node is now the first non-zero balance ancestor of tmp
+            // this is now the first unbalanced ancestor of tmp
             unbal_par = tmp_par;
             unbal = tmp;
             path = 0;
@@ -142,105 +144,105 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
         len += 1;
 
         tmp_par = tmp;
-        tmp = PTR_DEREF(tmp)->child[dir];
+        tmp = DEREF(tmp)->child[dir];
     } // while
 
 
     uint32_t const node = avl_node_init(tree->alloc, value, sample);
-    PTR_DEREF(tmp_par)->child[dir] = node;
+    DEREF(tmp_par)->child[dir] = node;
 
 
     // Update the balance factors along the path from the first
-    // non-zero ancenstor to the new node
+    // unbalanced ancenstor to the new node
     tmp = unbal;
     while (tmp != node)
     {
         if (0 == (path & 1))
         {
-            PTR_DEREF(tmp)->balance -= 1;
+            DEREF(tmp)->balance -= 1;
         } // if
         else
         {
-            PTR_DEREF(tmp)->balance += 1;
+            DEREF(tmp)->balance += 1;
         } // else
 
-        tmp = PTR_DEREF(tmp)->child[path & 1];
+        tmp = DEREF(tmp)->child[path & 1];
         path >>= 1;
     } // while
 
 
     // Do the rotations if necessary
     uint32_t root = 0;
-    if (-2 == PTR_DEREF(unbal)->balance)
+    if (-2 == DEREF(unbal)->balance)
     {
-        uint32_t const child = PTR_DEREF(unbal)->child[LEFT];
-        if (-1 == PTR_DEREF(child)->balance)
+        uint32_t const child = DEREF(unbal)->child[LEFT];
+        if (-1 == DEREF(child)->balance)
         {
             root = child;
-            PTR_DEREF(unbal)->child[LEFT] = PTR_DEREF(child)->child[RIGHT];
-            PTR_DEREF(child)->child[RIGHT] = unbal;
-            PTR_DEREF(child)->balance = 0;
-            PTR_DEREF(unbal)->balance = 0;
+            DEREF(unbal)->child[LEFT] = DEREF(child)->child[RIGHT];
+            DEREF(child)->child[RIGHT] = unbal;
+            DEREF(child)->balance = 0;
+            DEREF(unbal)->balance = 0;
         } // if
         else
         {
-            root = PTR_DEREF(child)->child[RIGHT];
-            PTR_DEREF(child)->child[RIGHT] = PTR_DEREF(root)->child[LEFT];
-            PTR_DEREF(root)->child[LEFT] = child;
-            PTR_DEREF(unbal)->child[LEFT] = PTR_DEREF(root)->child[RIGHT];
-            PTR_DEREF(root)->child[RIGHT] = unbal;
-            if (-1 == PTR_DEREF(root)->balance)
+            root = DEREF(child)->child[RIGHT];
+            DEREF(child)->child[RIGHT] = DEREF(root)->child[LEFT];
+            DEREF(root)->child[LEFT] = child;
+            DEREF(unbal)->child[LEFT] = DEREF(root)->child[RIGHT];
+            DEREF(root)->child[RIGHT] = unbal;
+            if (-1 == DEREF(root)->balance)
             {
-                PTR_DEREF(child)->balance = 0;
-                PTR_DEREF(unbal)->balance = 1;
+                DEREF(child)->balance = 0;
+                DEREF(unbal)->balance = 1;
             } // if
-            else if (0 == PTR_DEREF(root)->balance)
+            else if (0 == DEREF(root)->balance)
             {
-                PTR_DEREF(child)->balance = 0;
-                PTR_DEREF(unbal)->balance = 0;
+                DEREF(child)->balance = 0;
+                DEREF(unbal)->balance = 0;
             } // if
             else
             {
-                PTR_DEREF(child)->balance = -1;
-                PTR_DEREF(unbal)->balance = 0;
+                DEREF(child)->balance = -1;
+                DEREF(unbal)->balance = 0;
             } // else
-            PTR_DEREF(root)->balance = 0;
+            DEREF(root)->balance = 0;
         } // else
     } // if
-    else if (2 == PTR_DEREF(unbal)->balance)
+    else if (2 == DEREF(unbal)->balance)
     {
-        uint32_t const child = PTR_DEREF(unbal)->child[RIGHT];
-        if (1 == PTR_DEREF(child)->balance)
+        uint32_t const child = DEREF(unbal)->child[RIGHT];
+        if (1 == DEREF(child)->balance)
         {
             root = child;
-            PTR_DEREF(unbal)->child[RIGHT] = PTR_DEREF(child)->child[LEFT];
-            PTR_DEREF(child)->child[LEFT] = unbal;
-            PTR_DEREF(child)->balance = 0;
-            PTR_DEREF(unbal)->balance = 0;
+            DEREF(unbal)->child[RIGHT] = DEREF(child)->child[LEFT];
+            DEREF(child)->child[LEFT] = unbal;
+            DEREF(child)->balance = 0;
+            DEREF(unbal)->balance = 0;
         } // if
         else
         {
-            root = PTR_DEREF(child)->child[LEFT];
-            PTR_DEREF(child)->child[LEFT] = PTR_DEREF(root)->child[RIGHT];
-            PTR_DEREF(root)->child[RIGHT] = child;
-            PTR_DEREF(unbal)->child[RIGHT] = PTR_DEREF(root)->child[LEFT];
-            PTR_DEREF(root)->child[LEFT] = unbal;
-            if (1 == PTR_DEREF(root)->balance)
+            root = DEREF(child)->child[LEFT];
+            DEREF(child)->child[LEFT] = DEREF(root)->child[RIGHT];
+            DEREF(root)->child[RIGHT] = child;
+            DEREF(unbal)->child[RIGHT] = DEREF(root)->child[LEFT];
+            DEREF(root)->child[LEFT] = unbal;
+            if (1 == DEREF(root)->balance)
             {
-                PTR_DEREF(child)->balance = 0;
-                PTR_DEREF(unbal)->balance = -1;
+                DEREF(child)->balance = 0;
+                DEREF(unbal)->balance = -1;
             } // if
-            else if(0 == PTR_DEREF(root)->balance)
+            else if(0 == DEREF(root)->balance)
             {
-                PTR_DEREF(child)->balance = 0;
-                PTR_DEREF(unbal)->balance = 0;
+                DEREF(child)->balance = 0;
+                DEREF(unbal)->balance = 0;
             } // if
             else
             {
-                PTR_DEREF(child)->balance = 1;
-                PTR_DEREF(unbal)->balance = 0;
+                DEREF(child)->balance = 1;
+                DEREF(unbal)->balance = 0;
             } // else
-            PTR_DEREF(root)->balance = 0;
+            DEREF(root)->balance = 0;
         } // else
     } // if
     else
@@ -248,10 +250,11 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
         return 0;
     } // else
 
-    PTR_DEREF(unbal_par)->child[unbal != PTR_DEREF(unbal_par)->child[LEFT]] = root;
+    DEREF(unbal_par)->child[unbal !=
+                            DEREF(unbal_par)->child[LEFT]] = root;
 
     return 0;
 
 
-#undef PTR_DEREF
+#undef DEREF
 } // vrd_avl_insert
