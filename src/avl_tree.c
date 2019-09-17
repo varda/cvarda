@@ -24,12 +24,12 @@ struct AVL_Node
 
 struct AVL_Tree
 {
-    struct AVL_Node* restrict root;
     vrd_Alloc* restrict alloc;
+    uint32_t root;
 }; // AVL_Tree
 
 
-static inline struct AVL_Node*
+static inline uintptr_t
 avl_node_init(vrd_Alloc* const restrict alloc,
               uint32_t const value,
               uint32_t const sample)
@@ -37,7 +37,7 @@ avl_node_init(vrd_Alloc* const restrict alloc,
     void* const restrict ptr = vrd_alloc(alloc, sizeof(struct AVL_Node));
     if (NULL == ptr)
     {
-        return NULL;
+        return 0;
     } // if
 
     struct AVL_Node* const restrict node = vrd_deref(alloc, ptr);
@@ -47,7 +47,7 @@ avl_node_init(vrd_Alloc* const restrict alloc,
     node->balance = 0;
     node->sample = sample;
 
-    return node;
+    return (uintptr_t) ptr;
 } // avl_node_init
 
 
@@ -65,7 +65,7 @@ vrd_avl_init(vrd_Alloc* const restrict alloc)
         return NULL;
     } // if
 
-    tree->root = NULL;
+    tree->root = 0;
     tree->alloc = alloc;
 
     return tree;
@@ -90,8 +90,7 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value,
                uint32_t const sample)
 {
-#define PTR_EXPAND(ptr) ((void*) (uintptr_t) ptr)
-#define PTR_SHORTEN(ptr) ((uint32_t) (uintptr_t) ptr)
+#define PTR_DEREF(ptr) ((struct AVL_Node*) vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 
     if (NULL == tree)
@@ -100,7 +99,8 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
     } // if
 
     // FIXME: range check sample (29 bits)
-    if (NULL == tree->root)
+
+    if (0 == tree->root)
     {
         tree->root = avl_node_init(tree->alloc, value, sample);
         return 0;
@@ -113,19 +113,19 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
     int len = 0; // length of the path
     int dir = 0;
 
-    struct AVL_Node* restrict tmp_par = tree->root; // parent of tmp
-    struct AVL_Node* restrict tmp = tree->root;
+    uint32_t tmp_par = tree->root; // parent of tmp
+    uint32_t tmp = tree->root;
 
-    struct AVL_Node* restrict unbal = tree->root; // first non-zero balance ancestor of tmp
-    struct AVL_Node* restrict unbal_par = tree->root; // parent of unbalanced
+    uint32_t unbal = tree->root; // first non-zero balance ancestor of tmp
+    uint32_t unbal_par = tree->root; // parent of unbalanced
 
 
     // Insert a new node at the BST position
-    while (NULL != tmp)
+    while (0 != tmp)
     {
-        int64_t const cmp = (int64_t) value - (int64_t) tmp->value;
+        int64_t const cmp = (int64_t) value - (int64_t) PTR_DEREF(tmp)->value;
 
-        if (tmp->balance != 0)
+        if (0 != PTR_DEREF(tmp)->balance)
         {
             // this node is now the first non-zero balance ancestor of tmp
             unbal_par = tmp_par;
@@ -135,20 +135,19 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
         } // if
 
         dir = cmp > 0;
-        if (dir == 1)
+        if (1 == dir)
         {
             path |= UINT64_C(1) << len;
         } // if
         len += 1;
 
         tmp_par = tmp;
-        tmp = vrd_deref(tree->alloc, PTR_EXPAND(tmp->child[dir]));
+        tmp = PTR_DEREF(tmp)->child[dir];
     } // while
 
 
-    struct AVL_Node* const restrict node =
-        avl_node_init(tree->alloc, value, sample);
-    tmp_par->child[dir] = PTR_SHORTEN(node);
+    uint32_t const node = avl_node_init(tree->alloc, value, sample);
+    PTR_DEREF(tmp_par)->child[dir] = node;
 
 
     // Update the balance factors along the path from the first
@@ -156,94 +155,92 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
     tmp = unbal;
     while (tmp != node)
     {
-        if ((path & 1) == 0)
+        if (0 == (path & 1))
         {
-            tmp->balance -= 1;
+            PTR_DEREF(tmp)->balance -= 1;
         } // if
         else
         {
-            tmp->balance += 1;
+            PTR_DEREF(tmp)->balance += 1;
         } // else
 
-        tmp = vrd_deref(tree->alloc, PTR_EXPAND(tmp->child[path & 1]));
+        tmp = PTR_DEREF(tmp)->child[path & 1];
         path >>= 1;
     } // while
 
 
     // Do the rotations if necessary
-    struct AVL_Node* restrict root = NULL;
-    if (-2 == unbal->balance)
+    uint32_t root = 0;
+    if (-2 == PTR_DEREF(unbal)->balance)
     {
-        struct AVL_Node* const restrict child =
-            vrd_deref(tree->alloc, PTR_EXPAND(unbal->child[LEFT]));
-        if (-1 == child->balance)
+        uint32_t const child = PTR_DEREF(unbal)->child[LEFT];
+        if (-1 == PTR_DEREF(child)->balance)
         {
             root = child;
-            unbal->child[LEFT] = child->child[RIGHT];
-            child->child[RIGHT] = PTR_SHORTEN(unbal);
-            child->balance = 0;
-            unbal->balance = 0;
+            PTR_DEREF(unbal)->child[LEFT] = PTR_DEREF(child)->child[RIGHT];
+            PTR_DEREF(child)->child[RIGHT] = unbal;
+            PTR_DEREF(child)->balance = 0;
+            PTR_DEREF(unbal)->balance = 0;
         } // if
         else
         {
-            root = vrd_deref(tree->alloc, PTR_EXPAND(child->child[RIGHT]));
-            child->child[RIGHT] = root->child[LEFT];
-            root->child[LEFT] = PTR_SHORTEN(child);
-            unbal->child[LEFT] = root->child[RIGHT];
-            root->child[RIGHT] = PTR_SHORTEN(unbal);
-            if (-1 == root->balance)
+            root = PTR_DEREF(child)->child[RIGHT];
+            PTR_DEREF(child)->child[RIGHT] = PTR_DEREF(root)->child[LEFT];
+            PTR_DEREF(root)->child[LEFT] = child;
+            PTR_DEREF(unbal)->child[LEFT] = PTR_DEREF(root)->child[RIGHT];
+            PTR_DEREF(root)->child[RIGHT] = unbal;
+            if (-1 == PTR_DEREF(root)->balance)
             {
-                child->balance = 0;
-                unbal->balance = 1;
+                PTR_DEREF(child)->balance = 0;
+                PTR_DEREF(unbal)->balance = 1;
             } // if
-            else if (0 == root->balance)
+            else if (0 == PTR_DEREF(root)->balance)
             {
-                child->balance = 0;
-                unbal->balance = 0;
+                PTR_DEREF(child)->balance = 0;
+                PTR_DEREF(unbal)->balance = 0;
             } // if
             else
             {
-                child->balance = -1;
-                unbal->balance = 0;
+                PTR_DEREF(child)->balance = -1;
+                PTR_DEREF(unbal)->balance = 0;
             } // else
-            root->balance = 0;
+            PTR_DEREF(root)->balance = 0;
         } // else
     } // if
-    else if (2 == unbal->balance)
+    else if (2 == PTR_DEREF(unbal)->balance)
     {
-        struct AVL_Node* const restrict child =
-            vrd_deref(tree->alloc, PTR_EXPAND(unbal->child[RIGHT]));
-        if (1 == child->balance)
+        uint32_t const child = PTR_DEREF(unbal)->child[RIGHT];
+        if (1 == PTR_DEREF(child)->balance)
         {
             root = child;
-            unbal->child[RIGHT] = child->child[LEFT];
-            child->child[LEFT] = PTR_SHORTEN(unbal);
-            child->balance = 0;
-            unbal->balance = 0;
+            PTR_DEREF(unbal)->child[RIGHT] = PTR_DEREF(child)->child[LEFT];
+            PTR_DEREF(child)->child[LEFT] = unbal;
+            PTR_DEREF(child)->balance = 0;
+            PTR_DEREF(unbal)->balance = 0;
         } // if
         else
         {
-            root = vrd_deref(tree->alloc, PTR_EXPAND(child->child[LEFT]));
-            child->child[LEFT] = root->child[RIGHT];
-            root->child[RIGHT] = PTR_SHORTEN(child);
-            unbal->child[RIGHT] = root->child[LEFT];
-            root->child[LEFT] = PTR_SHORTEN(unbal);
-            if (1 == root->balance)
+            root = PTR_DEREF(child)->child[LEFT];
+            PTR_DEREF(child)->child[LEFT] = PTR_DEREF(root)->child[RIGHT];
+            PTR_DEREF(root)->child[RIGHT] = child;
+            PTR_DEREF(unbal)->child[RIGHT] = PTR_DEREF(root)->child[LEFT];
+            PTR_DEREF(root)->child[LEFT] = unbal;
+            if (1 == PTR_DEREF(root)->balance)
             {
-                child->balance = 0;
-                unbal->balance = -1;
+                PTR_DEREF(child)->balance = 0;
+                PTR_DEREF(unbal)->balance = -1;
             } // if
-            else if(0 == root->balance)
+            else if(0 == PTR_DEREF(root)->balance)
             {
-                child->balance = 0;
-                unbal->balance = 0;
+                PTR_DEREF(child)->balance = 0;
+                PTR_DEREF(unbal)->balance = 0;
             } // if
             else
             {
-                child->balance = 1;
-                unbal->balance = 0;
+                PTR_DEREF(child)->balance = 1;
+                PTR_DEREF(unbal)->balance = 0;
             } // else
-            root->balance = 0;
+            PTR_DEREF(root)->balance = 0;
         } // else
     } // if
     else
@@ -251,11 +248,10 @@ vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
         return 0;
     } // else
 
-    unbal_par->child[unbal != vrd_deref(tree->alloc, PTR_EXPAND(unbal_par->child[LEFT]))] = PTR_SHORTEN(root);
+    PTR_DEREF(unbal_par)->child[unbal != PTR_DEREF(unbal_par)->child[LEFT]] = root;
 
     return 0;
 
 
-#undef PTR_EXPAND
-#undef PTR_SHORTEN
+#undef PTR_DEREF
 } // vrd_avl_insert

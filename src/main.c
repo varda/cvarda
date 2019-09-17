@@ -51,6 +51,9 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
+    vrd_avl_insert(tree, 10, 0);
+    vrd_avl_insert(tree, 11, 0);
+
 
     vrd_avl_destroy(&tree);
     vrd_pool_destroy(&tree_pool);

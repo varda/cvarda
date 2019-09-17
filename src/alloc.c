@@ -112,6 +112,10 @@ static inline void*
 pool_deref(struct Alloc const* const restrict alloc,
            void* const restrict ptr)
 {
+    if (NULL == ptr)
+    {
+        return NULL;
+    } // if
     struct Pool* const restrict pool = (struct Pool*) alloc;
     size_t const idx = (size_t) ptr;
     return (char*) pool->pool + idx * pool->obj_size;
