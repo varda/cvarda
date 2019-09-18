@@ -4,7 +4,7 @@
 #include "../include/alloc.h"       // vrd_Alloc
 #include "../include/avl_tree.h"    // vrd_AVL_Node, vrd_AVL_Tree,
                                     // vrd_avl_*
-#include "../include/snv_index.h"   // vrd_SNV_Table, vrd_snv_*
+#include "../include/snv_index.h"   // vrd_SNV_Index, vrd_snv_*
 
 
 struct SNV_Node
@@ -13,6 +13,9 @@ struct SNV_Node
     uint32_t phase : 28;
     uint32_t type  :  4;
 }; // SNV_Node
+
+
+size_t const VRD_SNV_NODE_SIZE = sizeof(struct SNV_Node);
 
 
 struct SNV_Index

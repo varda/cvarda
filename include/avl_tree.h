@@ -30,6 +30,9 @@ typedef struct vrd_AVL_Node
 } vrd_AVL_Node;
 
 
+static size_t const VRD_AVL_NODE_SIZE = sizeof(vrd_AVL_Node);
+
+
 vrd_AVL_Tree*
 vrd_avl_init(vrd_Alloc* const restrict alloc);
 

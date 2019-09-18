@@ -11,12 +11,16 @@ extern "C"
 #endif
 
 
+#include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 
 #include "alloc.h"      // vrd_Alloc
 
 
 typedef struct SNV_Index vrd_SNV_Index;
+
+
+extern size_t const VRD_SNV_NODE_SIZE;
 
 
 vrd_SNV_Index*

@@ -31,6 +31,9 @@ typedef struct vrd_Itv_Node
 } vrd_Itv_Node;
 
 
+static size_t const VRD_ITV_NODE_SIZE = sizeof(vrd_Itv_Node);
+
+
 vrd_Itv_Tree*
 vrd_itv_init(vrd_Alloc* const restrict alloc);
 
