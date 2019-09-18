@@ -44,7 +44,7 @@ std_deref(struct Alloc const* const restrict alloc,
 } // std_deref
 
 
-vrd_Alloc vrd_malloc =
+vrd_Alloc const vrd_malloc =
 {
     .alloc = std_malloc,
     .dealloc = std_free,
@@ -82,7 +82,7 @@ struct Pool
     size_t capacity;
     size_t obj_size;
     size_t next;
-    void* restrict pool;
+    void* restrict data;
 }; // Pool
 
 
@@ -114,7 +114,7 @@ pool_deref(struct Alloc const* const restrict alloc,
 {
     struct Pool* const restrict pool = (struct Pool*) alloc;
     size_t const idx = (size_t) ptr;
-    return (char*) pool->pool + idx * pool->obj_size;
+    return (char*) pool->data + idx * pool->obj_size;
 } // pool_alloc
 
 
@@ -139,8 +139,8 @@ vrd_pool_init(size_t const capacity, size_t const obj_size)
     alloc->base.dealloc = pool_dealloc;
     alloc->base.deref = pool_deref;
 
-    alloc->pool = malloc(size);
-    if (NULL == alloc->pool)
+    alloc->data = malloc(size);
+    if (NULL == alloc->data)
     {
         free(alloc);
         return NULL;
@@ -164,7 +164,7 @@ vrd_pool_destroy(vrd_Alloc* restrict* const restrict alloc)
         return;
     } // if
 
-    free((*pool)->pool);
+    free((*pool)->data);
     free(*pool);
     *pool = NULL;
 } // vrd_pool_destroy

@@ -32,7 +32,7 @@ vrd_deref(vrd_Alloc const* const restrict alloc,
           void* const restrict ptr);
 
 
-extern vrd_Alloc vrd_malloc;
+extern vrd_Alloc const vrd_malloc;
 
 
 vrd_Alloc*

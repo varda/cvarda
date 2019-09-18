@@ -1,11 +1,12 @@
-#include <stdint.h>     // uint32_t, int32_t, uint64_t, int64_t,
+#include <stdint.h>     // uint32_t, uint64_t, int64_t,
                         // UINT64_C, uintptr_t
 #include <stdlib.h>     // NULL, malloc, free
 
 #include <stdio.h>      // FIXME: DEBUG FILE*, fprintf
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_alloc, vrd_deref
-#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_Node,
+                                    // vrd_avl_*
 
 
 enum
@@ -13,15 +14,6 @@ enum
     LEFT = 0,
     RIGHT = 1
 }; // constants
-
-
-struct AVL_Node
-{
-    uint32_t child[2];
-    uint32_t value;
-    int32_t balance  :  3;  // [-2, .., 2]
-    uint32_t extra   : 29;
-}; // AVL_Node
 
 
 struct AVL_Tree
@@ -36,13 +28,13 @@ avl_node_init(vrd_Alloc* const restrict alloc,
               uint32_t const value,
               uint32_t const extra)
 {
-    void* const restrict ptr = vrd_alloc(alloc, sizeof(struct AVL_Node));
+    void* const restrict ptr = vrd_alloc(alloc, sizeof(struct vrd_AVL_Node));
     if (NULL == ptr)
     {
         return 0;
     } // if
 
-    struct AVL_Node* const restrict node = vrd_deref(alloc, ptr);
+    vrd_AVL_Node* const restrict node = vrd_deref(alloc, ptr);
     node->child[LEFT] = 0;
     node->child[RIGHT] = 0;
     node->value = value;
@@ -62,7 +54,7 @@ avl_node_destroy(vrd_Alloc* const restrict alloc,
         return;
     } // if
 
-    struct AVL_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
+    vrd_AVL_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
     avl_node_destroy(alloc, node->child[LEFT]);
     avl_node_destroy(alloc, node->child[RIGHT]);
     vrd_dealloc(alloc, (void*) (uintptr_t) root);
@@ -86,7 +78,7 @@ avl_node_print(FILE* const restrict stream,
         return 0;
     } // if
 
-    struct AVL_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
+    vrd_AVL_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
     return avl_node_print(stream, alloc, node->child[RIGHT], indent + INDENT) +
            fprintf(stream, "%*s%zu (%2d)\n", indent, "", (size_t) node->value, node->balance) +
            avl_node_print(stream, alloc, node->child[LEFT], indent + INDENT);
@@ -129,12 +121,12 @@ vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree)
 } // vrd_avl_destroy
 
 
-void*
+vrd_AVL_Node*
 vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value,
                uint32_t const extra)
 {
-#define DEREF(ptr) ((struct AVL_Node*) \
+#define DEREF(ptr) ((vrd_AVL_Node*) \
 vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 

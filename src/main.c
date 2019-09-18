@@ -1,5 +1,4 @@
 #include <ctype.h>      // isprint
-#include <stdint.h>     // SIZE_MAX
 #include <stdio.h>      // fprintf, stderr
 #include <stdlib.h>     // EXIT_*, malloc, free, rand
 
