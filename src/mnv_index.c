@@ -5,7 +5,7 @@
 #include "../include/region_index.h"    // vrd_Region_Node,
                                         // vrd_Region_Tree,
                                         // vrd_region_*
-#include "../include/mnv_index.h"   // vrd_Variant_Index
+#include "../include/mnv_index.h"   // vrd_MNV_Index, vrd_mnv_*
 
 
 struct MNV_Node

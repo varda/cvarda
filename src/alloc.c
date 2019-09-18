@@ -44,7 +44,7 @@ std_deref(struct Alloc const* const restrict alloc,
 } // std_deref
 
 
-vrd_Alloc const vrd_malloc =
+vrd_Alloc vrd_malloc =
 {
     .alloc = std_malloc,
     .dealloc = std_free,
