@@ -7,8 +7,8 @@
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_alloc, vrd_deref
                                     // vrd_dealloc
-#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_Node,
-                                    // vrd_avl_*
+#include "../include/itv_tree.h"    // vrd_Itv_Tree, vrd_Itv_Node,
+                                    // vrd_itv_*
 
 
 enum
@@ -18,37 +18,72 @@ enum
 }; // constants
 
 
-struct AVL_Tree
+struct Itv_Tree
 {
     vrd_Alloc* restrict alloc;
     uint32_t root;
-}; // AVL_Tree
+}; // Itv_Tree
+
+
+static inline uint32_t
+max(uint32_t const a,
+    uint32_t const b)
+{
+    return a > b ? a : b;
+} // max
+
+
+static inline uint32_t
+update_max(vrd_Alloc const* const alloc,
+           uint32_t const root)
+{
+#define DEREF(ptr) ((vrd_Itv_Node*) \
+vrd_deref(alloc, ((void*) (uintptr_t) ptr)))
+
+
+    uint32_t res = DEREF(root)->max;
+    if (0 != DEREF(root)->child[LEFT])
+    {
+        res = max(res, DEREF(DEREF(root)->child[LEFT])->max);
+    } // if
+    if (0 != DEREF(root)->child[RIGHT])
+    {
+        res = max(res, DEREF(DEREF(root)->child[RIGHT])->max);
+    } // if
+    return res;
+
+
+#undef DEREF
+} // update_max
 
 
 static inline uintptr_t
-avl_node_init(vrd_Alloc* const restrict alloc,
-              uint32_t const value)
+itv_node_init(vrd_Alloc* const restrict alloc,
+              uint32_t const start,
+              uint32_t const end)
 {
     void* const restrict ptr =
-        vrd_alloc(alloc, sizeof(struct vrd_AVL_Node));
+        vrd_alloc(alloc, sizeof(struct vrd_Itv_Node));
     if (NULL == ptr)
     {
         return 0;
     } // if
 
-    vrd_AVL_Node* const restrict node = vrd_deref(alloc, ptr);
+    vrd_Itv_Node* const restrict node = vrd_deref(alloc, ptr);
     node->child[LEFT] = 0;
     node->child[RIGHT] = 0;
-    node->value = value;
+    node->start = start;
+    node->end = end;
+    node->max = end;
     node->balance = 0;
     node->extra = 0;
 
     return (uintptr_t) ptr;
-} // avl_node_init
+} // itv_node_init
 
 
 static void
-avl_node_destroy(vrd_Alloc* const restrict alloc,
+itv_node_destroy(vrd_Alloc* const restrict alloc,
                  uint32_t const root)
 {
     if (0 == root)
@@ -56,17 +91,17 @@ avl_node_destroy(vrd_Alloc* const restrict alloc,
         return;
     } // if
 
-    vrd_AVL_Node const* const restrict node =
+    vrd_Itv_Node const* const restrict node =
         vrd_deref(alloc, (void*) (uintptr_t) root);
-    avl_node_destroy(alloc, node->child[LEFT]);
-    avl_node_destroy(alloc, node->child[RIGHT]);
+    itv_node_destroy(alloc, node->child[LEFT]);
+    itv_node_destroy(alloc, node->child[RIGHT]);
     vrd_dealloc(alloc, (void*) (uintptr_t) root);
-} // avl_node_destroy
+} // itv_node_destroy
 
 
 // FIXME: DEBUG
 static size_t
-avl_node_print(FILE* const restrict stream,
+itv_node_print(FILE* const restrict stream,
                vrd_Alloc const* const restrict alloc,
                uint32_t const root,
                int const indent)
@@ -81,22 +116,22 @@ avl_node_print(FILE* const restrict stream,
         return 0;
     } // if
 
-    vrd_AVL_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
-    return avl_node_print(stream, alloc, node->child[RIGHT], indent + INDENT) +
-           fprintf(stream, "%*s%zu (%2d)\n", indent, "", (size_t) node->value, node->balance) +
-           avl_node_print(stream, alloc, node->child[LEFT], indent + INDENT);
-} // avl_node_print
+    vrd_Itv_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
+    return itv_node_print(stream, alloc, node->child[RIGHT], indent + INDENT) +
+           fprintf(stream, "%*s%zu--%zu (%2d)\n", indent, "", (size_t) node->start, (size_t) node->end, node->balance) +
+           itv_node_print(stream, alloc, node->child[LEFT], indent + INDENT);
+} // itv_node_print
 
 
-vrd_AVL_Tree*
-vrd_avl_init(vrd_Alloc* const restrict alloc)
+vrd_Itv_Tree*
+vrd_itv_init(vrd_Alloc* const restrict alloc)
 {
     if (NULL == alloc)
     {
         return NULL;
     } // if
 
-    struct AVL_Tree* const restrict tree = malloc(sizeof(*tree));
+    struct Itv_Tree* const restrict tree = malloc(sizeof(*tree));
     if (NULL == tree)
     {
         return NULL;
@@ -106,29 +141,30 @@ vrd_avl_init(vrd_Alloc* const restrict alloc)
     tree->alloc = alloc;
 
     return tree;
-} // vrd_avl_init
+} // vrd_itv_init
 
 
 void
-vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree)
+vrd_itv_destroy(vrd_Itv_Tree* restrict* const restrict tree)
 {
     if (NULL == tree || NULL == *tree)
     {
         return;
     } // if
 
-    avl_node_destroy((*tree)->alloc, (*tree)->root);
+    itv_node_destroy((*tree)->alloc, (*tree)->root);
 
     free(*tree);
     *tree = NULL;
-} // vrd_avl_destroy
+} // vrd_itv_destroy
 
 
-vrd_AVL_Node*
-vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
-               uint32_t const value)
+vrd_Itv_Node*
+vrd_itv_insert(vrd_Itv_Tree* const restrict tree,
+               uint32_t const start,
+               uint32_t const end)
 {
-#define DEREF(ptr) ((vrd_AVL_Node*) \
+#define DEREF(ptr) ((vrd_Itv_Node*) \
 vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 
@@ -139,7 +175,7 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
     if (0 == tree->root)
     {
-        tree->root = avl_node_init(tree->alloc, value);
+        tree->root = itv_node_init(tree->alloc, start, end);
         if (0 == tree->root)
         {
             return NULL;
@@ -163,8 +199,8 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
     // Insert a new node at the BST position
     while (0 != tmp)
     {
-        int64_t const cmp = (int64_t) value -
-                            (int64_t) DEREF(tmp)->value;
+        int64_t const cmp = (int64_t) start -
+                            (int64_t) DEREF(tmp)->start;
 
         if (0 != DEREF(tmp)->balance)
         {
@@ -187,7 +223,7 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
     } // while
 
 
-    uint32_t const node = avl_node_init(tree->alloc, value);
+    uint32_t const node = itv_node_init(tree->alloc, start, end);
     if (0 == node)
     {
         return NULL;
@@ -226,6 +262,8 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
             DEREF(child)->child[RIGHT] = unbal;
             DEREF(child)->balance = 0;
             DEREF(unbal)->balance = 0;
+            DEREF(child)->max = update_max(tree->alloc, child);
+            DEREF(unbal)->max = update_max(tree->alloc, unbal);
         } // if
         else
         {
@@ -250,6 +288,9 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
                 DEREF(unbal)->balance = 0;
             } // else
             DEREF(root)->balance = 0;
+            DEREF(root)->max = update_max(tree->alloc, root);
+            DEREF(child)->max = update_max(tree->alloc, child);
+            DEREF(unbal)->max = update_max(tree->alloc, unbal);
         } // else
     } // if
     else if (2 == DEREF(unbal)->balance)
@@ -262,6 +303,8 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
             DEREF(child)->child[LEFT] = unbal;
             DEREF(child)->balance = 0;
             DEREF(unbal)->balance = 0;
+            DEREF(child)->max = update_max(tree->alloc, child);
+            DEREF(unbal)->max = update_max(tree->alloc, unbal);
         } // if
         else
         {
@@ -286,6 +329,9 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
                 DEREF(unbal)->balance = 0;
             } // else
             DEREF(root)->balance = 0;
+            DEREF(root)->max = update_max(tree->alloc, root);
+            DEREF(child)->max = update_max(tree->alloc, child);
+            DEREF(unbal)->max = update_max(tree->alloc, unbal);
         } // else
     } // if
     else
@@ -300,17 +346,17 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 
 #undef DEREF
-} // vrd_avl_insert
+} // vrd_itv_insert
 
 
 // FIXME: DEBUG
 size_t
-vrd_avl_print(FILE* const restrict stream,
-              vrd_AVL_Tree const* const restrict tree)
+vrd_itv_print(FILE* const restrict stream,
+              vrd_Itv_Tree const* const restrict tree)
 {
     if (NULL == tree)
     {
         return 0;
     } // if
-    return avl_node_print(stream, tree->alloc, tree->root, 0);
-} // vrd_avl_print
+    return itv_node_print(stream, tree->alloc, tree->root, 0);
+} // vrd_itv_print

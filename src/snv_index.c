@@ -24,6 +24,11 @@ struct SNV_Index
 vrd_SNV_Index*
 vrd_snv_init(vrd_Alloc* const restrict alloc)
 {
+    if (&vrd_malloc == alloc)
+    {
+        return NULL;
+    } // if
+
     struct SNV_Index* const restrict index = malloc(sizeof(*index));
     if (NULL == index)
     {
