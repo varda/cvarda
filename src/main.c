@@ -38,6 +38,7 @@ main(int argc, char* argv[])
                                                         minor,
                                                         patch);
 
+
     vrd_Alloc* restrict tree_pool = vrd_pool_init(1000, 16);
     if (NULL == tree_pool)
     {
@@ -51,8 +52,16 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
-    vrd_avl_insert(tree, 10, 0);
-    vrd_avl_insert(tree, 11, 0);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        int const value = rand() % 100;
+        fprintf(stderr, "Insert: %d\n", value);
+        vrd_avl_insert(tree, value, 0);
+
+        fprintf(stderr, "Result:\n");
+        vrd_avl_print(stderr, tree);
+    } // for
 
 
     vrd_avl_destroy(&tree);
