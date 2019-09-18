@@ -2,7 +2,7 @@
 #include <stdio.h>      // fprintf, stderr
 #include <stdlib.h>     // EXIT_*, malloc, free, rand
 
-#include "../include/varda.h"   // vrd_*
+#include "../include/varda.h"   // vrd_*, VRD_*
 
 
 enum
@@ -36,9 +36,14 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "cvarda version %d.%d.%d\n", major,
                                                         minor,
                                                         patch);
+    (void) fprintf(stderr, "VRD_AVL_NODE_SIZE: %zu\n", VRD_AVL_NODE_SIZE);
+    (void) fprintf(stderr, "VRD_ITV_NODE_SIZE: %zu\n", VRD_ITV_NODE_SIZE);
+    (void) fprintf(stderr, "VRD_SNV_NODE_SIZE: %zu\n", VRD_SNV_NODE_SIZE);
+    (void) fprintf(stderr, "VRD_REGION_NODE_SIZE: %zu\n", VRD_REGION_NODE_SIZE);
+    (void) fprintf(stderr, "VRD_VARIANT_NODE_SIZE: %zu\n", VRD_VARIANT_NODE_SIZE);
 
 
-    vrd_Alloc* restrict tree_pool = vrd_pool_init(1000, 20);
+    vrd_Alloc* restrict tree_pool = vrd_pool_init(1000, VRD_SNV_NODE_SIZE);
     if (NULL == tree_pool)
     {
         return EXIT_FAILURE;

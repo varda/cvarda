@@ -53,7 +53,7 @@ vrd_region_destroy(vrd_Region_Index* restrict* const restrict index)
 } // vrd_region_destroy
 
 
-int
+vrd_Region_Node*
 vrd_region_insert(vrd_Region_Index* const restrict index,
                   uint32_t const start,
                   uint32_t const end,
@@ -62,14 +62,14 @@ vrd_region_insert(vrd_Region_Index* const restrict index,
 {
     if (NULL == index)
     {
-        return -1;
+        return NULL;
     } // if
 
     vrd_Region_Node* const restrict node =
         (vrd_Region_Node*) vrd_itv_insert(index->tree, start, end);
     if (NULL == node)
     {
-        return -1;
+        return NULL;
     } // if
 
     // FIXME: range check on phase and type
@@ -77,5 +77,5 @@ vrd_region_insert(vrd_Region_Index* const restrict index,
     node->base.extra = sample_id;
     node->phase = phase;
 
-    return 0;
+    return node;
 } // vrd_region_insert

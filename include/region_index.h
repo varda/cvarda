@@ -15,6 +15,7 @@ extern "C"
 #include <stdint.h>     // uint32_t
 
 #include "alloc.h"      // vrd_Alloc
+#include "itv_tree.h"   // vrd_Itv_Node
 
 
 typedef struct Region_Index vrd_Region_Index;
@@ -37,7 +38,7 @@ void
 vrd_region_destroy(vrd_Region_Index* restrict* const restrict index);
 
 
-int
+vrd_Region_Node*
 vrd_region_insert(vrd_Region_Index* const restrict index,
                   uint32_t const start,
                   uint32_t const end,
