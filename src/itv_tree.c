@@ -118,7 +118,7 @@ itv_node_print(FILE* const restrict stream,
 
     vrd_Itv_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
     return itv_node_print(stream, alloc, node->child[RIGHT], indent + INDENT) +
-           fprintf(stream, "%*s%zu--%zu (%2d)\n", indent, "", (size_t) node->start, (size_t) node->end, node->balance) +
+           fprintf(stream, "%*s%zu--%zu [%zu] (%2d)\n", indent, "", (size_t) node->start, (size_t) node->end, (size_t) node->max, node->balance) +
            itv_node_print(stream, alloc, node->child[LEFT], indent + INDENT);
 } // itv_node_print
 
@@ -342,6 +342,8 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
     DEREF(unbal_par)->child[unbal !=
                             DEREF(unbal_par)->child[LEFT]] = root;
+    DEREF(unbal_par)->max = update_max(tree->alloc, unbal_par);
+
     return vrd_deref(tree->alloc, (void*) (uintptr_t) node);
 
 

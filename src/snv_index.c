@@ -1,6 +1,8 @@
 #include <stdint.h>     // uint32_t
 #include <stdlib.h>     // NULL, malloc, free
 
+#include <stdio.h>      // FILE*
+
 #include "../include/alloc.h"       // vrd_Alloc
 #include "../include/avl_tree.h"    // vrd_AVL_Node, vrd_AVL_Tree,
                                     // vrd_avl_*
@@ -90,3 +92,15 @@ vrd_snv_insert(vrd_SNV_Index* const restrict index,
 
     return 0;
 } // vrd_snv_insert
+
+
+size_t
+vrd_snv_print(FILE* const restrict stream,
+              vrd_SNV_Index const* const restrict index)
+{
+    if (NULL == index)
+    {
+        return 0;
+    } // if
+    return vrd_avl_print(stream, index->tree);
+} // vrd_snv_print

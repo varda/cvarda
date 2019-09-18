@@ -19,12 +19,11 @@ extern "C"
                         // vrd_avl_*
 #include "itv_tree.h"   // vrd_Itv_Tree, vrd_Itv_Node, VRD_ITV_NODE_SIZE,
                         // vrd_itv_*
+#include "mnv_index.h"  // vrd_MNV_Index, vrd_mnv_* VRD_MNV_NODE_SIZE
 #include "region_index.h"   // vrd_Region_Index, vrd_Region_Node,
                             // VRD_REGION_NODE_SIZE, vrd_region_*
 #include "snv_index.h"  // vrd_SNV_Index, vrd_snv_*, VRD_SNV_NODE_SIZE
 #include "trie.h"       // vrd_Trie, vrd_trie_*
-#include "variant_index.h"  // vrd_Variant_Index, vrd_variant_*,
-                            // VRD_VARIANT_NODE_SIZE
 
 
 enum

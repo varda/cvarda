@@ -40,16 +40,16 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "VRD_ITV_NODE_SIZE: %zu\n", VRD_ITV_NODE_SIZE);
     (void) fprintf(stderr, "VRD_SNV_NODE_SIZE: %zu\n", VRD_SNV_NODE_SIZE);
     (void) fprintf(stderr, "VRD_REGION_NODE_SIZE: %zu\n", VRD_REGION_NODE_SIZE);
-    (void) fprintf(stderr, "VRD_VARIANT_NODE_SIZE: %zu\n", VRD_VARIANT_NODE_SIZE);
+    (void) fprintf(stderr, "VRD_MNV_NODE_SIZE: %zu\n", VRD_MNV_NODE_SIZE);
 
 
-    vrd_Alloc* restrict tree_pool = vrd_pool_init(1000, VRD_SNV_NODE_SIZE);
+    vrd_Alloc* restrict tree_pool = vrd_pool_init(1000, VRD_REGION_NODE_SIZE);
     if (NULL == tree_pool)
     {
         return EXIT_FAILURE;
     } /// if
 
-    vrd_SNV_Index* restrict index = vrd_snv_init(tree_pool);
+    vrd_Region_Index* restrict index = vrd_region_init(tree_pool);
     if (NULL == index)
     {
         return EXIT_FAILURE;
@@ -58,13 +58,20 @@ main(int argc, char* argv[])
 
     for (int i = 0; i < 10; ++i)
     {
-        int const value = rand() % 100;
-        (void) fprintf(stderr, "Insert: %d\n", value);
-        vrd_snv_insert(index, value, 0, value, 0);
+        int const start = rand() % 100;
+        int const end = start + rand() % 100;
+        (void) fprintf(stderr, "Insert: %d--%d\n", start, end);
+        int const res = vrd_region_insert(index, start, end, 0, start);
+        if (-1 == res)
+        {
+            (void) fprintf(stderr, "vrd_region_insert() failed\n");
+            break;
+        } // if
+        (void) vrd_region_print(stderr, index);
     } // for
 
 
-    vrd_snv_destroy(&index);
+    vrd_region_destroy(&index);
     vrd_pool_destroy(&tree_pool);
 
     return EXIT_SUCCESS;

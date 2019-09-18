@@ -5,29 +5,29 @@
 #include "../include/region_index.h"    // vrd_Region_Node,
                                         // vrd_Region_Tree,
                                         // vrd_region_*
-#include "../include/variant_index.h"   // vrd_Variant_Index
+#include "../include/mnv_index.h"   // vrd_Variant_Index
 
 
-struct Variant_Node
+struct MNV_Node
 {
     vrd_Region_Node base;
     void* restrict inserted;
-}; // Variant_Node
+}; // MNV_Node
 
 
-size_t const VRD_VARIANT_NODE_SIZE = sizeof(struct Variant_Node);
+size_t const VRD_MNV_NODE_SIZE = sizeof(struct MNV_Node);
 
 
-struct Variant_Index
+struct MNV_Index
 {
     vrd_Region_Index* restrict index;
-}; // Variant_Index
+}; // MNV_Index
 
 
-vrd_Variant_Index*
-vrd_variant_init(vrd_Alloc* const restrict alloc)
+vrd_MNV_Index*
+vrd_mnv_init(vrd_Alloc* const restrict alloc)
 {
-    struct Variant_Index* const restrict index = malloc(sizeof(*index));
+    struct MNV_Index* const restrict index = malloc(sizeof(*index));
     if (NULL == index)
     {
         return NULL;
@@ -41,11 +41,11 @@ vrd_variant_init(vrd_Alloc* const restrict alloc)
     } // if
 
     return index;
-} // vrd_variant_init
+} // vrd_mnv_init
 
 
 void
-vrd_variant_destroy(vrd_Variant_Index* restrict* const restrict index)
+vrd_mnv_destroy(vrd_MNV_Index* restrict* const restrict index)
 {
     if (NULL == index || NULL == *index)
     {
@@ -55,24 +55,24 @@ vrd_variant_destroy(vrd_Variant_Index* restrict* const restrict index)
     vrd_region_destroy(&(*index)->index);
     free(*index);
     *index = NULL;
-} // vrd_variant_destroy
+} // vrd_mnv_destroy
 
 
 int
-vrd_variant_insert(vrd_Variant_Index* const restrict index,
-                   uint32_t const start,
-                   uint32_t const end,
-                   uint32_t const sample_id,
-                   uint32_t const phase,
-                   void* const restrict inserted)
+vrd_mnv_insert(vrd_MNV_Index* const restrict index,
+               uint32_t const start,
+               uint32_t const end,
+               uint32_t const sample_id,
+               uint32_t const phase,
+               void* const restrict inserted)
 {
     if (NULL == index)
     {
         return -1;
     } // if
 
-    struct Variant_Node* const restrict node =
-        (struct Variant_Node*) vrd_region_insert(index->index, start, end, sample_id, phase);
+    struct MNV_Node* const restrict node =
+        (struct MNV_Node*) vrd_region_insert(index->index, start, end, sample_id, phase);
     if (NULL == node)
     {
         return -1;
@@ -83,4 +83,4 @@ vrd_variant_insert(vrd_Variant_Index* const restrict index,
     node->inserted = inserted;
 
     return 0;
-} // vrd_variant_insert
+} // vrd_mnv_insert

@@ -14,6 +14,8 @@ extern "C"
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 
+#include <stdio.h>      // FILE*
+
 #include "alloc.h"      // vrd_Alloc
 #include "itv_tree.h"   // vrd_Itv_Node
 
@@ -44,6 +46,11 @@ vrd_region_insert(vrd_Region_Index* const restrict index,
                   uint32_t const end,
                   uint32_t const sample_id,
                   uint32_t const phase);
+
+
+size_t
+vrd_region_print(FILE* const restrict stream,
+                 vrd_Region_Index const* const restrict index);
 
 
 #ifdef __cplusplus

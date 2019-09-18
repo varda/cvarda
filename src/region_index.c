@@ -1,6 +1,8 @@
 #include <stdint.h>     // uint32_t
 #include <stdlib.h>     // NULL, malloc, free
 
+#include <stdio.h>      // FILE*
+
 #include "../include/alloc.h"       // vrd_Alloc
 #include "../include/itv_tree.h"    // vrd_Itv_Node, vrd_Itv_Tree,
                                     // vrd_itv_*
@@ -79,3 +81,15 @@ vrd_region_insert(vrd_Region_Index* const restrict index,
 
     return node;
 } // vrd_region_insert
+
+
+size_t
+vrd_region_print(FILE* const restrict stream,
+                 vrd_Region_Index const* const restrict index)
+{
+    if (NULL == index)
+    {
+        return 0;
+    } // if
+    return vrd_itv_print(stream, index->tree);
+} // vrd_region_print
