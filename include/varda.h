@@ -14,7 +14,7 @@ extern "C"
 #include "alloc.h"      // vrd_Alloc, vrd_alloc, vrd_dealloc, vrd_deref,
                         // vrd_pool_*
 #include "avl_tree.h"   // vrd_AVL_Tree, vrd_AVL_Node, vrd_avl_*
-#include "snv_index.h"  // vrd_SNV_Index
+#include "snv_index.h"  // vrd_SNV_Index, vrd_snv_*
 #include "trie.h"       // vrd_Trie, vrd_trie_*
 
 

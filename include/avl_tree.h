@@ -16,6 +16,8 @@ extern "C"
 
 #include <stdio.h>      // FIXME: DEBUG FILE*
 
+#include "alloc.h"      // vrd_Alloc
+
 
 typedef struct AVL_Tree vrd_AVL_Tree;
 
@@ -28,7 +30,6 @@ typedef struct vrd_AVL_Node
 } vrd_AVL_Node;
 
 
-
 vrd_AVL_Tree*
 vrd_avl_init(vrd_Alloc* const restrict alloc);
 
@@ -39,8 +40,7 @@ vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree);
 
 vrd_AVL_Node*
 vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
-               uint32_t const value,
-               uint32_t const extra);
+               uint32_t const value);
 
 
 // FIXME: DEBUG
