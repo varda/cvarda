@@ -85,7 +85,7 @@ vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree)
 } // vrd_avl_destroy
 
 
-int
+void*
 vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value,
                uint32_t const sample)
@@ -96,7 +96,7 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
     if (NULL == tree)
     {
-        return -1;
+        return NULL;
     } // if
 
     // FIXME: range check sample (29 bits)
@@ -104,7 +104,7 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
     if (0 == tree->root)
     {
         tree->root = avl_node_init(tree->alloc, value, sample);
-        return 0;
+        return vrd_deref(tree->alloc, (void*) (uintptr_t) tree->root);
     } // if
 
     // limiting to height 64 becomes a problem after allocating 413 TiB
@@ -118,7 +118,6 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
     uint32_t tmp = tree->root;
 
     uint32_t unbal = tree->root; // first unbalanced ancestor of tmp
-    uint32_t unbal_par = tree->root; // parent of unbalanced
 
 
     // Insert a new node at the BST position
@@ -130,7 +129,6 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
         if (0 != DEREF(tmp)->balance)
         {
             // this is now the first unbalanced ancestor of tmp
-            unbal_par = tmp_par;
             unbal = tmp;
             path = 0;
             len = 0;
@@ -245,16 +243,9 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
             DEREF(root)->balance = 0;
         } // else
     } // if
-    else
-    {
-        return 0;
-    } // else
 
-    DEREF(unbal_par)->child[unbal !=
-                            DEREF(unbal_par)->child[LEFT]] = root;
 
-    return 0;
-
+    return vrd_deref(tree->alloc, (void*) (uintptr_t) node);
 
 #undef DEREF
 } // vrd_avl_insert

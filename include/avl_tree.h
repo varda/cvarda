@@ -26,7 +26,7 @@ void
 vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree);
 
 
-int
+void*
 vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value,
                uint32_t const sample);
