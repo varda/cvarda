@@ -164,7 +164,14 @@ vrd_pool_destroy(vrd_Alloc* restrict* const restrict alloc)
         return;
     } // if
 
-    free((*pool)->data);
     free(*pool);
     *pool = NULL;
 } // vrd_pool_destroy
+
+
+size_t
+vrd_pool_size(vrd_Alloc const* const restrict alloc)
+{
+    struct Pool* const restrict pool = (struct Pool*) alloc;
+    return pool->next;
+} // vrd_pool_size

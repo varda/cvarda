@@ -44,6 +44,10 @@ void
 vrd_pool_destroy(vrd_Alloc* restrict* const restrict alloc);
 
 
+size_t
+vrd_pool_size(vrd_Alloc const* const restrict alloc);
+
+
 #ifdef __cplusplus
 
 } // extern "C"

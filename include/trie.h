@@ -11,9 +11,27 @@ extern "C"
 #endif
 
 
+#include <ctype.h>      // isprint
 #include <stddef.h>     // size_t
 
 #include "alloc.h"      // vrd_Alloc
+
+
+enum
+{
+    VRD_ASCII_SIZE = 95
+}; // constants
+
+
+static inline size_t
+vrd_ascii_to_idx(char const ch)
+{
+    if (isprint(ch))
+    {
+        return ch - ' ';
+    } // if
+    return VRD_ASCII_SIZE;
+} // vrd_ascii_to_idx
 
 
 typedef struct Trie vrd_Trie;

@@ -1,12 +1,11 @@
 #include <stdint.h>     // uint32_t
+#include <stdio.h>      // FILE*
 #include <stdlib.h>     // NULL, malloc, free
 
-#include <stdio.h>      // FILE*
-
-#include "../include/alloc.h"       // vrd_Alloc
+#include "../include/alloc.h"       // vrd_Alloc, vrd_pool_*
 #include "../include/avl_tree.h"    // vrd_AVL_Node, vrd_AVL_Tree,
                                     // vrd_avl_*
-#include "../include/snv_index.h"   // vrd_SNV_Index, vrd_snv_*
+#include "../include/snv_index.h"   // vrd_SNV_Index, vrd_snv_index_*
 
 
 struct SNV_Node
@@ -17,42 +16,47 @@ struct SNV_Node
 }; // SNV_Node
 
 
-size_t const VRD_SNV_NODE_SIZE = sizeof(struct SNV_Node);
-
-
 struct SNV_Index
 {
+    vrd_Alloc* restrict alloc;
     vrd_AVL_Tree* restrict tree;
 }; // SNV_Index
 
 
-vrd_SNV_Index*
-vrd_snv_init(vrd_Alloc* const restrict alloc)
-{
-    if (&vrd_malloc == alloc)
-    {
-        return NULL;
-    } // if
+size_t const VRD_SNV_NODE_SIZE = sizeof(struct SNV_Node);
+size_t const VRD_SNV_INDEX_SIZE = sizeof(struct SNV_Index);
 
+
+vrd_SNV_Index*
+vrd_snv_index_init(size_t const capacity)
+{
     struct SNV_Index* const restrict index = malloc(sizeof(*index));
     if (NULL == index)
     {
         return NULL;
     } // if
 
-    index->tree = vrd_avl_init(alloc);
-    if (NULL == index->tree)
+    index->alloc = vrd_pool_init(capacity, VRD_SNV_NODE_SIZE);
+    if (NULL == index->alloc)
     {
         free(index);
         return NULL;
     } // if
 
+    index->tree = vrd_avl_init(index->alloc);
+    if (NULL == index->tree)
+    {
+        vrd_pool_destroy(&index->alloc);
+        free(index);
+        return NULL;
+    } // if
+
     return index;
-} // vrd_snv_init
+} // vrd_snv_index_init
 
 
 void
-vrd_snv_destroy(vrd_SNV_Index* restrict* const restrict index)
+vrd_snv_index_destroy(vrd_SNV_Index* restrict* const restrict index)
 {
     if (NULL == index || NULL == *index)
     {
@@ -60,17 +64,18 @@ vrd_snv_destroy(vrd_SNV_Index* restrict* const restrict index)
     } // if
 
     vrd_avl_destroy(&(*index)->tree);
+    vrd_pool_destroy(&(*index)->alloc);
     free(*index);
     *index = NULL;
-} // vrd_snv_destroy
+} // vrd_snv_index_destroy
 
 
 int
-vrd_snv_insert(vrd_SNV_Index* const restrict index,
-               uint32_t const position,
-               uint32_t const sample_id,
-               uint32_t const phase,
-               uint32_t const type)
+vrd_snv_index_insert(vrd_SNV_Index* const restrict index,
+                     uint32_t const position,
+                     uint32_t const sample_id,
+                     uint32_t const phase,
+                     uint32_t const type)
 {
     if (NULL == index)
     {
@@ -84,23 +89,21 @@ vrd_snv_insert(vrd_SNV_Index* const restrict index,
         return -1;
     } // if
 
-    // FIXME: range check on phase and type
-
     node->base.extra = sample_id;
     node->phase = phase;
     node->type = type;
 
     return 0;
-} // vrd_snv_insert
+} // vrd_snv_index_insert
 
 
 size_t
-vrd_snv_print(FILE* const restrict stream,
-              vrd_SNV_Index const* const restrict index)
+vrd_snv_index_print(FILE* const restrict stream,
+                    vrd_SNV_Index const* const restrict index)
 {
     if (NULL == index)
     {
         return 0;
     } // if
     return vrd_avl_print(stream, index->tree);
-} // vrd_snv_print
+} // vrd_snv_index_print

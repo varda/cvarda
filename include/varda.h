@@ -11,6 +11,19 @@ extern "C"
 #endif
 
 
+#ifndef VRD_VERSION_MAJOR
+#define VRD_VERSION_MAJOR 0
+#endif
+
+#ifndef VRD_VERSION_MINOR
+#define VRD_VERSION_MINOR 0
+#endif
+
+#ifndef VRD_VERSION_PATCH
+#define VRD_VERSION_PATCH 0
+#endif
+
+
 #include <stdint.h>     // UINT64_C
 
 #include "alloc.h"      // vrd_Alloc, vrd_alloc, vrd_dealloc, vrd_deref,
@@ -22,7 +35,9 @@ extern "C"
 #include "mnv_index.h"  // vrd_MNV_Index, vrd_mnv_* VRD_MNV_NODE_SIZE
 #include "region_index.h"   // vrd_Region_Index, vrd_Region_Node,
                             // VRD_REGION_NODE_SIZE, vrd_region_*
-#include "snv_index.h"  // vrd_SNV_Index, vrd_snv_*, VRD_SNV_NODE_SIZE
+#include "snv_index.h"  // vrd_SNV_Index, vrd_snv_index_*,
+                        // VRD_SNV_NODE_SIZE
+#include "snv_table.h"  // vrd_SNV_Table, vrd_snv_table_*
 #include "trie.h"       // vrd_Trie, vrd_trie_*
 
 
