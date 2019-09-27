@@ -14,9 +14,6 @@ extern "C"
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 
-#include <stdio.h>      // FILE*
-
-#include "alloc.h"      // vrd_Alloc
 #include "itv_tree.h"   // vrd_Itv_Node
 
 
@@ -33,24 +30,20 @@ static size_t const VRD_REGION_NODE_SIZE = sizeof(vrd_Region_Node);
 
 
 vrd_Region_Index*
-vrd_region_init(vrd_Alloc* const restrict alloc);
+vrd_region_index_init(size_t const capacity, size_t const obj_size);
 
 
 void
-vrd_region_destroy(vrd_Region_Index* restrict* const restrict index);
+vrd_region_index_destroy(vrd_Region_Index* restrict*
+                            const restrict index);
 
 
 vrd_Region_Node*
-vrd_region_insert(vrd_Region_Index* const restrict index,
-                  uint32_t const start,
-                  uint32_t const end,
-                  uint32_t const sample_id,
-                  uint32_t const phase);
-
-
-size_t
-vrd_region_print(FILE* const restrict stream,
-                 vrd_Region_Index const* const restrict index);
+vrd_region_index_insert(vrd_Region_Index* const restrict index,
+                        uint32_t const start,
+                        uint32_t const end,
+                        uint32_t const sample_id,
+                        uint32_t const phase);
 
 
 #ifdef __cplusplus

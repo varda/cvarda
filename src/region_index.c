@@ -1,48 +1,51 @@
 #include <stdint.h>     // uint32_t
 #include <stdlib.h>     // NULL, malloc, free
 
-#include <stdio.h>      // FILE*
-
-#include "../include/alloc.h"       // vrd_Alloc
+#include "../include/alloc.h"       // vrd_Alloc, vrd_pool_*
 #include "../include/itv_tree.h"    // vrd_Itv_Node, vrd_Itv_Tree,
                                     // vrd_itv_*
 #include "../include/region_index.h"   // vrd_Region_Index,
-                                       // vrd_Region_Node, vrd_region_*
+                                       // vrd_Region_Node,
+                                       // vrd_region_index_*
 
 
 struct Region_Index
 {
+    vrd_Alloc* restrict alloc;
     vrd_Itv_Tree* restrict tree;
 }; // Region_Index
 
 
 vrd_Region_Index*
-vrd_region_init(vrd_Alloc* const restrict alloc)
+vrd_region_index_init(size_t const capacity, size_t const obj_size)
 {
-    if (&vrd_malloc == alloc)
-    {
-        return NULL;
-    } // if
-
     struct Region_Index* const restrict index = malloc(sizeof(*index));
     if (NULL == index)
     {
         return NULL;
     } // if
 
-    index->tree = vrd_itv_init(alloc);
-    if (NULL == index->tree)
+    index->alloc = vrd_pool_init(capacity, obj_size);
+    if (NULL == index->alloc)
     {
         free(index);
         return NULL;
     } // if
 
+    index->tree = vrd_itv_init(index->alloc);
+    if (NULL == index->tree)
+    {
+        vrd_pool_destroy(&index->alloc);
+        free(index);
+        return NULL;
+    } // if
+
     return index;
-} // vrd_region_init
+} // vrd_region_index_init
 
 
 void
-vrd_region_destroy(vrd_Region_Index* restrict* const restrict index)
+vrd_region_index_destroy(vrd_Region_Index* restrict* const restrict index)
 {
     if (NULL == index || NULL == *index)
     {
@@ -50,17 +53,18 @@ vrd_region_destroy(vrd_Region_Index* restrict* const restrict index)
     } // if
 
     vrd_itv_destroy(&(*index)->tree);
+    vrd_pool_destroy(&(*index)->alloc);
     free(*index);
     *index = NULL;
-} // vrd_region_destroy
+} // vrd_region_index_destroy
 
 
 vrd_Region_Node*
-vrd_region_insert(vrd_Region_Index* const restrict index,
-                  uint32_t const start,
-                  uint32_t const end,
-                  uint32_t const sample_id,
-                  uint32_t const phase)
+vrd_region_index_insert(vrd_Region_Index* const restrict index,
+                        uint32_t const start,
+                        uint32_t const end,
+                        uint32_t const sample_id,
+                        uint32_t const phase)
 {
     if (NULL == index)
     {
@@ -74,22 +78,8 @@ vrd_region_insert(vrd_Region_Index* const restrict index,
         return NULL;
     } // if
 
-    // FIXME: range check on phase and type
-
     node->base.extra = sample_id;
     node->phase = phase;
 
     return node;
-} // vrd_region_insert
-
-
-size_t
-vrd_region_print(FILE* const restrict stream,
-                 vrd_Region_Index const* const restrict index)
-{
-    if (NULL == index)
-    {
-        return 0;
-    } // if
-    return vrd_itv_print(stream, index->tree);
-} // vrd_region_print
+} // vrd_region_index_insert

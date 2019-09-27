@@ -3,8 +3,6 @@
                         // UINT64_C, uintptr_t
 #include <stdlib.h>     // NULL, malloc, free
 
-#include <stdio.h>      // FIXME: DEBUG FILE*, fprintf
-
 #include "../include/alloc.h"       // vrd_Alloc, vrd_alloc, vrd_deref
                                     // vrd_dealloc
 #include "../include/itv_tree.h"    // vrd_Itv_Tree, vrd_Itv_Node,
@@ -97,30 +95,6 @@ itv_node_destroy(vrd_Alloc* const restrict alloc,
     itv_node_destroy(alloc, node->child[RIGHT]);
     vrd_dealloc(alloc, (void*) (uintptr_t) root);
 } // itv_node_destroy
-
-
-// FIXME: DEBUG
-static size_t
-itv_node_print(FILE* const restrict stream,
-               vrd_Alloc const* const restrict alloc,
-               uint32_t const root,
-               int const indent)
-{
-    enum
-    {
-        INDENT = 8
-    }; // constants
-
-    if (0 == root)
-    {
-        return 0;
-    } // if
-
-    vrd_Itv_Node const* const restrict node = vrd_deref(alloc, (void*) (uintptr_t) root);
-    return itv_node_print(stream, alloc, node->child[RIGHT], indent + INDENT) +
-           fprintf(stream, "%*s%zu--%zu [%zu] (%2d)\n", indent, "", (size_t) node->start, (size_t) node->end, (size_t) node->max, node->balance) +
-           itv_node_print(stream, alloc, node->child[LEFT], indent + INDENT);
-} // itv_node_print
 
 
 vrd_Itv_Tree*
@@ -349,16 +323,3 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 #undef DEREF
 } // vrd_itv_insert
-
-
-// FIXME: DEBUG
-size_t
-vrd_itv_print(FILE* const restrict stream,
-              vrd_Itv_Tree const* const restrict tree)
-{
-    if (NULL == tree)
-    {
-        return 0;
-    } // if
-    return itv_node_print(stream, tree->alloc, tree->root, 0);
-} // vrd_itv_print

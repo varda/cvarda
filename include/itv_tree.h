@@ -13,8 +13,6 @@ extern "C"
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t, int32_t
 
-#include <stdio.h>      // FIXME: DEBUG FILE*
-
 #include "alloc.h"      // vrd_Alloc
 
 
@@ -46,12 +44,6 @@ vrd_Itv_Node*
 vrd_itv_insert(vrd_Itv_Tree* const restrict tree,
                uint32_t const start,
                uint32_t const end);
-
-
-// FIXME: DEBUG
-size_t
-vrd_itv_print(FILE* const restrict stream,
-              vrd_Itv_Tree const* const restrict tree);
 
 
 #ifdef __cplusplus

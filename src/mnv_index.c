@@ -4,8 +4,8 @@
 #include "../include/alloc.h"       // vrd_Alloc
 #include "../include/region_index.h"    // vrd_Region_Node,
                                         // vrd_Region_Tree,
-                                        // vrd_region_*
-#include "../include/mnv_index.h"   // vrd_MNV_Index, vrd_mnv_*
+                                        // vrd_region_index_*
+#include "../include/mnv_index.h"   // vrd_MNV_Index, vrd_mnv_index_*
 
 
 struct MNV_Node
@@ -25,7 +25,7 @@ struct MNV_Index
 
 
 vrd_MNV_Index*
-vrd_mnv_init(vrd_Alloc* const restrict alloc)
+vrd_mnv_index_init(size_t const capacity)
 {
     struct MNV_Index* const restrict index = malloc(sizeof(*index));
     if (NULL == index)
@@ -33,7 +33,7 @@ vrd_mnv_init(vrd_Alloc* const restrict alloc)
         return NULL;
     } // if
 
-    index->index = vrd_region_init(alloc);
+    index->index = vrd_region_index_init(capacity, VRD_MNV_NODE_SIZE);
     if (NULL == index->index)
     {
         free(index);
@@ -41,30 +41,30 @@ vrd_mnv_init(vrd_Alloc* const restrict alloc)
     } // if
 
     return index;
-} // vrd_mnv_init
+} // vrd_mnv_index_init
 
 
 void
-vrd_mnv_destroy(vrd_MNV_Index* restrict* const restrict index)
+vrd_mnv_index_destroy(vrd_MNV_Index* restrict* const restrict index)
 {
     if (NULL == index || NULL == *index)
     {
         return;
     } // if
 
-    vrd_region_destroy(&(*index)->index);
+    vrd_region_index_destroy(&(*index)->index);
     free(*index);
     *index = NULL;
-} // vrd_mnv_destroy
+} // vrd_mnv_index_destroy
 
 
 int
-vrd_mnv_insert(vrd_MNV_Index* const restrict index,
-               uint32_t const start,
-               uint32_t const end,
-               uint32_t const sample_id,
-               uint32_t const phase,
-               void* const restrict inserted)
+vrd_mnv_index_insert(vrd_MNV_Index* const restrict index,
+                     uint32_t const start,
+                     uint32_t const end,
+                     uint32_t const sample_id,
+                     uint32_t const phase,
+                     void* const restrict inserted)
 {
     if (NULL == index)
     {
@@ -72,15 +72,17 @@ vrd_mnv_insert(vrd_MNV_Index* const restrict index,
     } // if
 
     struct MNV_Node* const restrict node =
-        (struct MNV_Node*) vrd_region_insert(index->index, start, end, sample_id, phase);
+        (struct MNV_Node*) vrd_region_index_insert(index->index,
+                                                   start,
+                                                   end,
+                                                   sample_id,
+                                                   phase);
     if (NULL == node)
     {
         return -1;
     } // if
 
-    // FIXME: range check on phase and type
-
     node->inserted = inserted;
 
     return 0;
-} // vrd_mnv_insert
+} // vrd_mnv_index_insert

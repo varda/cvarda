@@ -13,7 +13,6 @@ extern "C"
 
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t, int32_t
-#include <stdio.h>      // FILE*
 
 #include "alloc.h"      // vrd_Alloc
 
@@ -43,11 +42,6 @@ vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree);
 vrd_AVL_Node*
 vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value);
-
-
-size_t
-vrd_avl_print(FILE* const restrict stream,
-              vrd_AVL_Tree const* const restrict tree);
 
 
 #ifdef __cplusplus

@@ -112,6 +112,8 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
         } // if
     } // if
 
+    // FIXME: range checks on data
+
     return vrd_snv_index_insert(*(vrd_SNV_Index**)
                                     vrd_deref(table->alloc, ptr),
                                 position,
