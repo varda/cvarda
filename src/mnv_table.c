@@ -2,24 +2,24 @@
 #include <stdlib.h>     // NULL, malloc, free
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_malloc, vrd_pool_*
-#include "../include/snv_index.h"   // vrd_snv_index_*
-#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+#include "../include/mnv_index.h"   // vrd_mnv_index_*
+#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
 #include "../include/trie.h"        // vrd_Trie, vrd_trie_*,
                                     // VRD_ASCII_SIZE, vrd_ascii_to_idx
 #include "../include/varda.h"       // VRD_MAX_*
 
 
-struct SNV_Table
+struct MNV_Table
 {
     vrd_Alloc* restrict alloc;
     vrd_Trie* restrict trie;
-}; // SNV_Table
+}; // MNV_Table
 
 
-vrd_SNV_Table*
-vrd_snv_table_init(void)
+vrd_MNV_Table*
+vrd_mnv_table_init(void)
 {
-    struct SNV_Table* const restrict table = malloc(sizeof(*table));
+    struct MNV_Table* const restrict table = malloc(sizeof(*table));
     if (NULL == table)
     {
         return NULL;
@@ -43,11 +43,11 @@ vrd_snv_table_init(void)
     } // if
 
     return table;
-} // vrd_snv_table_init
+} // vrd_mnv_table_init
 
 
 void
-vrd_snv_table_destroy(vrd_SNV_Table* restrict* const restrict table)
+vrd_mnv_table_destroy(vrd_MNV_Table* restrict* const restrict table)
 {
     if (NULL == table || NULL == *table)
     {
@@ -56,7 +56,7 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const restrict table)
 
     for (uintptr_t i = 1; i < vrd_pool_size((*table)->alloc); ++i)
     {
-        vrd_snv_index_destroy((vrd_SNV_Index**)
+        vrd_mnv_index_destroy((vrd_MNV_Index**)
                                   vrd_deref((*table)->alloc, (void*) i));
     } // for
 
@@ -64,17 +64,18 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const restrict table)
     vrd_pool_destroy(&(*table)->alloc);
     free(*table);
     *table = NULL;
-} // vrd_snv_table_destroy
+} // vrd_mnv_table_destroy
 
 
 int
-vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
+vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
                      size_t const len,
                      char const reference[len],
-                     uint32_t const position,
+                     uint32_t const start,
+                     uint32_t const end,
                      uint32_t const sample_id,
                      uint32_t const phase,
-                     uint32_t const type)
+                     void* const restrict inserted)
 {
     if (NULL == table)
     {
@@ -92,14 +93,14 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
         } // if
         ptr = vrd_alloc(table->alloc, sizeof(void*));
 
-        vrd_SNV_Index* const restrict index =
-            vrd_snv_index_init(VRD_MAX_INDEX_SIZE);
+        vrd_MNV_Index* const restrict index =
+            vrd_mnv_index_init(VRD_MAX_INDEX_SIZE);
         if (NULL == index)
         {
             return -1;
         } // if
 
-        *(vrd_SNV_Index**) vrd_deref(table->alloc, ptr) = index;
+        *(vrd_MNV_Index**) vrd_deref(table->alloc, ptr) = index;
 
         void* const restrict ret = vrd_trie_insert(table->trie,
                                                    len,
@@ -111,10 +112,11 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
         } // if
     } // if
 
-    return vrd_snv_index_insert(*(vrd_SNV_Index**)
+    return vrd_mnv_index_insert(*(vrd_MNV_Index**)
                                     vrd_deref(table->alloc, ptr),
-                                position,
+                                start,
+                                end,
                                 sample_id,
                                 phase,
-                                type);
-} // vrd_snv_table_insert
+                                inserted);
+} // vrd_mnv_table_insert
