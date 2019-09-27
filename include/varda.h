@@ -43,8 +43,10 @@ extern "C"
 
 enum
 {
-    VRD_MAX_POSITION = (UINT64_C(1) << 28) - 1,
-    VRD_MAX_SAMPLE_ID = (UINT64_C(1) << 29) - 1
+    VRD_MAX_INDEX_SIZE = (UINT64_C(1) << 20),
+    VRD_MAX_POSITION   = (UINT64_C(1) << 28) - 1,
+    VRD_MAX_REFERENCES = 512,
+    VRD_MAX_SAMPLE_ID  = (UINT64_C(1) << 29) - 1
 }; // constants
 
 

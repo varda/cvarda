@@ -6,10 +6,7 @@
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/trie.h"        // vrd_Trie, vrd_trie_*,
                                     // VRD_ASCII_SIZE, vrd_ascii_to_idx
-
-
-#define VRD_MAX_REFERENCES 512
-#define VRD_MAX_INDEX_SIZE (1 << 20)
+#include "../include/varda.h"       // VRD_MAX_*
 
 
 struct SNV_Table
