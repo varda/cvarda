@@ -1,34 +1,18 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
-#include "../include/varda.h"   // vrd_*
+#include "../include/varda.h"   // vrd_*, VRD_*
 
 #include <stddef.h>     // size_t
-#include <stdio.h>      // fprintf
-#include <stdlib.h>     // NULL, EXIT_*, malloc
-
-
-enum
-{
-    ASCII_SIZE = 95
-}; // constants
-
-
-static inline size_t
-ascii_to_idx(char const ch)
-{
-    if (isprint(ch))
-    {
-        return ch - ' ';
-    } // if
-    return 256;
-} // ascii_to_idx
+#include <stdint.h>     // uint32_t
+#include <stdio.h>      // fprintf, stderr
+#include <stdlib.h>     // NULL, EXIT_*
 
 
 typedef struct
 {
     PyObject_HEAD
-    vrd_Trie* restrict trie;
+    vrd_Region_Table* restrict table;
 } RegionTableObject;
 
 
@@ -42,11 +26,11 @@ RegionTable_new(PyTypeObject* const restrict type,
 
     RegionTableObject* const restrict self = (RegionTableObject*) type->tp_alloc(type, 0);
 
-    self->trie = vrd_trie_init(ASCII_SIZE, ascii_to_idx);
-    if (NULL == self->trie)
+    self->table = vrd_region_table_init();
+    if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "RegionTable: vrd_trie_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "RegionTable: vrd_region_table_init() failed");
         return NULL;
     } // if
 
@@ -57,42 +41,40 @@ RegionTable_new(PyTypeObject* const restrict type,
 static void
 RegionTable_dealloc(RegionTableObject* const restrict self)
 {
-    vrd_trie_destroy(&self->trie);
-    Py_TYPE(self)->tp_free((PyObject *) self);
+    vrd_region_table_destroy(&self->table);
+    Py_TYPE(self)->tp_free((PyObject*) self);
 } // RegionTable_dealloc
 
 
 static PyObject*
-RegionTable_load(RegionTableObject* const restrict self,
-                 PyObject* const restrict args)
+RegionTable_insert(RegionTableObject* const restrict self,
+                   PyObject* const restrict args)
 {
-    char const* restrict reference_id = NULL;
-    char const* restrict path = NULL;
+    char const* restrict reference = NULL;
     size_t len = 0;
+    uint32_t start = 0;
+    uint32_t end = 0;
+    uint32_t sample_id = 0;
+    uint32_t phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#s", &reference_id, &len, &path))
+    if (!PyArg_ParseTuple(args, "s#IIII", &reference, &len, &start, &end, &sample_id, &phase))
     {
         return NULL;
     } // if
 
-    // TODO: load an index from path
-    void* const restrict index = NULL;
-
-    void* const restrict result = vrd_trie_insert(self->trie, len, reference_id, index);
-
-    if (0 == result)
+    if (-1 == vrd_region_table_insert(self->table, len, reference, start, end, sample_id, phase))
     {
-        PyErr_SetString(PyExc_RuntimeError, "RegionTable.load(): vrd_trie_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "RegionTable.insert(): vrd_region_table_insert() failed");
         return NULL;
     } // if
 
     Py_RETURN_NONE;
-} // RegionTable_load
+} // RegionTable_insert
 
 
 static PyMethodDef RegionTable_methods[] =
 {
-    {"load", (PyCFunction) RegionTable_load, METH_VARARGS,
+    {"insert", (PyCFunction) RegionTable_insert, METH_VARARGS,
      "Docstring..."},
 
     {NULL}  // sentinel
