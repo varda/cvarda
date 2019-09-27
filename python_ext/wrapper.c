@@ -1,12 +1,12 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
-#include "../include/varda.h"   // vrd_*, VRD_*
-
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 #include <stdio.h>      // fprintf, stderr
 #include <stdlib.h>     // NULL, EXIT_*
+
+#include "../include/varda.h"   // vrd_*, VRD_*
 
 
 typedef struct
@@ -72,9 +72,29 @@ RegionTable_insert(RegionTableObject* const restrict self,
 } // RegionTable_insert
 
 
+static PyObject*
+RegionTable_query(RegionTableObject* const restrict self,
+                  PyObject* const restrict args)
+{
+    char const* restrict reference = NULL;
+    size_t len = 0;
+    uint32_t start = 0;
+    uint32_t end = 0;
+
+    if (!PyArg_ParseTuple(args, "s#II", &reference, &len, &start, &end))
+    {
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // RegionTable_query
+
+
 static PyMethodDef RegionTable_methods[] =
 {
     {"insert", (PyCFunction) RegionTable_insert, METH_VARARGS,
+     "Docstring..."},
+    {"query", (PyCFunction) RegionTable_query, METH_VARARGS,
      "Docstring..."},
 
     {NULL}  // sentinel

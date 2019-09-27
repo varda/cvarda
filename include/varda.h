@@ -63,6 +63,18 @@ enum
 }; // constants
 
 
+/**
+ * Runtime version information
+ *
+ * Gets the semantic versioning information on runtime.
+ *
+ * :param major: The major version number.
+ * :type major: int
+ * :param minor: The minor version number.
+ * :type minor: int
+ * :param patch: The patch version number.
+ * :type patch: int
+ */
 static inline void
 vrd_version(int* const restrict major,
             int* const restrict minor,
