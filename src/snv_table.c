@@ -60,7 +60,7 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const restrict table)
     for (uintptr_t i = 1; i < vrd_pool_size((*table)->alloc); ++i)
     {
         vrd_snv_index_destroy((vrd_SNV_Index**)
-                                vrd_deref((*table)->alloc, (void*) i));
+                                  vrd_deref((*table)->alloc, (void*) i));
     } // for
 
     vrd_trie_destroy(&(*table)->trie);
@@ -112,7 +112,8 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
         } // if
     } // if
 
-    return vrd_snv_index_insert(vrd_deref(table->alloc, ptr),
+    return vrd_snv_index_insert(*(vrd_SNV_Index**)
+                                    vrd_deref(table->alloc, ptr),
                                 position,
                                 sample_id,
                                 phase,
