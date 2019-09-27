@@ -164,6 +164,7 @@ vrd_pool_destroy(vrd_Alloc* restrict* const restrict alloc)
         return;
     } // if
 
+    free((*pool)->data);
     free(*pool);
     *pool = NULL;
 } // vrd_pool_destroy

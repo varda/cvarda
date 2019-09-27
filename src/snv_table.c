@@ -1,5 +1,4 @@
 #include <stdint.h>     // uintptr_t
-#include <stdio.h>      // fprintf, stderr
 #include <stdlib.h>     // NULL, malloc, free
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_malloc, vrd_pool_*
@@ -7,6 +6,10 @@
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/trie.h"        // vrd_Trie, vrd_trie_*,
                                     // VRD_ASCII_SIZE, vrd_ascii_to_idx
+
+
+#define VRD_MAX_REFERENCES 512
+#define VRD_MAX_INDEX_SIZE (1 << 20)
 
 
 struct SNV_Table
@@ -25,7 +28,7 @@ vrd_snv_table_init(void)
         return NULL;
     } // if
 
-    table->alloc = vrd_pool_init(100, sizeof(vrd_SNV_Index*));
+    table->alloc = vrd_pool_init(VRD_MAX_REFERENCES, sizeof(void*));
     if (NULL == table->alloc)
     {
         free(table);
@@ -56,7 +59,8 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const restrict table)
 
     for (uintptr_t i = 1; i < vrd_pool_size((*table)->alloc); ++i)
     {
-        vrd_snv_index_destroy(vrd_deref((*table)->alloc, (void*) i));
+        vrd_snv_index_destroy((vrd_SNV_Index**)
+                                vrd_deref((*table)->alloc, (void*) i));
     } // for
 
     vrd_trie_destroy(&(*table)->trie);
@@ -80,28 +84,37 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
         return -1;
     } // if
 
-    vrd_SNV_Index* restrict index = vrd_trie_find(table->trie,
-                                                  len,
-                                                  reference);
-    if (NULL == index)
+    void* restrict ptr = vrd_trie_find(table->trie, len, reference);
+    if (NULL == ptr)
     {
-        index = vrd_alloc(table->alloc, sizeof(vrd_SNV_Index*));
-        vrd_deref(table->alloc, index) = vrd_snv_index_init(100);
-        if (NULL == index)
+        if (VRD_MAX_REFERENCES <= vrd_pool_size(table->alloc))
         {
-            fprintf(stderr, "could not init index\n");
             return -1;
         } // if
+        ptr = vrd_alloc(table->alloc, sizeof(void*));
+
+        vrd_SNV_Index* const restrict index =
+            vrd_snv_index_init(VRD_MAX_INDEX_SIZE);
+        if (NULL == index)
+        {
+            return -1;
+        } // if
+
+        *(vrd_SNV_Index**) vrd_deref(table->alloc, ptr) = index;
+
         void* const restrict ret = vrd_trie_insert(table->trie,
                                                    len,
                                                    reference,
-                                                   index);
+                                                   ptr);
         if (NULL == ret)
         {
-            free(index);
             return -1;
         } // if
     } // if
 
-    return vrd_snv_index_insert(index, position, sample_id, phase, type);
+    return vrd_snv_index_insert(vrd_deref(table->alloc, ptr),
+                                position,
+                                sample_id,
+                                phase,
+                                type);
 } // vrd_snv_table_insert

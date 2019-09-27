@@ -1,6 +1,6 @@
 #include <stddef.h>     // size_t
 #include <stdio.h>      // fprintf, stderr
-#include <stdlib.h>     // EXIT_*, malloc, free, rand
+#include <stdlib.h>     // EXIT_*, malloc, free
 
 #include "../include/varda.h"   // vrd_*, VRD_*
 
@@ -25,23 +25,50 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "VRD_REGION_NODE_SIZE: %zu\n", VRD_REGION_NODE_SIZE);
     (void) fprintf(stderr, "VRD_MNV_NODE_SIZE: %zu\n", VRD_MNV_NODE_SIZE);
 
-
-    vrd_SNV_Table* restrict snv = vrd_snv_table_init();
-    if (NULL == snv)
+    vrd_Alloc* restrict pool = vrd_pool_init(100, sizeof(void*));
+    if (NULL == pool)
     {
-        (void) fprintf(stderr, "vrd_snv_table_init() failed\n");
+        (void) fprintf(stderr, "vrd_pool_init() failed\n");
         return EXIT_FAILURE;
     } // if
 
-    for (size_t i = 0; i < 1; ++i)
+    vrd_Trie* restrict trie = vrd_trie_init(&vrd_malloc, VRD_ASCII_SIZE, vrd_ascii_to_idx);
+    if (NULL == trie)
     {
-        if (-1 == vrd_snv_table_insert(snv, 4, "chr1", 0, 0, 0, 0))
-        {
-            (void) fprintf(stderr, "vrd_snv_table_insert() failed\n");
-        } // if
+        (void) fprintf(stderr, "vrd_trie_init() failed\n");
+        vrd_pool_destroy(&pool);
+        return EXIT_FAILURE;
+    } // if
+
+    vrd_SNV_Index* restrict index = vrd_snv_index_init(1000);
+    if (NULL == index)
+    {
+        (void) fprintf(stderr, "vrd_snv_index_init() failed");
+        vrd_trie_destroy(&trie);
+        vrd_pool_destroy(&pool);
+        return EXIT_FAILURE;
+    } // if
+
+    void* const restrict ptr = vrd_alloc(pool, sizeof(vrd_SNV_Index*));
+
+    fprintf(stderr, "ptr = %p\n", ptr);
+    fprintf(stderr, "deref = %p\n", vrd_deref(pool, ptr));
+    //fprintf(stderr, "value = %zu\n", *(size_t*) vrd_deref(pool, ptr));
+
+    *(vrd_SNV_Index**) vrd_deref(pool, ptr) = index;
+
+    fprintf(stderr, "ptr = %p\n", ptr);
+    fprintf(stderr, "deref = %p\n", vrd_deref(pool, ptr));
+    fprintf(stderr, "value = %zu\n", *(size_t*) vrd_deref(pool, ptr));
+    fprintf(stderr, "index = %p\n", (void*) index);
+
+    for (size_t i = 1; i < vrd_pool_size(pool); ++i)
+    {
+        vrd_snv_index_destroy((vrd_SNV_Index**) vrd_deref(pool, (void*) i));
     } // for
 
-    vrd_snv_table_destroy(&snv);
+    vrd_trie_destroy(&trie);
+    vrd_pool_destroy(&pool);
 
     return EXIT_SUCCESS;
 } // main
