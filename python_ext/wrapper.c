@@ -30,7 +30,7 @@ RegionTable_new(PyTypeObject* const restrict type,
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "RegionTable: vrd_region_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "RegionTable(): vrd_region_table_init() failed");
         return NULL;
     } // if
 
@@ -55,9 +55,9 @@ RegionTable_insert(RegionTableObject* const restrict self,
     uint32_t start = 0;
     uint32_t end = 0;
     uint32_t sample_id = 0;
-    uint32_t phase = 0;
+    uint32_t phase = VRD_HOMOZYGOUS;
 
-    if (!PyArg_ParseTuple(args, "s#IIII", &reference, &len, &start, &end, &sample_id, &phase))
+    if (!PyArg_ParseTuple(args, "s#III|I:RegionTable.insert", &reference, &len, &start, &end, &sample_id, &phase))
     {
         return NULL;
     } // if
@@ -80,22 +80,50 @@ RegionTable_query(RegionTableObject* const restrict self,
     size_t len = 0;
     uint32_t start = 0;
     uint32_t end = 0;
+    PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#II", &reference, &len, &start, &end))
+    if (!PyArg_ParseTuple(args, "s#II|O!:RegionTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
     {
         return NULL;
     } // if
 
-    Py_RETURN_NONE;
+    if (NULL != list)
+    {
+        size_t const n = PyList_Size(list);
+        for (size_t i = 0; i < n; ++i)
+        {
+            PyObject* const restrict item = PyList_GetItem(list, i);
+            size_t const val = PyLong_AsSize_t(item);
+            if (NULL != PyErr_Occurred())
+            {
+                return NULL;
+            } // if
+        } // for
+    } // if
+
+    return Py_BuildValue("i", 42);
 } // RegionTable_query
 
 
 static PyMethodDef RegionTable_methods[] =
 {
     {"insert", (PyCFunction) RegionTable_insert, METH_VARARGS,
-     "Docstring..."},
+     "Insert a region in the :py:class:`RegionTable`\n\n"
+     ":param str reference: The reference sequence ID\n"
+     ":param int start: The start position of the region (included)\n"
+     ":param int end: The end position of the region (excluded)\n"
+     ":param int sample_id: The sample ID\n"
+     ":param phase: The phase group (the start position), defaults to :c:data:`VRD_HOMOZYGOUS`\n"
+     ":type phase: interger, optional\n"},
     {"query", (PyCFunction) RegionTable_query, METH_VARARGS,
-     "Docstring..."},
+     "Query for a region in the :py:class:`RegionTable`\n\n"
+     ":param str reference: The referece sequence ID\n"
+     ":param int start: The start position of the region (included)\n"
+     ":param int end: The end position of the region (excluded)\n"
+     ":param subset: A list of sample IDs, defauls to []\n"
+     ":type subset: list, optional\n"
+     ":return: The number of regions contained within the query region\n"
+     ":rtype: integer\n"},
 
     {NULL}  // sentinel
 }; // RegionTable_methods
@@ -105,7 +133,8 @@ static PyTypeObject RegionTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.RegionTable",
-    .tp_doc = "Docstring...",
+    .tp_doc = "This class is a conceptual representation of a database"
+              "table containing regions on reference sequences.",
     .tp_basicsize = sizeof(RegionTableObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
