@@ -304,4 +304,7 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
     } // while
 
     return false;
+
+
+#undef DEREF
 } // vrd_avl_is_element
