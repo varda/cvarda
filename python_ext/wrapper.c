@@ -124,10 +124,14 @@ RegionTable_query(RegionTableObject* const restrict self,
         } // for
     } // if
 
-    size_t const result = vrd_region_table_query(self->table, len, reference, start, end, subset);
+    size_t result = 0;
+    
+    Py_BEGIN_ALLOW_THREADS
+    result = vrd_region_table_query(self->table, len, reference, start, end, subset);
 
     vrd_avl_destroy(&subset);
     vrd_pool_destroy(&pool);
+    Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
 } // RegionTable_query
