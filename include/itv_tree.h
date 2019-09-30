@@ -16,7 +16,12 @@ extern "C"
 #include "alloc.h"      // vrd_Alloc
 
 
-typedef struct Itv_Tree vrd_Itv_Tree;
+typedef struct vrd_Itv_Tree
+{
+    vrd_Alloc* restrict alloc;
+    uint32_t root;
+} vrd_Itv_Tree;
+
 
 typedef struct vrd_Itv_Node
 {

@@ -16,13 +16,6 @@ enum
 }; // constants
 
 
-struct Itv_Tree
-{
-    vrd_Alloc* restrict alloc;
-    uint32_t root;
-}; // Itv_Tree
-
-
 static inline uint32_t
 max(uint32_t const a,
     uint32_t const b)
@@ -32,7 +25,7 @@ max(uint32_t const a,
 
 
 static inline uint32_t
-update_max(vrd_Alloc const* const alloc,
+update_max(vrd_Alloc const* const restrict alloc,
            uint32_t const root)
 {
 #define DEREF(ptr) ((vrd_Itv_Node*) \
@@ -105,7 +98,7 @@ vrd_itv_init(vrd_Alloc* const restrict alloc)
         return NULL;
     } // if
 
-    struct Itv_Tree* const restrict tree = malloc(sizeof(*tree));
+    struct vrd_Itv_Tree* const restrict tree = malloc(sizeof(*tree));
     if (NULL == tree)
     {
         return NULL;

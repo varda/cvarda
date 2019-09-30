@@ -11,6 +11,7 @@ extern "C"
 #endif
 
 
+#include <stdbool.h>    // bool
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t, int32_t
 
@@ -42,6 +43,11 @@ vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree);
 vrd_AVL_Node*
 vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
                uint32_t const value);
+
+
+bool
+vrd_avl_is_element(vrd_AVL_Tree const* const restrict tree,
+                   uint32_t const value);
 
 
 #ifdef __cplusplus

@@ -14,6 +14,7 @@ extern "C"
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 
+#include "avl_tree.h"   // vrd_AVL_Tree
 #include "itv_tree.h"   // vrd_Itv_Node
 
 
@@ -44,6 +45,13 @@ vrd_region_index_insert(vrd_Region_Index* const restrict index,
                         uint32_t const end,
                         uint32_t const sample_id,
                         uint32_t const phase);
+
+
+size_t
+vrd_region_index_query(vrd_Region_Index const* const restrict index,
+                       uint32_t const start,
+                       uint32_t const end,
+                       vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

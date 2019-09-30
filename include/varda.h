@@ -46,6 +46,8 @@ extern "C"
 
 enum
 {
+    VRD_HOMOZYGOUS = 0,
+
     // max number of elements (nodes) in each index
     VRD_MAX_INDEX_SIZE = (UINT64_C(1) << 20),
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>     // NULL, malloc, free
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_malloc, vrd_pool_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/region_index.h"   // vrd_region_index_*
 #include "../include/region_table.h"   // vrd_Region_Table,
                                        // vrd_region_table_*
@@ -128,3 +129,30 @@ vrd_region_table_insert(vrd_Region_Table* const restrict table,
 
     return 0;
 } // vrd_region_table_insert
+
+
+size_t
+vrd_region_table_query(vrd_Region_Table const* const restrict table,
+                       size_t const len,
+                       char const reference[len],
+                       uint32_t const start,
+                       uint32_t const end,
+                       vrd_AVL_Tree const* const restrict subset)
+{
+    if (NULL == table)
+    {
+        return 0;
+    } // if
+
+    void* restrict ptr = vrd_trie_find(table->trie, len, reference);
+    if (NULL == ptr)
+    {
+        return 0;
+    } // if
+
+    return vrd_region_index_query(*(vrd_Region_Index**)
+                                    vrd_deref(table->alloc, ptr),
+                                  start,
+                                  end,
+                                  subset);
+} // vrd_region_table_query

@@ -1,3 +1,4 @@
+#include <stdbool.h>    // bool, true, false
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t, uint64_t, int64_t,
                         // UINT64_C, uintptr_t
@@ -275,3 +276,32 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
 
 #undef DEREF
 } // vrd_avl_insert
+
+
+bool
+vrd_avl_is_element(vrd_AVL_Tree const* const restrict tree,
+                   uint32_t const value)
+{
+#define DEREF(ptr) ((vrd_AVL_Node*) \
+vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
+
+
+    if (NULL == tree)
+    {
+        return false;
+    } // if
+
+    uint32_t tmp = tree->root;
+    while (0 != tmp)
+    {
+        if (value == DEREF(tmp)->value)
+        {
+            return true;
+        } // if
+        int64_t const cmp = (int64_t) value -
+                            (int64_t) DEREF(tmp)->value;
+        tmp = DEREF(tmp)->child[cmp > 0];
+    } // while
+
+    return false;
+} // vrd_avl_is_element

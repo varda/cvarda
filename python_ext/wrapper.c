@@ -87,21 +87,49 @@ RegionTable_query(RegionTableObject* const restrict self,
         return NULL;
     } // if
 
+    vrd_Alloc* restrict pool = NULL;
+    vrd_AVL_Tree* restrict subset = NULL;
     if (NULL != list)
     {
         size_t const n = PyList_Size(list);
+        pool = vrd_pool_init(n, VRD_AVL_NODE_SIZE);
+        if (NULL == pool)
+        {
+            return PyErr_NoMemory();
+        } // if
+        subset = vrd_avl_init(pool);
+        if (NULL == subset)
+        {
+            vrd_pool_destroy(&pool);
+            return PyErr_NoMemory();
+        } // if
+
         for (size_t i = 0; i < n; ++i)
         {
-            PyObject* const restrict item = PyList_GetItem(list, i);
-            size_t const val = PyLong_AsSize_t(item);
+            uint32_t const sample_id = PyLong_AsLong(PyList_GetItem(list, i));
             if (NULL != PyErr_Occurred())
             {
+                vrd_avl_destroy(&subset);
+                vrd_pool_destroy(&pool);
+                return NULL;
+            } // if
+
+            if (NULL == vrd_avl_insert(subset, sample_id))
+            {
+                vrd_avl_destroy(&subset);
+                vrd_pool_destroy(&pool);
+                PyErr_SetString(PyExc_RuntimeError, "RegionTable.query(): vrd_avl_insert() failed");
                 return NULL;
             } // if
         } // for
     } // if
 
-    return Py_BuildValue("i", 42);
+    size_t const result = vrd_region_table_query(self->table, len, reference, start, end, subset);
+
+    vrd_avl_destroy(&subset);
+    vrd_pool_destroy(&pool);
+
+    return Py_BuildValue("i", result);
 } // RegionTable_query
 
 
