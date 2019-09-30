@@ -44,38 +44,49 @@ extern "C"
 #include "trie.h"       // vrd_Trie, vrd_trie_*
 
 
-enum
+/**
+ * Global constants
+ */
+enum VRD_GLOBAL
 {
+    /**
+     * Indicates a homozygous observation
+     */
     VRD_HOMOZYGOUS = 0,
 
-    // max number of elements (nodes) in each index
+    /**
+     * Maximum number of elements (nodes) in each index (32 bits)
+     */
     VRD_MAX_INDEX_SIZE = (UINT64_C(1) << 20),
 
-    // max value for a position
+    /**
+     * Maximum value for a position (28 bits)
+     */
     VRD_MAX_POSITION   = (UINT64_C(1) << 28) - 1,
 
-    // max number of distinct references per table
+    /**
+     * Maximum number of distinct references per table
+     */
     VRD_MAX_REFERENCES = 512,
 
-    // max string length of each reference id
+    /**
+     * Maximum string length of each reference sequence ID
+     */
     VRD_MAX_REFSEQ_ID  = 256,
 
-    // max value for a sample id
+    /**
+     * Maximum value for a sample ID (29 bits)
+     */
     VRD_MAX_SAMPLE_ID  = (UINT64_C(1) << 29) - 1
-}; // constants
+}; // VRD_GLOBAL
 
 
 /**
- * Runtime version information
+ * Determine the semantic versioning information on run time
  *
- * Gets the semantic versioning information on runtime.
- *
- * :param major: The major version number.
- * :type major: int
- * :param minor: The minor version number.
- * :type minor: int
- * :param patch: The patch version number.
- * :type patch: int
+ * :param int major: The major version number
+ * :param int minor: The minor version number
+ * :param int patch: The patch version number
  */
 static inline void
 vrd_version(int* const restrict major,

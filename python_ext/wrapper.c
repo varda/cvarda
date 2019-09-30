@@ -147,12 +147,13 @@ static PyMethodDef RegionTable_methods[] =
      ":param int sample_id: The sample ID\n"
      ":param phase: The phase group (the start position), defaults to :c:data:`VRD_HOMOZYGOUS`\n"
      ":type phase: interger, optional\n"},
+
     {"query", (PyCFunction) RegionTable_query, METH_VARARGS,
      "Query for a region in the :py:class:`RegionTable`\n\n"
      ":param str reference: The referece sequence ID\n"
      ":param int start: The start position of the region (included)\n"
      ":param int end: The end position of the region (excluded)\n"
-     ":param subset: A list of sample IDs, defauls to []\n"
+     ":param subset: A list of sample IDs, defaults to []\n"
      ":type subset: list, optional\n"
      ":return: The number of regions contained within the query region\n"
      ":rtype: integer\n"},
