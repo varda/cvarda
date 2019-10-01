@@ -358,7 +358,7 @@ static PyMethodDef SNVTable_methods[] =
      "Insert a SNV in the :py:class:`SNVTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int position: The position of the SNV\n"
-     ":param int type: A, C, G, T\n"
+     ":param str type: 'A', 'C', 'G', or 'T'\n"
      ":param int sample_id: The sample ID\n"
      ":param phase: The phase group (the start position), defaults to :c:data:`VRD_HOMOZYGOUS`\n"
      ":type phase: integer, optional\n"},
@@ -367,7 +367,7 @@ static PyMethodDef SNVTable_methods[] =
      "Query for a SNV in the :py:class:`SNVTable`\n\n"
      ":param str reference: The referece sequence ID\n"
      ":param int position: The position of the SNV\n"
-     ":param int type: A, C, G, T\n"
+     ":param str type: 'A', 'C', 'G', or 'T'\n"
      ":param subset: A list of sample IDs, defaults to []\n"
      ":type subset: list, optional\n"
      ":return: The number of identical SNVs\n"
