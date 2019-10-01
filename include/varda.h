@@ -84,9 +84,9 @@ enum VRD_GLOBAL
 /**
  * Determine the semantic versioning information on run time
  *
- * :param int major: The major version number
- * :param int minor: The minor version number
- * :param int patch: The patch version number
+ * :param major: The major version number
+ * :param minor: The minor version number
+ * :param patch: The patch version number
  */
 static inline void
 vrd_version(int* const restrict major,

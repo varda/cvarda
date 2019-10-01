@@ -16,6 +16,7 @@ extern "C"
 
 #include "avl_tree.h"   // vrd_ALV_Tree
 
+
 /**
  * Opaque data type for a region table
  */
@@ -26,7 +27,6 @@ typedef struct Region_Table vrd_Region_Table;
  * Create and initialize a new region table
  *
  * :return: A pointer to an opaque region table object
- * :rtype: :c:type:`vrd_Region_Table` *
  */
 vrd_Region_Table*
 vrd_region_table_init(void);
@@ -37,7 +37,6 @@ vrd_region_table_init(void);
  *
  * :param table: Address of a pointer to an opaque region table object;
  *               the pointer is set to NULL
- * :type table: :c:type:`vrd_Region_Table` **
  */
 void
 vrd_region_table_destroy(vrd_Region_Table* restrict*
@@ -48,15 +47,13 @@ vrd_region_table_destroy(vrd_Region_Table* restrict*
  * Insert a region in a :c:type:`vrd_Region_Table`
  *
  * :param table: A pointer to an opaque region table object;
- * :type table: :c:type:`vrd_Region_Table` *
- * :param size_t len: The string length of the reference sequence ID
- * :param char[] reference: The reference sequence ID
- * :param uint32_t start: The start position of the region (included)
- * :param uint32_t end: The end position of the region (excluded)
- * :param uint32_t sample_id: The sample ID
- * :param uint32_t phase: The phase group (the start position)
+ * :param len: The string length of the reference sequence ID
+ * :param reference: The reference sequence ID
+ * :param start: The start position of the region (included)
+ * :param end: The end position of the region (excluded)
+ * :param sample_id: The sample ID
+ * :param phase: The phase group (the start position)
  * :return: 0 on success; -1 on error
- * :rtype: integer
  */
 int
 vrd_region_table_insert(vrd_Region_Table* const restrict table,
