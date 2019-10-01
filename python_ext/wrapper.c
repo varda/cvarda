@@ -181,14 +181,45 @@ SNVTable_insert(SNVTableObject* const restrict self,
     char const* restrict reference = NULL;
     size_t len = 0;
     uint32_t position = 0;
-    uint32_t type = 0;
+    char const* restrict alt = NULL;
+    size_t alt_len = 0;
     uint32_t sample_id = 0;
     uint32_t phase = VRD_HOMOZYGOUS;
 
-    if (!PyArg_ParseTuple(args, "s#III|I:SNVTable.insert", &reference, &len, &position, &type, &sample_id, &phase))
+    if (!PyArg_ParseTuple(args, "s#Is#I|I:SNVTable.insert", &reference, &len, &position, &alt, &alt_len, &sample_id, &phase))
     {
         return NULL;
     } // if
+
+    if (1 != alt_len)
+    {
+        PyErr_SetString(PyExc_ValueError, "SNVTable.query(): type should be 'A', 'C', 'G', or 'T'");
+        return NULL;
+    } // if
+
+    uint32_t type = 0;
+    switch (alt[0])
+    {
+        case 'A':
+        case 'a':
+            type = 1;
+            break;
+        case 'C':
+        case 'c':
+            type = 2;
+            break;
+        case 'G':
+        case 'g':
+            type = 3;
+            break;
+        case 'T':
+        case 't':
+            type = 4;
+            break;
+        default:
+            PyErr_SetString(PyExc_ValueError, "SNVTable.query(): type should be 'A', 'C', 'G', or 'T'");
+            return NULL;
+    } // switch
 
     if (-1 == vrd_snv_table_insert(self->table, len, reference, position, type, sample_id, phase))
     {
@@ -206,12 +237,12 @@ SNVTable_query(SNVTableObject* const restrict self,
 {
     char const* restrict reference = NULL;
     size_t len = 0;
-    uint32_t start = 0;
+    uint32_t position = 0;
     char const* restrict alt = NULL;
     size_t alt_len = 0;
     PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#Is#|O!:SNVTable.query", &reference, &len, &start, &alt, &alt_len, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#Is#|O!:SNVTable.query", &reference, &len, &position, &alt, &alt_len, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -286,7 +317,7 @@ SNVTable_query(SNVTableObject* const restrict self,
     size_t result = 0;
     
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_snv_table_query(self->table, len, reference, start, type, subset);
+    result = vrd_snv_table_query(self->table, len, reference, position, type, subset);
 
     vrd_avl_destroy(&subset);
     vrd_pool_destroy(&pool);
