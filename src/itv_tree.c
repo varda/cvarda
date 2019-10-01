@@ -54,7 +54,7 @@ itv_node_init(vrd_Alloc* const restrict alloc,
               uint32_t const end)
 {
     void* const restrict ptr =
-        vrd_alloc(alloc, sizeof(struct vrd_Itv_Node));
+        vrd_alloc(alloc, sizeof(vrd_Itv_Node));
     if (NULL == ptr)
     {
         return 0;
@@ -98,7 +98,7 @@ vrd_itv_init(vrd_Alloc* const restrict alloc)
         return NULL;
     } // if
 
-    struct vrd_Itv_Tree* const restrict tree = malloc(sizeof(*tree));
+    vrd_Itv_Tree* const restrict tree = malloc(sizeof(*tree));
     if (NULL == tree)
     {
         return NULL;

@@ -15,6 +15,49 @@ struct SNV_Node
 }; // SNV_Node
 
 
+enum
+{
+    LEFT = 0,
+    RIGHT = 1
+}; // constants
+
+
+static size_t
+query_contains(vrd_Alloc const* const restrict alloc,
+               uint32_t const root,
+               uint32_t const position,
+               uint32_t const type,
+               vrd_AVL_Tree const* const restrict subset)
+{
+    if (0 == root)
+    {
+        return 0;
+    } // if
+
+    struct SNV_Node const* const restrict node =
+        vrd_deref(alloc, (void*) (uintptr_t) root);
+
+    if (node->base.value > position)
+    {
+        return query_contains(alloc, node->base.child[LEFT], position, type, subset);
+    } // if
+
+    if (node->base.value < position)
+    {
+        return query_contains(alloc, node->base.child[RIGHT], position, type, subset);
+    } // if
+
+    size_t res = 0;
+    if (node->type == type && vrd_avl_is_element(subset, node->base.extra))
+    {
+        res = 1;
+    } // if
+
+    return res + query_contains(alloc, node->base.child[LEFT], position, type, subset) +
+                 query_contains(alloc, node->base.child[RIGHT], position, type, subset);
+} // query_contains
+
+
 struct SNV_Index
 {
     vrd_Alloc* restrict alloc;
@@ -94,3 +137,18 @@ vrd_snv_index_insert(vrd_SNV_Index* const restrict index,
 
     return 0;
 } // vrd_snv_index_insert
+
+
+size_t
+vrd_snv_index_query(vrd_SNV_Index const* const restrict index,
+                    uint32_t const position,
+                    uint32_t const type,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    if (NULL == index)
+    {
+        return 0;
+    } // if
+
+    return query_contains(index->alloc, index->tree->root, position, type, subset);
+} // vrd_snv_index_query

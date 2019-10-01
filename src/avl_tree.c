@@ -17,19 +17,12 @@ enum
 }; // constants
 
 
-struct AVL_Tree
-{
-    vrd_Alloc* restrict alloc;
-    uint32_t root;
-}; // AVL_Tree
-
-
 static inline uintptr_t
 avl_node_init(vrd_Alloc* const restrict alloc,
               uint32_t const value)
 {
     void* const restrict ptr =
-        vrd_alloc(alloc, sizeof(struct vrd_AVL_Node));
+        vrd_alloc(alloc, sizeof(vrd_AVL_Node));
     if (NULL == ptr)
     {
         return 0;
@@ -71,7 +64,7 @@ vrd_avl_init(vrd_Alloc* const restrict alloc)
         return NULL;
     } // if
 
-    struct AVL_Tree* const restrict tree = malloc(sizeof(*tree));
+    vrd_AVL_Tree* const restrict tree = malloc(sizeof(*tree));
     if (NULL == tree)
     {
         return NULL;

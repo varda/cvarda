@@ -2,6 +2,7 @@
 #include <stdlib.h>     // NULL, malloc, free
 
 #include "../include/alloc.h"       // vrd_Alloc, vrd_malloc, vrd_pool_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/snv_index.h"   // vrd_snv_index_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/trie.h"        // vrd_Trie, vrd_trie_*,
@@ -118,3 +119,30 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
                                 phase,
                                 type);
 } // vrd_snv_table_insert
+
+
+size_t
+vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
+                    size_t const len,
+                    char const reference[len],
+                    uint32_t const start,
+                    uint32_t const type,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    if (NULL == table)
+    {
+        return 0;
+    } // if
+
+    void* restrict ptr = vrd_trie_find(table->trie, len, reference);
+    if (NULL == ptr)
+    {
+        return 0;
+    } // if
+
+    return vrd_snv_index_query(*(vrd_SNV_Index**)
+                               vrd_deref(table->alloc, ptr),
+                               start,
+                               type,
+                               subset);
+} // vrd_snv_table_query

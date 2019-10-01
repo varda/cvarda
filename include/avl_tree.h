@@ -18,7 +18,12 @@ extern "C"
 #include "alloc.h"      // vrd_Alloc
 
 
-typedef struct AVL_Tree vrd_AVL_Tree;
+typedef struct vrd_AVL_Tree
+{
+    vrd_Alloc* restrict alloc;
+    uint32_t root;
+} vrd_AVL_Tree;
+
 
 typedef struct vrd_AVL_Node
 {

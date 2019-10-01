@@ -14,6 +14,8 @@ extern "C"
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 
+#include "avl_tree.h"   // AVL_Tree
+
 
 typedef struct SNV_Index vrd_SNV_Index;
 
@@ -36,6 +38,13 @@ vrd_snv_index_insert(vrd_SNV_Index* const restrict index,
                      uint32_t const sample_id,
                      uint32_t const phase,
                      uint32_t const type);
+
+
+size_t
+vrd_snv_index_query(vrd_SNV_Index const* const restrict index,
+                    uint32_t const position,
+                    uint32_t const type,
+                    vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus
