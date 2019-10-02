@@ -153,5 +153,5 @@ vrd_ascii_trie_find(vrd_ASCII_Trie const* const trie,
         tmp = trie->nodes[tmp].child[idx];
     } // for
 
-    return &trie->nodes[tmp].data;
+    return trie->nodes[tmp].data;
 } // vrd_ascii_trie_find
