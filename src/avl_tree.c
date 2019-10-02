@@ -1,140 +1,101 @@
-#include <stdbool.h>    // bool, true, false
-#include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t, uint64_t, int64_t,
-                        // UINT64_C, uintptr_t
-#include <stdlib.h>     // NULL, malloc, free
+#include <assert.h>     // assert
+#include <stddef.h>     // NULL
+#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
+#include <stdlib.h>     // malloc, free
 
-#include "../include/alloc.h"       // vrd_Alloc, vrd_alloc, vrd_deref
-                                    // vrd_dealloc
-#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_Node,
-                                    // vrd_avl_*
+#include "../include/avl_tree.h"    // vrd_AVL_*, vrd_avl_tree_*
 
 
 enum
 {
-    LEFT = 0,
+    NULLPTR = 0,
+
+    LEFT =  0,
     RIGHT = 1
 }; // constants
 
 
-static inline uintptr_t
-avl_node_init(vrd_Alloc* const restrict alloc,
-              uint32_t const value)
+struct vrd_AVL_Node
 {
-    void* const restrict ptr =
-        vrd_alloc(alloc, sizeof(vrd_AVL_Node));
-    if (NULL == ptr)
-    {
-        return 0;
-    } // if
-
-    vrd_AVL_Node* const restrict node = vrd_deref(alloc, ptr);
-    node->child[LEFT] = 0;
-    node->child[RIGHT] = 0;
-    node->value = value;
-    node->balance = 0;
-    node->extra = 0;
-
-    return (uintptr_t) ptr;
-} // avl_node_init
+    uint32_t child[2];
+    uint32_t value;
+    int32_t  balance :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+    uint32_t extra   : 29;  // this extra space can be used to store data
+}; // vrd_AVL_Node
 
 
-static void
-avl_node_destroy(vrd_Alloc* const restrict alloc,
-                 uint32_t const root)
+struct vrd_AVL_Tree
 {
-    if (0 == root)
-    {
-        return;
-    } // if
+    uint32_t root;
 
-    vrd_AVL_Node const* const restrict node =
-        vrd_deref(alloc, (void*) (uintptr_t) root);
-    avl_node_destroy(alloc, node->child[LEFT]);
-    avl_node_destroy(alloc, node->child[RIGHT]);
-    vrd_dealloc(alloc, (void*) (uintptr_t) root);
-} // avl_node_destroy
+    uint32_t next;
+    uint32_t capacity;
+    vrd_AVL_Node nodes[];
+}; // vrd_AVL_Tree
 
 
 vrd_AVL_Tree*
-vrd_avl_init(vrd_Alloc* const restrict alloc)
+vrd_avl_tree_init(uint32_t const capacity)
 {
-    if (NULL == alloc)
-    {
-        return NULL;
-    } // if
-
-    vrd_AVL_Tree* const restrict tree = malloc(sizeof(*tree));
+    vrd_AVL_Tree* const tree = malloc(sizeof(vrd_AVL_Tree) +
+                                      sizeof(vrd_AVL_Node) *
+                                      ((size_t) capacity + 1));
     if (NULL == tree)
     {
         return NULL;
     } // if
 
-    tree->root = 0;
-    tree->alloc = alloc;
+    tree->root = NULLPTR;
+    tree->next = 1;
+    tree->capacity = capacity;
 
     return tree;
-} // vrd_avl_init
+} // vrd_avl_tree_init
 
 
 void
-vrd_avl_destroy(vrd_AVL_Tree* restrict* const restrict tree)
+vrd_avl_tree_destroy(vrd_AVL_Tree** const tree)
 {
-    if (NULL == tree || NULL == *tree)
+    if (NULL != tree)
     {
-        return;
+        free(*tree);
+        *tree = NULL;
     } // if
-
-    avl_node_destroy((*tree)->alloc, (*tree)->root);
-
-    free(*tree);
-    *tree = NULL;
-} // vrd_avl_destroy
+} // vrd_avl_tree_destroy
 
 
+// Adapted from:
+// http://adtinfo.org/libavl.html/Inserting-into-an-AVL-Tree.html
+static
 vrd_AVL_Node*
-vrd_avl_insert(vrd_AVL_Tree* const restrict tree,
-               uint32_t const value)
+insert(vrd_AVL_Tree* tree, uint32_t const ptr)
 {
-#define DEREF(ptr) ((vrd_AVL_Node*) \
-vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
+    assert(NULL != tree);
 
-
-    if (NULL == tree)
+    // This is the first node in the tree
+    if (NULLPTR == tree->root)
     {
-        return NULL;
-    } // if
-
-    if (0 == tree->root)
-    {
-        tree->root = avl_node_init(tree->alloc, value);
-        if (0 == tree->root)
-        {
-            return NULL;
-        } // if
-        return vrd_deref(tree->alloc, (void*) (uintptr_t) tree->root);
+        tree->root = ptr;
+        return &tree->nodes[ptr];
     } // if
 
     // limiting to height 64 becomes a problem after allocating 413 TiB
     // at the earliest; it allows for a minimum of
     // 27,777,890,035,287 nodes
-    uint64_t path = 0; // bit-path to first unbalanced ancestor
-    int len = 0; // length of the path
+    uint64_t path = 0;  // bit-path to first unbalanced ancestor
+    int len = 0;    // length of the path
     int dir = 0;
 
-    uint32_t tmp_par = tree->root; // parent of tmp
     uint32_t tmp = tree->root;
+    uint32_t tmp_par = tree->root;  // parent of tmp
 
-    uint32_t unbal = tree->root; // first unbalanced ancestor of tmp
-    uint32_t unbal_par = tree->root; // parent of unbalanced
+    uint32_t unbal = tree->root;    // first unbalanced ancestor of tmp
+    uint32_t unbal_par = tree->root;    // parent of unbalanced
 
     // Insert a new node at the BST position
-    while (0 != tmp)
+    while (NULLPTR != tmp)
     {
-        int64_t const cmp = (int64_t) value -
-                            (int64_t) DEREF(tmp)->value;
-
-        if (0 != DEREF(tmp)->balance)
+        if (0 != tree->nodes[tmp].balance)
         {
             // this is now the first unbalanced ancestor of tmp
             unbal_par = tmp_par;
@@ -143,161 +104,207 @@ vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
             len = 0;
         } // if
 
-        dir = cmp > 0;
-        if (1 == dir)
+        dir = tree->nodes[ptr].value > tree->nodes[tmp].value;
+        if (RIGHT == dir)
         {
-            path |= UINT64_C(1) << len;
+            path |= (uint64_t) RIGHT << len;
         } // if
         len += 1;
 
         tmp_par = tmp;
-        tmp = DEREF(tmp)->child[dir];
+        tmp = tree->nodes[tmp].child[dir];
     } // while
 
-
-    uint32_t const node = avl_node_init(tree->alloc, value);
-    if (0 == node)
-    {
-        return NULL;
-    } // if
-    DEREF(tmp_par)->child[dir] = node;
-
+    tree->nodes[tmp_par].child[dir] = ptr;
 
     // Update the balance factors along the path from the first
-    // unbalanced ancenstor to the new node
+    // unbalanced ancestor to the new node
     tmp = unbal;
-    while (tmp != node)
+    while (tmp != ptr)
     {
-        if (0 == (path & 1))
+        if (LEFT == (path & RIGHT))
         {
-            DEREF(tmp)->balance -= 1;
+            tree->nodes[tmp].balance -= 1;
         } // if
         else
         {
-            DEREF(tmp)->balance += 1;
+            tree->nodes[tmp].balance += 1;
         } // else
 
-        tmp = DEREF(tmp)->child[path & 1];
+        tmp = tree->nodes[tmp].child[path & RIGHT];
         path >>= 1;
     } // while
 
-
     // Do the rotations if necessary
     uint32_t root = 0;
-    if (-2 == DEREF(unbal)->balance)
+    if (-2 == tree->nodes[unbal].balance)
     {
-        uint32_t const child = DEREF(unbal)->child[LEFT];
-        if (-1 == DEREF(child)->balance)
+        uint32_t const child = tree->nodes[unbal].child[LEFT];
+        if (-1 == tree->nodes[child].balance)
         {
             root = child;
-            DEREF(unbal)->child[LEFT] = DEREF(child)->child[RIGHT];
-            DEREF(child)->child[RIGHT] = unbal;
-            DEREF(child)->balance = 0;
-            DEREF(unbal)->balance = 0;
+            tree->nodes[unbal].child[LEFT] = tree->nodes[child].child[RIGHT];
+            tree->nodes[child].child[RIGHT] = unbal;
+            tree->nodes[child].balance = 0;
+            tree->nodes[unbal].balance = 0;
         } // if
         else
         {
-            root = DEREF(child)->child[RIGHT];
-            DEREF(child)->child[RIGHT] = DEREF(root)->child[LEFT];
-            DEREF(root)->child[LEFT] = child;
-            DEREF(unbal)->child[LEFT] = DEREF(root)->child[RIGHT];
-            DEREF(root)->child[RIGHT] = unbal;
-            if (-1 == DEREF(root)->balance)
+            root = tree->nodes[child].child[RIGHT];
+            tree->nodes[child].child[RIGHT] = tree->nodes[root].child[LEFT];
+            tree->nodes[root].child[LEFT] = child;
+            tree->nodes[unbal].child[LEFT] = tree->nodes[root].child[RIGHT];
+            tree->nodes[root].child[RIGHT] = unbal;
+            if (-1 == tree->nodes[root].balance)
             {
-                DEREF(child)->balance = 0;
-                DEREF(unbal)->balance = 1;
-            } // if
-            else if (0 == DEREF(root)->balance)
+                tree->nodes[child].balance = 0;
+                tree->nodes[unbal].balance = 1;
+            } // if#include <inttypes.h>
+            else if (0 == tree->nodes[root].balance)
             {
-                DEREF(child)->balance = 0;
-                DEREF(unbal)->balance = 0;
+                tree->nodes[child].balance = 0;
+                tree->nodes[unbal].balance = 0;
             } // if
             else
             {
-                DEREF(child)->balance = -1;
-                DEREF(unbal)->balance = 0;
+                tree->nodes[child].balance = -1;
+                tree->nodes[unbal].balance = 0;
             } // else
-            DEREF(root)->balance = 0;
+            tree->nodes[root].balance = 0;
         } // else
     } // if
-    else if (2 == DEREF(unbal)->balance)
+    else if (2 == tree->nodes[unbal].balance)
     {
-        uint32_t const child = DEREF(unbal)->child[RIGHT];
-        if (1 == DEREF(child)->balance)
+        uint32_t const child = tree->nodes[unbal].child[RIGHT];
+        if (1 == tree->nodes[child].balance)
         {
             root = child;
-            DEREF(unbal)->child[RIGHT] = DEREF(child)->child[LEFT];
-            DEREF(child)->child[LEFT] = unbal;
-            DEREF(child)->balance = 0;
-            DEREF(unbal)->balance = 0;
+            tree->nodes[unbal].child[RIGHT] = tree->nodes[child].child[LEFT];
+            tree->nodes[child].child[LEFT] = unbal;
+            tree->nodes[child].balance = 0;
+            tree->nodes[unbal].balance = 0;
         } // if
         else
         {
-            root = DEREF(child)->child[LEFT];
-            DEREF(child)->child[LEFT] = DEREF(root)->child[RIGHT];
-            DEREF(root)->child[RIGHT] = child;
-            DEREF(unbal)->child[RIGHT] = DEREF(root)->child[LEFT];
-            DEREF(root)->child[LEFT] = unbal;
-            if (1 == DEREF(root)->balance)
+            root = tree->nodes[child].child[LEFT];
+            tree->nodes[child].child[LEFT] = tree->nodes[root].child[RIGHT];
+            tree->nodes[root].child[RIGHT] = child;
+            tree->nodes[unbal].child[RIGHT] = tree->nodes[root].child[LEFT];
+            tree->nodes[root].child[LEFT] = unbal;
+            if (1 == tree->nodes[root].balance)
             {
-                DEREF(child)->balance = 0;
-                DEREF(unbal)->balance = -1;
+                tree->nodes[child].balance = 0;
+                tree->nodes[unbal].balance = -1;
             } // if
-            else if(0 == DEREF(root)->balance)
+            else if(0 == tree->nodes[root].balance)
             {
-                DEREF(child)->balance = 0;
-                DEREF(unbal)->balance = 0;
+                tree->nodes[child].balance = 0;
+                tree->nodes[unbal].balance = 0;
             } // if
             else
             {
-                DEREF(child)->balance = 1;
-                DEREF(unbal)->balance = 0;
+                tree->nodes[child].balance = 1;
+                tree->nodes[unbal].balance = 0;
             } // else
-            DEREF(root)->balance = 0;
+            tree->nodes[root].balance = 0;
         } // else
     } // if
     else
     {
-        return vrd_deref(tree->alloc, (void*) (uintptr_t) node);
+        return &tree->nodes[ptr];
     } // else
 
-
-    DEREF(unbal_par)->child[unbal !=
-                            DEREF(unbal_par)->child[LEFT]] = root;
-    return vrd_deref(tree->alloc, (void*) (uintptr_t) node);
-
-
-#undef DEREF
-} // vrd_avl_insert
-
-
-bool
-vrd_avl_is_element(vrd_AVL_Tree const* const restrict tree,
-                   uint32_t const value)
-{
-#define DEREF(ptr) ((vrd_AVL_Node*) \
-vrd_deref(tree->alloc, ((void*) (uintptr_t) ptr)))
-
-
-    if (NULL == tree)
+    if (tree->root == unbal)
     {
-        return false;
+        tree->root = root;
+        return &tree->nodes[ptr];
     } // if
 
-    uint32_t tmp = tree->root;
-    while (0 != tmp)
+    tree->nodes[unbal_par].child[unbal !=
+                                 tree->nodes[unbal_par].child[LEFT]] = root;
+    return &tree->nodes[ptr];
+} // insert
+
+
+vrd_AVL_Node*
+vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
+{
+    assert(NULL != tree);
+
+    if (UINT32_MAX == tree->next || tree->capacity < tree->next)
     {
-        if (value == DEREF(tmp)->value)
-        {
-            return true;
-        } // if
-        int64_t const cmp = (int64_t) value -
-                            (int64_t) DEREF(tmp)->value;
-        tmp = DEREF(tmp)->child[cmp > 0];
-    } // while
+        return NULL;
+    } // if
 
-    return false;
+    uint32_t const ptr = tree->next;
+    tree->next += 1;
+
+    tree->nodes[ptr].child[LEFT] = NULLPTR;
+    tree->nodes[ptr].child[RIGHT] = NULLPTR;
+    tree->nodes[ptr].value = value;
+    tree->nodes[ptr].balance = 0;
+    tree->nodes[ptr].extra = 0;
+
+    return insert(tree, ptr);
+} // vrd_avl_tree_insert
 
 
-#undef DEREF
-} // vrd_avl_is_element
+#ifndef NDEBUG
+
+#include <errno.h>  // errno
+#include <inttypes.h>   // PRIu32
+#include <stdio.h>  // FILE, fprintf, perror
+
+
+static int
+print(FILE* restrict stream,
+      vrd_AVL_Tree const* const restrict tree,
+      uint32_t const root,
+      int const indent)
+{
+    static int const INDENT = 8;
+
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    int ret = print(stream, tree, tree->nodes[root].child[RIGHT], indent + INDENT);
+    if (0 > ret)
+    {
+        return ret;
+    } // if
+
+    int written = ret;
+
+    errno = 0;
+    ret = fprintf(stream, "%*s%" PRIu32 " (%2d)\n", indent, "", tree->nodes[root].value, tree->nodes[root].balance);
+    if (0 > ret)
+    {
+        perror("fprintf() failed");
+        return ret;
+    } // if
+
+    written += ret;
+
+    ret = print(stream, tree, tree->nodes[root].child[LEFT], indent + INDENT);
+    if (0 > ret)
+    {
+        return ret;
+    } // if
+
+    return written + ret;
+} // print
+
+
+int
+vrd_avl_tree_print(FILE* restrict stream,
+                   vrd_AVL_Tree const* const restrict tree)
+{
+    assert(NULL != stream);
+    assert(NULL != tree);
+
+    return print(stream, tree, tree->root, 0);
+} // vrd_avl_tree_print
+
+#endif

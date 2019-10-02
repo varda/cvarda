@@ -3,7 +3,7 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
-#include "../include/itv_tree.h"    // vrd_Itv_*, vrd_itv_tree_*
+#include "../include/mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
 
 
 enum
@@ -15,7 +15,7 @@ enum
 }; // constants
 
 
-struct vrd_Itv_Node
+struct vrd_MNV_Node
 {
     uint32_t child[2];
     uint32_t start;
@@ -23,24 +23,26 @@ struct vrd_Itv_Node
     uint32_t max;
     int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
-}; // vrd_Itv_Node
+    uint32_t phase;
+    void* inserted;
+}; // vrd_MNV_Node
 
 
-struct vrd_Itv_Tree
+struct vrd_MNV_Tree
 {
     uint32_t root;
 
     uint32_t next;
     uint32_t capacity;
-    vrd_Itv_Node nodes[];
-}; // vrd_Itv_Tree
+    vrd_MNV_Node nodes[];
+}; // vrd_MNV_Tree
 
 
-vrd_Itv_Tree*
-vrd_itv_tree_init(uint32_t const capacity)
+vrd_MNV_Tree*
+vrd_mnv_tree_init(uint32_t const capacity)
 {
-    vrd_Itv_Tree* const tree = malloc(sizeof(vrd_Itv_Tree) +
-                                      sizeof(vrd_Itv_Node) *
+    vrd_MNV_Tree* const tree = malloc(sizeof(vrd_MNV_Tree) +
+                                      sizeof(vrd_MNV_Node) *
                                       ((size_t) capacity + 1));
     if (NULL == tree)
     {
@@ -52,18 +54,18 @@ vrd_itv_tree_init(uint32_t const capacity)
     tree->capacity = capacity;
 
     return tree;
-} // vrd_itv_tree_init
+} // vrd_mnv_tree_init
 
 
 void
-vrd_itv_tree_destroy(vrd_Itv_Tree** const tree)
+vrd_mnv_tree_destroy(vrd_MNV_Tree** const tree)
 {
     if (NULL != tree)
     {
         free(*tree);
         *tree = NULL;
     } // if
-} // vrd_itv_tree_destroy
+} // vrd_mnv_tree_destroy
 
 
 static inline uint32_t
@@ -75,7 +77,7 @@ max(uint32_t const a,
 
 
 static inline uint32_t
-update_max(vrd_Itv_Tree const* const tree,
+update_max(vrd_MNV_Tree const* const tree,
            uint32_t const root)
 {
     uint32_t res = tree->nodes[root].max;
@@ -92,10 +94,10 @@ update_max(vrd_Itv_Tree const* const tree,
 
 
 // Adapted from:
-// http://adtinfo.org/libitv.html/Inserting-into-an-Itv-Tree.html
+// http://adtinfo.org/libmnv.html/Inserting-into-an-MNV-Tree.html
 static
-vrd_Itv_Node*
-insert(vrd_Itv_Tree* tree, uint32_t const ptr)
+vrd_MNV_Node*
+insert(vrd_MNV_Tree* tree, uint32_t const ptr)
 {
     assert(NULL != tree);
 
@@ -264,11 +266,13 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
 } // insert
 
 
-vrd_Itv_Node*
-vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
+vrd_MNV_Node*
+vrd_mnv_tree_insert(vrd_MNV_Tree* const tree,
                     uint32_t const start,
                     uint32_t const end,
-                    uint32_t const sample_id)
+                    uint32_t const sample_id,
+                    uint32_t const phase,
+                    void* const inserted)
 {
     assert(NULL != tree);
 
@@ -287,6 +291,8 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
     tree->nodes[ptr].max = end;
     tree->nodes[ptr].balance = 0;
     tree->nodes[ptr].sample_id = sample_id;
+    tree->nodes[ptr].phase = phase;
+    tree->nodes[ptr].inserted = inserted;
 
     return insert(tree, ptr);
-} // vrd_itv_tree_insert
+} // vrd_mnv_tree_insert

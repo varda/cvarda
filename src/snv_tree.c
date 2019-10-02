@@ -3,7 +3,7 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
-#include "../include/itv_tree.h"    // vrd_Itv_*, vrd_itv_tree_*
+#include "../include/snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
 
 
 enum
@@ -15,32 +15,32 @@ enum
 }; // constants
 
 
-struct vrd_Itv_Node
+struct vrd_SNV_Node
 {
     uint32_t child[2];
-    uint32_t start;
-    uint32_t end;
-    uint32_t max;
+    uint32_t position;
     int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
-}; // vrd_Itv_Node
+    uint32_t phase     : 28;
+    uint32_t type      :  4;
+}; // vrd_SNV_Node
 
 
-struct vrd_Itv_Tree
+struct vrd_SNV_Tree
 {
     uint32_t root;
 
     uint32_t next;
     uint32_t capacity;
-    vrd_Itv_Node nodes[];
-}; // vrd_Itv_Tree
+    vrd_SNV_Node nodes[];
+}; // vrd_SNV_Tree
 
 
-vrd_Itv_Tree*
-vrd_itv_tree_init(uint32_t const capacity)
+vrd_SNV_Tree*
+vrd_snv_tree_init(uint32_t const capacity)
 {
-    vrd_Itv_Tree* const tree = malloc(sizeof(vrd_Itv_Tree) +
-                                      sizeof(vrd_Itv_Node) *
+    vrd_SNV_Tree* const tree = malloc(sizeof(vrd_SNV_Tree) +
+                                      sizeof(vrd_SNV_Node) *
                                       ((size_t) capacity + 1));
     if (NULL == tree)
     {
@@ -52,50 +52,25 @@ vrd_itv_tree_init(uint32_t const capacity)
     tree->capacity = capacity;
 
     return tree;
-} // vrd_itv_tree_init
+} // vrd_snv_tree_init
 
 
 void
-vrd_itv_tree_destroy(vrd_Itv_Tree** const tree)
+vrd_snv_tree_destroy(vrd_SNV_Tree** const tree)
 {
     if (NULL != tree)
     {
         free(*tree);
         *tree = NULL;
     } // if
-} // vrd_itv_tree_destroy
-
-
-static inline uint32_t
-max(uint32_t const a,
-    uint32_t const b)
-{
-    return a > b ? a : b;
-} // max
-
-
-static inline uint32_t
-update_max(vrd_Itv_Tree const* const tree,
-           uint32_t const root)
-{
-    uint32_t res = tree->nodes[root].max;
-    if (NULLPTR != tree->nodes[root].child[LEFT])
-    {
-        res = max(res, tree->nodes[tree->nodes[root].child[LEFT]].max);
-    } // if
-    if (NULLPTR != tree->nodes[root].child[RIGHT])
-    {
-        res = max(res, tree->nodes[tree->nodes[root].child[RIGHT]].max);
-    } // if
-    return res;
-} // update_max
+} // vrd_snv_tree_destroy
 
 
 // Adapted from:
-// http://adtinfo.org/libitv.html/Inserting-into-an-Itv-Tree.html
+// http://adtinfo.org/libsnv.html/Inserting-into-an-SNV-Tree.html
 static
-vrd_Itv_Node*
-insert(vrd_Itv_Tree* tree, uint32_t const ptr)
+vrd_SNV_Node*
+insert(vrd_SNV_Tree* tree, uint32_t const ptr)
 {
     assert(NULL != tree);
 
@@ -131,7 +106,7 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
             len = 0;
         } // if
 
-        dir = tree->nodes[ptr].start > tree->nodes[tmp].start;
+        dir = tree->nodes[ptr].position > tree->nodes[tmp].position;
         if (RIGHT == dir)
         {
             path |= (uint64_t) RIGHT << len;
@@ -174,8 +149,6 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
             tree->nodes[child].child[RIGHT] = unbal;
             tree->nodes[child].balance = 0;
             tree->nodes[unbal].balance = 0;
-            tree->nodes[child].max = update_max(tree, child);
-            tree->nodes[unbal].max = update_max(tree, unbal);
         } // if
         else
         {
@@ -200,9 +173,6 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
                 tree->nodes[unbal].balance = 0;
             } // else
             tree->nodes[root].balance = 0;
-            tree->nodes[root].max = update_max(tree, root);
-            tree->nodes[child].max = update_max(tree, child);
-            tree->nodes[unbal].max = update_max(tree, unbal);
         } // else
     } // if
     else if (2 == tree->nodes[unbal].balance)
@@ -215,8 +185,6 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
             tree->nodes[child].child[LEFT] = unbal;
             tree->nodes[child].balance = 0;
             tree->nodes[unbal].balance = 0;
-            tree->nodes[child].max = update_max(tree, child);
-            tree->nodes[unbal].max = update_max(tree, unbal);
         } // if
         else
         {
@@ -241,9 +209,6 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
                 tree->nodes[unbal].balance = 0;
             } // else
             tree->nodes[root].balance = 0;
-            tree->nodes[root].max = update_max(tree, root);
-            tree->nodes[child].max = update_max(tree, child);
-            tree->nodes[unbal].max = update_max(tree, unbal);
         } // else
     } // if
     else
@@ -259,16 +224,16 @@ insert(vrd_Itv_Tree* tree, uint32_t const ptr)
 
     tree->nodes[unbal_par].child[unbal !=
                                  tree->nodes[unbal_par].child[LEFT]] = root;
-    tree->nodes[unbal_par].max = update_max(tree, unbal_par);
     return &tree->nodes[ptr];
 } // insert
 
 
-vrd_Itv_Node*
-vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
-                    uint32_t const start,
-                    uint32_t const end,
-                    uint32_t const sample_id)
+vrd_SNV_Node*
+vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
+                    uint32_t const position,
+                    uint32_t const sample_id,
+                    uint32_t const phase,
+                    uint32_t const type)
 {
     assert(NULL != tree);
 
@@ -282,11 +247,11 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 
     tree->nodes[ptr].child[LEFT] = NULLPTR;
     tree->nodes[ptr].child[RIGHT] = NULLPTR;
-    tree->nodes[ptr].start = start;
-    tree->nodes[ptr].end = end;
-    tree->nodes[ptr].max = end;
+    tree->nodes[ptr].position = position;
     tree->nodes[ptr].balance = 0;
     tree->nodes[ptr].sample_id = sample_id;
+    tree->nodes[ptr].phase = phase;
+    tree->nodes[ptr].type = type;
 
     return insert(tree, ptr);
-} // vrd_itv_tree_insert
+} // vrd_snv_tree_insert
