@@ -25,11 +25,17 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "VRD_REGION_NODE_SIZE: %zu\n", VRD_REGION_NODE_SIZE);
     (void) fprintf(stderr, "VRD_MNV_NODE_SIZE: %zu\n", VRD_MNV_NODE_SIZE);
 
-    vrd_MNV_Table* restrict indel = vrd_mnv_table_init();
+    vrd_Region_Table* restrict cov = vrd_region_table_init();
 
-    vrd_mnv_table_insert(indel, 4, "chr1", 0, 10, 0, 0, NULL);
+    if (-1 == vrd_region_table_insert(cov, 4, "chr1", 1, 10, 0, 0))
+    {
+        fprintf(stderr, "vrd_region_table_insert failed\n");
+    } // if
 
-    vrd_mnv_table_destroy(&indel);
+    size_t const n = vrd_region_table_query(cov, 4, "chr1", 0, 100, NULL);
+    fprintf(stderr, "result: %zu\n", n);
+
+    vrd_region_table_destroy(&cov);
 
     return EXIT_SUCCESS;
 } // main

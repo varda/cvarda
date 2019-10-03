@@ -36,13 +36,13 @@ query_contains(vrd_Alloc const* const restrict alloc,
         return 0;
     } // if
 
-    if (node->base.start > start)
+    if (node->base.start < start)
     {
         return query_contains(alloc, node->base.child[LEFT], start, end, subset);
     } // if
 
     size_t res = 0;
-    if (start >= node->base.start && end <= node->base.end && vrd_avl_is_element(subset, node->base.extra))
+    if (start <= node->base.start && end >= node->base.end && (NULL == subset || vrd_avl_is_element(subset, node->base.extra)))
     {
         res = 1;
     } // if
