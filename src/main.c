@@ -51,12 +51,15 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
-    if (-1 == vrd_cov_table_insert(cov, 4, REFSEQ[0], 0, 10, 0))
+    if (-1 == vrd_cov_table_insert(cov, 4, REFSEQ[0], 42, 84, 0))
     {
         (void) fprintf(stderr, "vrd_cov_table_insert() failed\n");
         vrd_cov_table_destroy(&cov);
         return EXIT_FAILURE;
     } // if
+
+    (void) fprintf(stderr, "query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 42, 84, NULL));
+    (void) fprintf(stderr, "query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 0, 10, NULL));
 
     vrd_cov_table_destroy(&cov);
 

@@ -1,8 +1,9 @@
 #include <assert.h>     // assert
-#include <stddef.h>     // NULL
+#include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_is_element
 #include "../include/itv_tree.h"    // vrd_Itv_*, vrd_itv_tree_*
 
 
@@ -95,7 +96,7 @@ update_max(vrd_Itv_Tree const* const tree,
 // http://adtinfo.org/libitv.html/Inserting-into-an-Itv-Tree.html
 static
 vrd_Itv_Node*
-insert(vrd_Itv_Tree* tree, uint32_t const ptr)
+insert(vrd_Itv_Tree* const tree, uint32_t const ptr)
 {
     assert(NULL != tree);
 
@@ -290,3 +291,46 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 
     return insert(tree, ptr);
 } // vrd_itv_tree_insert
+
+
+static
+size_t
+query_contains(vrd_Itv_Tree const* const restrict tree,
+               uint32_t const root,
+               uint32_t const start,
+               uint32_t const end,
+               vrd_AVL_Tree const* const restrict subset)
+{
+    if (NULLPTR == root || tree->nodes[root].max < start)
+    {
+        return 0;
+    } // if
+
+    if (tree->nodes[root].start < start)
+    {
+        return query_contains(tree, tree->nodes[root].child[LEFT], start, end, subset);
+    } // if
+
+    size_t res = 0;
+    if (tree->nodes[root].start >= start &&
+        tree->nodes[root].end <= end &&
+        (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
+    {
+        res = 1;
+    } // if
+
+    return res + query_contains(tree, tree->nodes[root].child[LEFT], start, end, subset) +
+                 query_contains(tree, tree->nodes[root].child[RIGHT], start, end, subset);
+} // query_contains
+
+
+size_t
+vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
+                   uint32_t const start,
+                   uint32_t const end,
+                   vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != tree);
+
+    return query_contains(tree, tree->root, start, end, subset);
+} // vrd_itv_tree_query

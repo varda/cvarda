@@ -9,7 +9,10 @@ extern "C"
 #endif
 
 
+#include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
+
+#include "avl_tree.h"   // vrd_AVL_Tree
 
 
 /**
@@ -60,6 +63,16 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
                     uint32_t const start,
                     uint32_t const end,
                     uint32_t const sample_id);
+
+
+/**
+ *
+ */
+size_t
+vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
+                   uint32_t const start,
+                   uint32_t const end,
+                   vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

@@ -3,6 +3,7 @@
 #include <stdlib.h>     // malloc, free
 
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/itv_tree.h"    // vrd_Itv_Tree, vrd_itv_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
 
@@ -102,3 +103,23 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
 
     return 0;
 } // vrd_cov_table_insert
+
+
+size_t
+vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
+                    size_t const len,
+                    char const reference[len],
+                    uint32_t const start,
+                    uint32_t const end,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != table);
+
+    vrd_Itv_Tree const* const restrict tree = vrd_ascii_trie_find(table->trie, len, reference);
+    if (NULL == tree)
+    {
+        return 0;
+    } // if
+
+    return vrd_itv_tree_query(tree, start, end, subset);
+} // vrd_cov_table_query

@@ -76,7 +76,7 @@ static PyMethodDef MNVTable_methods[] =
      ":type phase: integer, optional\n"},
 
     {NULL}  // sentinel
-}; // RegionTable_methods
+}; // MNVTable_methods
 
 
 static PyTypeObject MNVTable =

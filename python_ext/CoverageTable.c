@@ -60,6 +60,30 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
 } // CoverageTable_insert
 
 
+static PyObject*
+CoverageTable_query(CoverageTableObject* const restrict self,
+                     PyObject* const restrict args)
+{
+    char const* restrict reference = NULL;
+    size_t len = 0;
+    uint32_t start = 0;
+    uint32_t end = 0;
+
+    if (!PyArg_ParseTuple(args, "s#II:CoverageTable.query", &reference, &len, &start, &end))
+    {
+        return NULL;
+    } // if
+
+    size_t result = 0;
+
+    Py_BEGIN_ALLOW_THREADS
+    result = vrd_cov_table_query(self->table, len, reference, start, end, NULL);
+    Py_END_ALLOW_THREADS
+
+    return Py_BuildValue("i", result);
+} // CoverageTable_query
+
+
 static PyMethodDef CoverageTable_methods[] =
 {
     {"insert", (PyCFunction) CoverageTable_insert, METH_VARARGS,
@@ -69,8 +93,16 @@ static PyMethodDef CoverageTable_methods[] =
      ":param int end: The end position of the region (excluded)\n"
      ":param int sample_id: The sample ID\n"},
 
+    {"query", (PyCFunction) CoverageTable_query, METH_VARARGS,
+     "Query for a region in the :py:class:`CoverageTable`\n\n"
+     ":param str reference: The reference sequence ID\n"
+     ":param int start: The start position of the region (included)\n"
+     ":param int end: The end position of the region (excluded)\n"
+     ":return: The number of contained intervals\n"
+     ":rtype: integer\n"},
+
     {NULL}  // sentinel
-}; // RegionTable_methods
+}; // CoverageTable_methods
 
 
 static PyTypeObject CoverageTable =

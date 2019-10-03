@@ -1,4 +1,5 @@
 #include <assert.h>     // assert
+#include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
@@ -247,6 +248,26 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
 
     return insert(tree, ptr);
 } // vrd_avl_tree_insert
+
+
+bool
+vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
+                        uint32_t const value)
+{
+    assert(NULL != tree);
+
+    uint32_t tmp = tree->root;
+    while (NULLPTR != tmp)
+    {
+        if (value == tree->nodes[tmp].value)
+        {
+            return true;
+        } // if
+        tmp = tree->nodes[tmp].child[value > tree->nodes[tmp].value];
+    } // while
+
+    return false;
+} // vrd_avl_tree_is_element
 
 
 #ifndef NDEBUG

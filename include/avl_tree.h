@@ -9,6 +9,7 @@ extern "C"
 #endif
 
 
+#include <stdbool.h>    // bool
 #include <stdint.h>     // uint32_t
 
 
@@ -55,6 +56,18 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree);
  */
 vrd_AVL_Node*
 vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value);
+
+
+/**
+ * Check for value in the tree.
+ *
+ * @param tree is the tree.
+ * @param value is the value to search in the tree.
+ * @return True if the value occurs in the tree, otherwise false.
+ */
+bool
+vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
+                        uint32_t const value);
 
 
 #ifndef NDEBUG
