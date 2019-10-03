@@ -1,10 +1,9 @@
 #include <assert.h>     // assert
-#include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
-#include "../include/avl_tree.h"    // vrd_AVL_*, vrd_avl_tree_*
+#include "../include/mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
 
 
 enum
@@ -16,30 +15,34 @@ enum
 }; // constants
 
 
-struct vrd_AVL_Node
+struct vrd_MNV_Node
 {
     uint32_t child[2];
-    uint32_t value;
-    int32_t  balance :  3;  // [-4, ..., 3], we use [-2, ..., 2]
-    uint32_t extra   : 29;  // this extra space can be used to store data
-}; // vrd_AVL_Node
+    uint32_t start;
+    uint32_t end;
+    uint32_t max;
+    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+    uint32_t sample_id : 29;
+    uint32_t phase;
+    void* inserted;
+}; // vrd_MNV_Node
 
 
-struct vrd_AVL_Tree
+struct vrd_MNV_Tree
 {
     uint32_t root;
 
     uint32_t next;
     uint32_t capacity;
-    vrd_AVL_Node nodes[];
-}; // vrd_AVL_Tree
+    vrd_MNV_Node nodes[];
+}; // vrd_MNV_Tree
 
 
-vrd_AVL_Tree*
-vrd_avl_tree_init(uint32_t const capacity)
+vrd_MNV_Tree*
+vrd_mnv_tree_init(uint32_t const capacity)
 {
-    vrd_AVL_Tree* const tree = malloc(sizeof(vrd_AVL_Tree) +
-                                      sizeof(vrd_AVL_Node) *
+    vrd_MNV_Tree* const tree = malloc(sizeof(vrd_MNV_Tree) +
+                                      sizeof(vrd_MNV_Node) *
                                       ((size_t) capacity + 1));
     if (NULL == tree)
     {
@@ -51,25 +54,50 @@ vrd_avl_tree_init(uint32_t const capacity)
     tree->capacity = capacity;
 
     return tree;
-} // vrd_avl_tree_init
+} // vrd_mnv_tree_init
 
 
 void
-vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
+vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree)
 {
     if (NULL != tree)
     {
         free(*tree);
         *tree = NULL;
     } // if
-} // vrd_avl_tree_destroy
+} // vrd_mnv_tree_destroy
+
+
+static inline uint32_t
+max(uint32_t const a,
+    uint32_t const b)
+{
+    return a > b ? a : b;
+} // max
+
+
+static inline uint32_t
+update_max(vrd_MNV_Tree const* const tree,
+           uint32_t const root)
+{
+    uint32_t res = tree->nodes[root].max;
+    if (NULLPTR != tree->nodes[root].child[LEFT])
+    {
+        res = max(res, tree->nodes[tree->nodes[root].child[LEFT]].max);
+    } // if
+    if (NULLPTR != tree->nodes[root].child[RIGHT])
+    {
+        res = max(res, tree->nodes[tree->nodes[root].child[RIGHT]].max);
+    } // if
+    return res;
+} // update_max
 
 
 // Adapted from:
-// http://adtinfo.org/libavl.html/Inserting-into-an-AVL-Tree.html
+// http://adtinfo.org/libmnv.html/Inserting-into-an-MNV-Tree.html
 static
-vrd_AVL_Node*
-insert(vrd_AVL_Tree* tree, uint32_t const ptr)
+vrd_MNV_Node*
+insert(vrd_MNV_Tree* tree, uint32_t const ptr)
 {
     assert(NULL != tree);
 
@@ -105,7 +133,7 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
             len = 0;
         } // if
 
-        dir = tree->nodes[ptr].value > tree->nodes[tmp].value;
+        dir = tree->nodes[ptr].start > tree->nodes[tmp].start;
         if (RIGHT == dir)
         {
             path |= (uint64_t) RIGHT << len;
@@ -148,6 +176,8 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
             tree->nodes[child].child[RIGHT] = unbal;
             tree->nodes[child].balance = 0;
             tree->nodes[unbal].balance = 0;
+            tree->nodes[child].max = update_max(tree, child);
+            tree->nodes[unbal].max = update_max(tree, unbal);
         } // if
         else
         {
@@ -172,6 +202,9 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
                 tree->nodes[unbal].balance = 0;
             } // else
             tree->nodes[root].balance = 0;
+            tree->nodes[root].max = update_max(tree, root);
+            tree->nodes[child].max = update_max(tree, child);
+            tree->nodes[unbal].max = update_max(tree, unbal);
         } // else
     } // if
     else if (2 == tree->nodes[unbal].balance)
@@ -184,6 +217,8 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
             tree->nodes[child].child[LEFT] = unbal;
             tree->nodes[child].balance = 0;
             tree->nodes[unbal].balance = 0;
+            tree->nodes[child].max = update_max(tree, child);
+            tree->nodes[unbal].max = update_max(tree, unbal);
         } // if
         else
         {
@@ -208,6 +243,9 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
                 tree->nodes[unbal].balance = 0;
             } // else
             tree->nodes[root].balance = 0;
+            tree->nodes[root].max = update_max(tree, root);
+            tree->nodes[child].max = update_max(tree, child);
+            tree->nodes[unbal].max = update_max(tree, unbal);
         } // else
     } // if
     else
@@ -223,12 +261,18 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
 
     tree->nodes[unbal_par].child[unbal !=
                                  tree->nodes[unbal_par].child[LEFT]] = root;
+    tree->nodes[unbal_par].max = update_max(tree, unbal_par);
     return &tree->nodes[ptr];
 } // insert
 
 
-vrd_AVL_Node*
-vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
+vrd_MNV_Node*
+vrd_mnv_tree_insert(vrd_MNV_Tree* const tree,
+                    uint32_t const start,
+                    uint32_t const end,
+                    uint32_t const sample_id,
+                    uint32_t const phase,
+                    void* const inserted)
 {
     assert(NULL != tree);
 
@@ -242,90 +286,13 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
 
     tree->nodes[ptr].child[LEFT] = NULLPTR;
     tree->nodes[ptr].child[RIGHT] = NULLPTR;
-    tree->nodes[ptr].value = value;
+    tree->nodes[ptr].start = start;
+    tree->nodes[ptr].end = end;
+    tree->nodes[ptr].max = end;
     tree->nodes[ptr].balance = 0;
-    tree->nodes[ptr].extra = 0;
+    tree->nodes[ptr].sample_id = sample_id;
+    tree->nodes[ptr].phase = phase;
+    tree->nodes[ptr].inserted = inserted;
 
     return insert(tree, ptr);
-} // vrd_avl_tree_insert
-
-
-bool
-vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
-                        uint32_t const value)
-{
-    assert(NULL != tree);
-
-    uint32_t tmp = tree->root;
-    while (NULLPTR != tmp)
-    {
-        if (value == tree->nodes[tmp].value)
-        {
-            return true;
-        } // if
-        tmp = tree->nodes[tmp].child[value > tree->nodes[tmp].value];
-    } // while
-
-    return false;
-} // vrd_avl_tree_is_element
-
-
-#ifndef NDEBUG
-
-#include <errno.h>  // errno
-#include <inttypes.h>   // PRIu32
-#include <stdio.h>  // FILE, fprintf, perror
-
-
-static int
-print(FILE* restrict stream,
-      vrd_AVL_Tree const* const restrict tree,
-      uint32_t const root,
-      int const indent)
-{
-    static int const INDENT = 8;
-
-    if (NULLPTR == root)
-    {
-        return 0;
-    } // if
-
-    int ret = print(stream, tree, tree->nodes[root].child[RIGHT], indent + INDENT);
-    if (0 > ret)
-    {
-        return ret;
-    } // if
-
-    int written = ret;
-
-    errno = 0;
-    ret = fprintf(stream, "%*s%" PRIu32 " (%2d)\n", indent, "", tree->nodes[root].value, tree->nodes[root].balance);
-    if (0 > ret)
-    {
-        perror("fprintf() failed");
-        return ret;
-    } // if
-
-    written += ret;
-
-    ret = print(stream, tree, tree->nodes[root].child[LEFT], indent + INDENT);
-    if (0 > ret)
-    {
-        return ret;
-    } // if
-
-    return written + ret;
-} // print
-
-
-int
-vrd_avl_tree_print(FILE* restrict stream,
-                   vrd_AVL_Tree const* const restrict tree)
-{
-    assert(NULL != stream);
-    assert(NULL != tree);
-
-    return print(stream, tree, tree->root, 0);
-} // vrd_avl_tree_print
-
-#endif
+} // vrd_mnv_tree_insert

@@ -1,75 +1,69 @@
-#include <stdint.h>     // uintptr_t
-#include <stdlib.h>     // NULL, malloc, free
+#include <assert.h>     // assert
+#include <stddef.h>     // NULL, size_t
+#include <stdlib.h>     // malloc, free
 
-#include "../include/alloc.h"       // vrd_Alloc, vrd_malloc, vrd_pool_*
-#include "../include/avl_tree.h"    // vrd_AVL_Tree
-#include "../include/snv_index.h"   // vrd_snv_index_*
+#include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
-#include "../include/trie.h"        // vrd_Trie, vrd_trie_*,
-                                    // VRD_ASCII_SIZE, vrd_ascii_to_idx
-#include "../include/varda.h"       // VRD_MAX_*
+#include "../include/snv_tree.h"    // vrd_SNV_Tree, vrd_snv_tree_*
 
 
-struct SNV_Table
+enum
 {
-    vrd_Alloc* restrict alloc;
-    vrd_Trie* restrict trie;
-}; // SNV_Table
+    MAX_REFS = 1000,
+    MAX_TREE_NODES = 1000000,
+    MAX_TRIE_NODES = 1000
+}; // constants
+
+
+struct vrd_SNV_Table
+{
+    vrd_ASCII_Trie* restrict trie;
+
+    size_t next;
+    vrd_SNV_Tree* restrict tree[];
+}; // vrd_SNV_Table
 
 
 vrd_SNV_Table*
 vrd_snv_table_init(void)
 {
-    struct SNV_Table* const restrict table = malloc(sizeof(*table));
+    vrd_SNV_Table* const table = malloc(sizeof(*table) + sizeof(table->tree[0]) * MAX_REFS);
     if (NULL == table)
     {
         return NULL;
     } // if
 
-    table->alloc = vrd_pool_init(VRD_MAX_REFERENCES, sizeof(void*));
-    if (NULL == table->alloc)
+    table->trie = vrd_ascii_trie_init(MAX_TRIE_NODES);
+    if (NULL == table->trie)
     {
         free(table);
         return NULL;
     } // if
 
-    table->trie = vrd_trie_init(&vrd_malloc,
-                                VRD_ASCII_SIZE,
-                                vrd_ascii_to_idx);
-    if (NULL == table->trie)
-    {
-        vrd_pool_destroy(&table->alloc);
-        free(table);
-        return NULL;
-    } // if
+    table->next = 0;
 
     return table;
 } // vrd_snv_table_init
 
 
 void
-vrd_snv_table_destroy(vrd_SNV_Table* restrict* const restrict table)
+vrd_snv_table_destroy(vrd_SNV_Table* restrict* const table)
 {
-    if (NULL == table || NULL == *table)
+    if (NULL != table)
     {
-        return;
+        for (size_t i = 0; i < (*table)->next; ++i)
+        {
+            vrd_snv_tree_destroy(&(*table)->tree[i]);
+        } // for
+        vrd_ascii_trie_destroy(&(*table)->trie);
+        free(*table);
+        *table = NULL;
     } // if
-
-    for (uintptr_t i = 1; i < vrd_pool_size((*table)->alloc); ++i)
-    {
-        vrd_snv_index_destroy((vrd_SNV_Index**)
-                                  vrd_deref((*table)->alloc, (void*) i));
-    } // for
-
-    vrd_trie_destroy(&(*table)->trie);
-    vrd_pool_destroy(&(*table)->alloc);
-    free(*table);
-    *table = NULL;
 } // vrd_snv_table_destroy
 
 
 int
-vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
+vrd_snv_table_insert(vrd_SNV_Table* const table,
                      size_t const len,
                      char const reference[len],
                      uint32_t const position,
@@ -77,72 +71,35 @@ vrd_snv_table_insert(vrd_SNV_Table* const restrict table,
                      uint32_t const phase,
                      uint32_t const type)
 {
-    if (NULL == table)
+    assert(NULL != table);
+
+    vrd_SNV_Tree* restrict tree = vrd_ascii_trie_find(table->trie, len, reference);
+    if (NULL == tree)
+    {
+        if (MAX_REFS <= table->next)
+        {
+            return -1;
+        } // if
+
+        table->tree[table->next] = vrd_snv_tree_init(MAX_TREE_NODES);
+        if (NULL == table->tree[table->next])
+        {
+            return -1;
+        } // if
+
+        tree = table->tree[table->next];
+        table->next += 1;
+
+        if (NULL == vrd_ascii_trie_insert(table->trie, len, reference, tree))
+        {
+            return -1;
+        } // if
+    } // if
+
+    if (NULL == vrd_snv_tree_insert(tree, position, sample_id, phase, type))
     {
         return -1;
     } // if
 
-    // FIXME: range checks on data
-
-    void* restrict ptr = vrd_trie_find(table->trie, len, reference);
-    if (NULL == ptr)
-    {
-        if (VRD_MAX_REFERENCES <= vrd_pool_size(table->alloc))
-        {
-            return -1;
-        } // if
-        ptr = vrd_alloc(table->alloc, sizeof(void*));
-
-        vrd_SNV_Index* const restrict index =
-            vrd_snv_index_init(VRD_MAX_INDEX_SIZE);
-        if (NULL == index)
-        {
-            return -1;
-        } // if
-
-        *(vrd_SNV_Index**) vrd_deref(table->alloc, ptr) = index;
-
-        void* const restrict ret = vrd_trie_insert(table->trie,
-                                                   len,
-                                                   reference,
-                                                   ptr);
-        if (NULL == ret)
-        {
-            return -1;
-        } // if
-    } // if
-
-    return vrd_snv_index_insert(*(vrd_SNV_Index**)
-                                    vrd_deref(table->alloc, ptr),
-                                position,
-                                sample_id,
-                                phase,
-                                type);
+    return 0;
 } // vrd_snv_table_insert
-
-
-size_t
-vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
-                    size_t const len,
-                    char const reference[len],
-                    uint32_t const start,
-                    uint32_t const type,
-                    vrd_AVL_Tree const* const restrict subset)
-{
-    if (NULL == table)
-    {
-        return 0;
-    } // if
-
-    void* restrict ptr = vrd_trie_find(table->trie, len, reference);
-    if (NULL == ptr)
-    {
-        return 0;
-    } // if
-
-    return vrd_snv_index_query(*(vrd_SNV_Index**)
-                               vrd_deref(table->alloc, ptr),
-                               start,
-                               type,
-                               subset);
-} // vrd_snv_table_query

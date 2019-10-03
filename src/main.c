@@ -1,8 +1,41 @@
-#include <stddef.h>     // size_t
+#include <stddef.h>     // NULL
 #include <stdio.h>      // fprintf, stderr
-#include <stdlib.h>     // EXIT_*, malloc, free
+#include <stdlib.h>     // EXIT_*
+#include <string.h>     // strlen
 
-#include "../include/varda.h"   // vrd_*, VRD_*
+
+#include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
+#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
+#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+
+
+static char const* const REFSEQ[24] =
+{
+    "chr1",
+    "chr2",
+    "chr3",
+    "chr4",
+    "chr5",
+    "chr6",
+    "chr7",
+    "chr8",
+    "chr9",
+    "chr10",
+    "chr11",
+    "chr12",
+    "chr13",
+    "chr14",
+    "chr15",
+    "chr16",
+    "chr17",
+    "chr18",
+    "chr19",
+    "chr20",
+    "chr21",
+    "chrX",
+    "chrY",
+    "chrM"
+}; // REFSEQ
 
 
 int
@@ -11,31 +44,24 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    int major = 0;
-    int minor = 0;
-    int patch = 0;
-    vrd_version(&major, &minor, &patch);
-
-    (void) fprintf(stderr, "cvarda version %d.%d.%d\n", major,
-                                                        minor,
-                                                        patch);
-    (void) fprintf(stderr, "VRD_AVL_NODE_SIZE: %zu\n", VRD_AVL_NODE_SIZE);
-    (void) fprintf(stderr, "VRD_ITV_NODE_SIZE: %zu\n", VRD_ITV_NODE_SIZE);
-    (void) fprintf(stderr, "VRD_SNV_NODE_SIZE: %zu\n", VRD_SNV_NODE_SIZE);
-    (void) fprintf(stderr, "VRD_REGION_NODE_SIZE: %zu\n", VRD_REGION_NODE_SIZE);
-    (void) fprintf(stderr, "VRD_MNV_NODE_SIZE: %zu\n", VRD_MNV_NODE_SIZE);
-
-    vrd_Region_Table* restrict cov = vrd_region_table_init();
-
-    if (-1 == vrd_region_table_insert(cov, 4, "chr1", 1, 10, 0, 0))
+    vrd_Cov_Table* restrict cov = vrd_cov_table_init();
+    if (NULL == cov)
     {
-        fprintf(stderr, "vrd_region_table_insert failed\n");
+        (void) fprintf(stderr, "vrd_cov_table_init() failed\n");
+        return EXIT_FAILURE;
     } // if
 
-    size_t const n = vrd_region_table_query(cov, 4, "chr1", 0, 100, NULL);
-    fprintf(stderr, "result: %zu\n", n);
+    if (-1 == vrd_cov_table_insert(cov, 4, REFSEQ[0], 42, 84, 0))
+    {
+        (void) fprintf(stderr, "vrd_cov_table_insert() failed\n");
+        vrd_cov_table_destroy(&cov);
+        return EXIT_FAILURE;
+    } // if
 
-    vrd_region_table_destroy(&cov);
+    (void) fprintf(stderr, "query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 42, 84, NULL));
+    (void) fprintf(stderr, "query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 0, 10, NULL));
+
+    vrd_cov_table_destroy(&cov);
 
     return EXIT_SUCCESS;
 } // main

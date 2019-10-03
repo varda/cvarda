@@ -1,10 +1,9 @@
 #include <assert.h>     // assert
-#include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
-#include "../include/avl_tree.h"    // vrd_AVL_*, vrd_avl_tree_*
+#include "../include/snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
 
 
 enum
@@ -16,30 +15,32 @@ enum
 }; // constants
 
 
-struct vrd_AVL_Node
+struct vrd_SNV_Node
 {
     uint32_t child[2];
-    uint32_t value;
-    int32_t  balance :  3;  // [-4, ..., 3], we use [-2, ..., 2]
-    uint32_t extra   : 29;  // this extra space can be used to store data
-}; // vrd_AVL_Node
+    uint32_t position;
+    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+    uint32_t sample_id : 29;
+    uint32_t phase     : 28;
+    uint32_t type      :  4;
+}; // vrd_SNV_Node
 
 
-struct vrd_AVL_Tree
+struct vrd_SNV_Tree
 {
     uint32_t root;
 
     uint32_t next;
     uint32_t capacity;
-    vrd_AVL_Node nodes[];
-}; // vrd_AVL_Tree
+    vrd_SNV_Node nodes[];
+}; // vrd_SNV_Tree
 
 
-vrd_AVL_Tree*
-vrd_avl_tree_init(uint32_t const capacity)
+vrd_SNV_Tree*
+vrd_snv_tree_init(uint32_t const capacity)
 {
-    vrd_AVL_Tree* const tree = malloc(sizeof(vrd_AVL_Tree) +
-                                      sizeof(vrd_AVL_Node) *
+    vrd_SNV_Tree* const tree = malloc(sizeof(vrd_SNV_Tree) +
+                                      sizeof(vrd_SNV_Node) *
                                       ((size_t) capacity + 1));
     if (NULL == tree)
     {
@@ -51,25 +52,25 @@ vrd_avl_tree_init(uint32_t const capacity)
     tree->capacity = capacity;
 
     return tree;
-} // vrd_avl_tree_init
+} // vrd_snv_tree_init
 
 
 void
-vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
+vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree)
 {
     if (NULL != tree)
     {
         free(*tree);
         *tree = NULL;
     } // if
-} // vrd_avl_tree_destroy
+} // vrd_snv_tree_destroy
 
 
 // Adapted from:
-// http://adtinfo.org/libavl.html/Inserting-into-an-AVL-Tree.html
+// http://adtinfo.org/libsnv.html/Inserting-into-an-SNV-Tree.html
 static
-vrd_AVL_Node*
-insert(vrd_AVL_Tree* tree, uint32_t const ptr)
+vrd_SNV_Node*
+insert(vrd_SNV_Tree* tree, uint32_t const ptr)
 {
     assert(NULL != tree);
 
@@ -105,7 +106,7 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
             len = 0;
         } // if
 
-        dir = tree->nodes[ptr].value > tree->nodes[tmp].value;
+        dir = tree->nodes[ptr].position > tree->nodes[tmp].position;
         if (RIGHT == dir)
         {
             path |= (uint64_t) RIGHT << len;
@@ -227,8 +228,12 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
 } // insert
 
 
-vrd_AVL_Node*
-vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
+vrd_SNV_Node*
+vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
+                    uint32_t const position,
+                    uint32_t const sample_id,
+                    uint32_t const phase,
+                    uint32_t const type)
 {
     assert(NULL != tree);
 
@@ -242,90 +247,11 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
 
     tree->nodes[ptr].child[LEFT] = NULLPTR;
     tree->nodes[ptr].child[RIGHT] = NULLPTR;
-    tree->nodes[ptr].value = value;
+    tree->nodes[ptr].position = position;
     tree->nodes[ptr].balance = 0;
-    tree->nodes[ptr].extra = 0;
+    tree->nodes[ptr].sample_id = sample_id;
+    tree->nodes[ptr].phase = phase;
+    tree->nodes[ptr].type = type;
 
     return insert(tree, ptr);
-} // vrd_avl_tree_insert
-
-
-bool
-vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
-                        uint32_t const value)
-{
-    assert(NULL != tree);
-
-    uint32_t tmp = tree->root;
-    while (NULLPTR != tmp)
-    {
-        if (value == tree->nodes[tmp].value)
-        {
-            return true;
-        } // if
-        tmp = tree->nodes[tmp].child[value > tree->nodes[tmp].value];
-    } // while
-
-    return false;
-} // vrd_avl_tree_is_element
-
-
-#ifndef NDEBUG
-
-#include <errno.h>  // errno
-#include <inttypes.h>   // PRIu32
-#include <stdio.h>  // FILE, fprintf, perror
-
-
-static int
-print(FILE* restrict stream,
-      vrd_AVL_Tree const* const restrict tree,
-      uint32_t const root,
-      int const indent)
-{
-    static int const INDENT = 8;
-
-    if (NULLPTR == root)
-    {
-        return 0;
-    } // if
-
-    int ret = print(stream, tree, tree->nodes[root].child[RIGHT], indent + INDENT);
-    if (0 > ret)
-    {
-        return ret;
-    } // if
-
-    int written = ret;
-
-    errno = 0;
-    ret = fprintf(stream, "%*s%" PRIu32 " (%2d)\n", indent, "", tree->nodes[root].value, tree->nodes[root].balance);
-    if (0 > ret)
-    {
-        perror("fprintf() failed");
-        return ret;
-    } // if
-
-    written += ret;
-
-    ret = print(stream, tree, tree->nodes[root].child[LEFT], indent + INDENT);
-    if (0 > ret)
-    {
-        return ret;
-    } // if
-
-    return written + ret;
-} // print
-
-
-int
-vrd_avl_tree_print(FILE* restrict stream,
-                   vrd_AVL_Tree const* const restrict tree)
-{
-    assert(NULL != stream);
-    assert(NULL != tree);
-
-    return print(stream, tree, tree->root, 0);
-} // vrd_avl_tree_print
-
-#endif
+} // vrd_snv_tree_insert
