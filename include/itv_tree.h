@@ -1,11 +1,9 @@
 #ifndef ITV_TREE_H
 #define ITV_TREE_H
 
-
 #ifdef __cplusplus
 
 #define restrict
-
 extern "C"
 {
 #endif
@@ -20,13 +18,13 @@ extern "C"
 typedef struct vrd_Itv_Node vrd_Itv_Node;
 
 /**
- * Opaque data structure for an Itv tree.
+ * Opaque data structure for an interval (Itv) tree.
  */
 typedef struct vrd_Itv_Tree vrd_Itv_Tree;
 
 
 /**
- * Create and initialize an interval tree.
+ * Create and initialize an Itv tree.
  *
  * @param capacity limits the number of nodes in the tree.
  * @return A pointer to the tree on success, otherwise NULL.
@@ -43,7 +41,7 @@ vrd_itv_tree_init(uint32_t const capacity);
  * @param tree is the reference to the tree.
  */
 void
-vrd_itv_tree_destroy(vrd_Itv_Tree** const tree);
+vrd_itv_tree_destroy(vrd_Itv_Tree* restrict* const tree);
 
 
 /**
@@ -67,6 +65,5 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
 
 #endif

@@ -54,7 +54,7 @@ vrd_avl_tree_init(uint32_t const capacity)
 
 
 void
-vrd_avl_tree_destroy(vrd_AVL_Tree** const tree)
+vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
 {
     if (NULL != tree)
     {

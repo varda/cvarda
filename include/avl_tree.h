@@ -1,11 +1,9 @@
 #ifndef AVL_TREE_H
 #define AVL_TREE_H
 
-
 #ifdef __cplusplus
 
 #define restrict
-
 extern "C"
 {
 #endif
@@ -43,7 +41,7 @@ vrd_avl_tree_init(uint32_t const capacity);
  * @param tree is the reference to the tree.
  */
 void
-vrd_avl_tree_destroy(vrd_AVL_Tree** const tree);
+vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree);
 
 
 /**
@@ -82,6 +80,5 @@ vrd_avl_tree_print(FILE* restrict stream,
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
 
 #endif

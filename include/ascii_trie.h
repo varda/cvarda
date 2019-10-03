@@ -1,11 +1,9 @@
 #ifndef ASCII_TRIE_H
 #define ASCII_TRIE_H
 
-
 #ifdef __cplusplus
 
 #define restrict
-
 extern "C"
 {
 #endif
@@ -38,7 +36,7 @@ vrd_ascii_trie_init(size_t const capacity);
  * @param trie is the reference to the trie.
  */
 void
-vrd_ascii_trie_destroy(vrd_ASCII_Trie** const trie);
+vrd_ascii_trie_destroy(vrd_ASCII_Trie* restrict* const trie);
 
 
 /**
@@ -74,6 +72,5 @@ vrd_ascii_trie_find(vrd_ASCII_Trie const* const trie,
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
 
 #endif

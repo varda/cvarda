@@ -4,7 +4,7 @@
 #include <stdint.h>     // SIZE_MAX
 #include <stdlib.h>     // malloc, free
 
-#include "../include/ascii_trie.h"    // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 
 
 #include <stdio.h>
@@ -78,7 +78,7 @@ vrd_ascii_trie_init(size_t const capacity)
 
 
 void
-vrd_ascii_trie_destroy(vrd_ASCII_Trie** const trie)
+vrd_ascii_trie_destroy(vrd_ASCII_Trie* restrict* const trie)
 {
     if (NULL != trie)
     {

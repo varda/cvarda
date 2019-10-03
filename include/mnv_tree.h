@@ -1,11 +1,9 @@
 #ifndef MNV_TREE_H
 #define MNV_TREE_H
 
-
 #ifdef __cplusplus
 
 #define restrict
-
 extern "C"
 {
 #endif
@@ -20,13 +18,13 @@ extern "C"
 typedef struct vrd_MNV_Node vrd_MNV_Node;
 
 /**
- * Opaque data structure for an MNV tree.
+ * Opaque data structure for an multi nucleotide variant (MNV) tree.
  */
 typedef struct vrd_MNV_Tree vrd_MNV_Tree;
 
 
 /**
- * Create and initialize a multi nucleotide variant (MNV) tree.
+ * Create and initialize a MNV tree.
  *
  * @param capacity limits the number of nodes in the tree.
  * @return A pointer to the tree on success, otherwise NULL.
@@ -43,7 +41,7 @@ vrd_mnv_tree_init(uint32_t const capacity);
  * @param tree is the reference to the tree.
  */
 void
-vrd_mnv_tree_destroy(vrd_MNV_Tree** const tree);
+vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree);
 
 
 /**
@@ -74,6 +72,5 @@ vrd_mnv_tree_insert(vrd_MNV_Tree* const tree,
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
 
 #endif

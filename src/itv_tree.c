@@ -56,7 +56,7 @@ vrd_itv_tree_init(uint32_t const capacity)
 
 
 void
-vrd_itv_tree_destroy(vrd_Itv_Tree** const tree)
+vrd_itv_tree_destroy(vrd_Itv_Tree* restrict* const tree)
 {
     if (NULL != tree)
     {

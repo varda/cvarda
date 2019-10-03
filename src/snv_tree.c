@@ -56,7 +56,7 @@ vrd_snv_tree_init(uint32_t const capacity)
 
 
 void
-vrd_snv_tree_destroy(vrd_SNV_Tree** const tree)
+vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree)
 {
     if (NULL != tree)
     {
