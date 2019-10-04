@@ -77,8 +77,9 @@ CoverageTable_query(CoverageTableObject* const restrict self,
     size_t len = 0;
     uint32_t start = 0;
     uint32_t end = 0;
+    PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#II:CoverageTable.query", &reference, &len, &start, &end))
+    if (!PyArg_ParseTuple(args, "s#II|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -107,6 +108,8 @@ static PyMethodDef CoverageTable_methods[] =
      ":param str reference: The reference sequence ID\n"
      ":param int start: The start position of the region (included)\n"
      ":param int end: The end position of the region (excluded)\n"
+     ":param subset: A list of sample IDs, defaults to []\n"
+     ":type subset: list, optional\n"
      ":return: The number of contained intervals\n"
      ":rtype: integer\n"},
 
