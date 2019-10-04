@@ -7,7 +7,7 @@ On macOS (Mark):
 `export CFLAGS=-isysroot/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk`
 
 
-`python setup.py install`
+`pip install . --upgrade`
 
 
 ## C Build
