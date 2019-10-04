@@ -1,12 +1,11 @@
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>     // Py*, METH_VARARGS, destructor
+#include <Python.h>     // Py*
 
-#include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
+#include <stddef.h>     // NULL
 #include <stdio.h>      // fprintf, stderr
-#include <stdlib.h>     // NULL, EXIT_*
+#include <stdlib.h>     // EXIT_*
 
-#include "../include/varda.h"   // vrd_*, VRD_*
+#include "../include/varda.h"   // vrd_version
 
 
 #include "CoverageTable.c"  // CoverageTable

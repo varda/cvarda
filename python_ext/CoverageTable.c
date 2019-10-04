@@ -1,3 +1,12 @@
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>     // Py*, METH_VARARGS, destructor
+
+#include <stddef.h>     // NULL, size_t
+#include <stdint.h>     // uint32_t
+
+#include "../include/varda.h"   // vrd_*
+
+
 typedef struct
 {
     PyObject_HEAD
