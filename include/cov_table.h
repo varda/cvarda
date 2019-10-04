@@ -35,7 +35,7 @@ vrd_cov_table_init(void);
  *
  * All associated data is deallocated and the reference is set to NULL.
  *
- * @param trie is the reference to the table.
+ * @param table is the reference to the table.
  */
 void
 vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table);
@@ -44,6 +44,7 @@ vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table);
 /**
  * Insert a coverage region in the table.
  *
+ * @param table is the table.
  * @param len the length of the reference ID (excluding the '\0').
  * @param reference the reference ID.
  * @param start is the start position of the covered region (included).
@@ -62,7 +63,15 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
 
 
 /**
+ * Query for coverage regions in the table.
  *
+ * @param table is the table.
+ * @param len the length of the reference ID (excluding the '\0').
+ * @param reference the reference ID.
+ * @param start is the start position of the covered region (included).
+ * @param end is the end position of the covered region (excluded).
+ * @param subset is the subset of sample IDs.
+ * @return The count of reported regions.
  */
 size_t
 vrd_cov_table_query(vrd_Cov_Table const* const restrict table,

@@ -6,6 +6,8 @@
 
 #include "../include/varda.h"   // vrd_*
 
+#include "helpers.h"    // sample_set
+
 
 typedef struct
 {
@@ -28,7 +30,7 @@ CoverageTable_new(PyTypeObject* const restrict type,
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "CoverageTable(): vrd_cov_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "CoverageTable: vrd_cov_table_init() failed");
         return NULL;
     } // if
 
@@ -61,7 +63,7 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
 
     if (-1 == vrd_cov_table_insert(self->table, len, reference, start, end, sample_id))
     {
-        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.insert(): vrd_cov_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.insert: vrd_cov_table_insert() failed");
         return NULL;
     } // if
 
@@ -84,10 +86,20 @@ CoverageTable_query(CoverageTableObject* const restrict self,
         return NULL;
     } // if
 
-    size_t result = 0;
+    vrd_AVL_Tree* restrict subset = NULL;
+    if (NULL != list)
+    {
+        subset = sample_set(list);
+        if (NULL == subset)
+        {
+            return NULL;
+        } // if
+    } // if
 
+    size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_cov_table_query(self->table, len, reference, start, end, NULL);
+    result = vrd_cov_table_query(self->table, len, reference, start, end, subset);
+    vrd_avl_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);

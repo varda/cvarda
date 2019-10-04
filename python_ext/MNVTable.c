@@ -28,7 +28,7 @@ MNVTable_new(PyTypeObject* const restrict type,
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable(): vrd_mnv_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable: vrd_mnv_table_init() failed");
         return NULL;
     } // if
 
@@ -64,7 +64,7 @@ MNVTable_insert(MNVTableObject* const restrict self,
 
     if (-1 == vrd_mnv_table_insert(self->table, len, reference, start, end, sample_id, phase, NULL))
     {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert(): vrd_mnv_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert: vrd_mnv_table_insert() failed");
         return NULL;
     } // if
 

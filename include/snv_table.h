@@ -33,7 +33,7 @@ vrd_snv_table_init(void);
  *
  * All associated data is deallocated and the reference is set to NULL.
  *
- * @param trie is the reference to the table.
+ * @param table is the reference to the table.
  */
 void
 vrd_snv_table_destroy(vrd_SNV_Table* restrict* const table);
@@ -42,6 +42,7 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const table);
 /**
  * Insert a SNV in the table.
  *
+ * @param table is the table.
  * @param len the length of the reference ID (excluding the '\0').
  * @param reference the reference ID.
  * @param position is the position of the SNV.

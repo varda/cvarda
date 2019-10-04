@@ -33,7 +33,7 @@ vrd_mnv_table_init(void);
  *
  * All associated data is deallocated and the reference is set to NULL.
  *
- * @param trie is the reference to the table.
+ * @param table is the reference to the table.
  */
 void
 vrd_mnv_table_destroy(vrd_MNV_Table* restrict* const table);
@@ -42,6 +42,7 @@ vrd_mnv_table_destroy(vrd_MNV_Table* restrict* const table);
 /**
  * Insert a MNV in the table.
  *
+ * @param table is the table.
  * @param len the length of the reference ID (excluding the '\0').
  * @param reference the reference ID.
  * @param start is the start position of the deleted part of the MNV

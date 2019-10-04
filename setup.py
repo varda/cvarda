@@ -11,6 +11,7 @@ VERSION = '.'.join(map(str, [VERSION_MAJOR,
 
 cvarda = Extension('cvarda',
                    sources = ['python_ext/wrapper.c',
+                              'python_ext/helpers.c',
                               'src/ascii_trie.c',
                               'src/avl_tree.c',
                               'src/cov_table.c',

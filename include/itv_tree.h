@@ -2,8 +2,8 @@
 #define ITV_TREE_H
 
 #ifdef __cplusplus
-
 #define restrict
+
 extern "C"
 {
 #endif
@@ -66,7 +66,13 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 
 
 /**
+ * Query intevals in the tree.
  *
+ * @param tree is the tree.
+ * @param start is the start position of the interval (included).
+ * @param end is the end position of the interval (excluded).
+ * @param subset is the subset of sample IDs.
+ * @return The count of reported intervals.
  */
 size_t
 vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,

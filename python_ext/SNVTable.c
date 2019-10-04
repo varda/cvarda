@@ -28,7 +28,7 @@ SNVTable_new(PyTypeObject* const restrict type,
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable(): vrd_snv_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable: vrd_snv_table_init() failed");
         return NULL;
     } // if
 
@@ -65,7 +65,7 @@ SNVTable_insert(SNVTableObject* const restrict self,
 
     if (-1 == vrd_snv_table_insert(self->table, len, reference, position, sample_id, phase, type))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert(): vrd_snv_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_snv_table_insert() failed");
         return NULL;
     } // if
 
