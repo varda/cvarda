@@ -48,7 +48,7 @@ vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table);
  * @param reference the reference ID.
  * @param start is the start position of the covered region (included).
  * @param end is the end position of the covered region (excluded).
- * @param sample_id is the ID of the sample that contains the coverd
+ * @param sample_id is the ID of the sample that contains the covered
  *                  region.
  * @return 0 on success; otherwise -1.
  */
