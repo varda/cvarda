@@ -307,14 +307,14 @@ query_contains(vrd_Itv_Tree const* const restrict tree,
         return 0;
     } // if
 
-    if (tree->nodes[root].start < start)
+    if (tree->nodes[root].start > start)
     {
         return query_contains(tree, tree->nodes[root].child[LEFT], start, end, subset);
     } // if
 
     size_t res = 0;
-    if (tree->nodes[root].start >= start &&
-        tree->nodes[root].end <= end &&
+    if (start >= tree->nodes[root].start &&
+        end <= tree->nodes[root].end &&
         (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
     {
         res = 1;
