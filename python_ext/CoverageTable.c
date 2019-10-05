@@ -2,7 +2,6 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // uint32_t
 
 #include "../include/varda.h"   // vrd_*
 
@@ -52,9 +51,9 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
 {
     char const* restrict reference = NULL;
     size_t len = 0;
-    uint32_t start = 0;
-    uint32_t end = 0;
-    uint32_t sample_id = 0;
+    int start = 0;
+    int end = 0;
+    int sample_id = 0;
 
     if (!PyArg_ParseTuple(args, "s#iii:CoverageTable.insert", &reference, &len, &start, &end, &sample_id))
     {
@@ -73,12 +72,12 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
 
 static PyObject*
 CoverageTable_query(CoverageTableObject* const restrict self,
-                     PyObject* const restrict args)
+                    PyObject* const restrict args)
 {
     char const* restrict reference = NULL;
     size_t len = 0;
-    uint32_t start = 0;
-    uint32_t end = 0;
+    int start = 0;
+    int end = 0;
     PyObject* restrict list = NULL;
 
     if (!PyArg_ParseTuple(args, "s#ii|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))

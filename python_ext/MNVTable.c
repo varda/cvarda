@@ -2,7 +2,6 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // uint32_t
 
 #include "../include/varda.h"   // vrd_*
 
@@ -50,12 +49,12 @@ MNVTable_insert(MNVTableObject* const restrict self,
 {
     char const* restrict reference = NULL;
     size_t len = 0;
-    uint32_t start = 0;
-    uint32_t end = 0;
-    uint32_t sample_id = 0;
+    int start = 0;
+    int end = 0;
+    int sample_id = 0;
     char const* restrict inserted = NULL;
     size_t len_inserted = 0;
-    uint32_t phase = 0;
+    int phase = 0;
 
     if (!PyArg_ParseTuple(args, "s#iii|s#i:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &inserted, &len_inserted, &phase))
     {

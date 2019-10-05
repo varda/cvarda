@@ -11,7 +11,7 @@ extern "C"
 
 
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>     // Py*
+#include <Python.h>     // PyObject
 
 #include "../include/varda.h"   // vrd_AVL_Tree
 

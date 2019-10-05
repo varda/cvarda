@@ -2,7 +2,6 @@
 #include <Python.h>     // Py*
 
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // uint32_t
 
 #include "../include/varda.h"   // vrd_AVL_Tree, vrd_avl_tree_*
 
@@ -22,7 +21,7 @@ sample_set(PyObject* const list)
     for (size_t i = 0; i < n; ++i)
     {
         int overflow = 0;
-        uint32_t const sample_id = PyLong_AsLongAndOverflow(PyList_GetItem(list, i), &overflow);
+        long const sample_id = PyLong_AsLongAndOverflow(PyList_GetItem(list, i), &overflow);
         if (NULL != PyErr_Occurred())
         {
             vrd_avl_tree_destroy(&tree);

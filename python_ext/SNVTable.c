@@ -2,7 +2,6 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // uint32_t
 
 #include "../include/varda.h"   // vrd_*
 
@@ -50,13 +49,13 @@ SNVTable_insert(SNVTableObject* const restrict self,
 {
     char const* restrict reference = NULL;
     size_t len = 0;
-    uint32_t position = 0;
-    uint32_t sample_id = 0;
+    int position = 0;
+    int sample_id = 0;
     char const* restrict inserted = NULL;
     size_t len_inserted = 0;
-    uint32_t phase = 0;
+    int phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iis#|I:SNVTable.insert", &reference, &len, &position, &sample_id, &inserted, &len_inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#iis#|i:SNVTable.insert", &reference, &len, &position, &sample_id, &inserted, &len_inserted, &phase))
     {
         return NULL;
     } // if
