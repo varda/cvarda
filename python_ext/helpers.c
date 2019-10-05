@@ -21,10 +21,18 @@ sample_set(PyObject* const list)
 
     for (size_t i = 0; i < n; ++i)
     {
-        uint32_t const sample_id = PyLong_AsLong(PyList_GetItem(list, i));
+        int overflow = 0;
+        uint32_t const sample_id = PyLong_AsLongAndOverflow(PyList_GetItem(list, i), &overflow);
         if (NULL != PyErr_Occurred())
         {
             vrd_avl_tree_destroy(&tree);
+            return NULL;
+        } // if
+
+        if (0 != overflow)
+        {
+            vrd_avl_tree_destroy(&tree);
+            PyErr_SetString(PyExc_ValueError, "sample_set(): integer overflow");
             return NULL;
         } // if
 

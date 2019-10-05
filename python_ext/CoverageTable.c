@@ -56,7 +56,7 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
     uint32_t end = 0;
     uint32_t sample_id = 0;
 
-    if (!PyArg_ParseTuple(args, "s#III:CoverageTable.insert", &reference, &len, &start, &end, &sample_id))
+    if (!PyArg_ParseTuple(args, "s#iii:CoverageTable.insert", &reference, &len, &start, &end, &sample_id))
     {
         return NULL;
     } // if
@@ -81,7 +81,7 @@ CoverageTable_query(CoverageTableObject* const restrict self,
     uint32_t end = 0;
     PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#II|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ii|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
     {
         return NULL;
     } // if

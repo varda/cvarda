@@ -27,6 +27,14 @@ extern "C"
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 
 
+enum
+{
+    VRD_MAX_REFS = 1000,
+    VRD_MAX_TRIE_SIZE = 10000,
+    VRD_MAX_TREE_SIZE = 1 << 20
+}; // constants
+
+
 /**
  * Determine the semantic versioning information on run time.
  *

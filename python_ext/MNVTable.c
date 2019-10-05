@@ -57,7 +57,7 @@ MNVTable_insert(MNVTableObject* const restrict self,
     size_t len_inserted = 0;
     uint32_t phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#III|s#I:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &inserted, &len_inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#iii|s#i:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &inserted, &len_inserted, &phase))
     {
         return NULL;
     } // if

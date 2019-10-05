@@ -4,16 +4,9 @@
 
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
-#include "../include/itv_tree.h"    // vrd_Itv_Tree, vrd_itv_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
-
-
-enum
-{
-    MAX_REFS = 1000,
-    MAX_TREE_NODES = 1000000,
-    MAX_TRIE_NODES = 1000
-}; // constants
+#include "../include/itv_tree.h"    // vrd_Itv_Tree, vrd_itv_tree_*
+#include "../include/varda.h"   // VRD_*
 
 
 struct vrd_Cov_Table
@@ -28,13 +21,15 @@ struct vrd_Cov_Table
 vrd_Cov_Table*
 vrd_cov_table_init(void)
 {
-    vrd_Cov_Table* const table = malloc(sizeof(*table) + sizeof(table->tree[0]) * MAX_REFS);
+    vrd_Cov_Table* const table = malloc(sizeof(*table) +
+                                        sizeof(table->tree[0]) *
+                                        VRD_MAX_REFS);
     if (NULL == table)
     {
         return NULL;
     } // if
 
-    table->trie = vrd_ascii_trie_init(MAX_TRIE_NODES);
+    table->trie = vrd_ascii_trie_init(VRD_MAX_TRIE_SIZE);
     if (NULL == table->trie)
     {
         free(table);
@@ -73,15 +68,17 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
 {
     assert(NULL != table);
 
-    vrd_Itv_Tree* restrict tree = vrd_ascii_trie_find(table->trie, len, reference);
+    vrd_Itv_Tree* restrict tree = vrd_ascii_trie_find(table->trie,
+                                                      len,
+                                                      reference);
     if (NULL == tree)
     {
-        if (MAX_REFS <= table->next)
+        if (VRD_MAX_REFS <= table->next)
         {
             return -1;
         } // if
 
-        table->tree[table->next] = vrd_itv_tree_init(MAX_TREE_NODES);
+        table->tree[table->next] = vrd_itv_tree_init(VRD_MAX_TREE_SIZE);
         if (NULL == table->tree[table->next])
         {
             return -1;
@@ -90,7 +87,10 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
         tree = table->tree[table->next];
         table->next += 1;
 
-        if (NULL == vrd_ascii_trie_insert(table->trie, len, reference, tree))
+        if (NULL == vrd_ascii_trie_insert(table->trie,
+                                          len,
+                                          reference,
+                                          tree))
         {
             return -1;
         } // if
@@ -115,7 +115,8 @@ vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
 {
     assert(NULL != table);
 
-    vrd_Itv_Tree const* const restrict tree = vrd_ascii_trie_find(table->trie, len, reference);
+    vrd_Itv_Tree const* const restrict tree =
+        vrd_ascii_trie_find(table->trie, len, reference);
     if (NULL == tree)
     {
         return 0;

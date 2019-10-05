@@ -3,16 +3,9 @@
 #include <stdlib.h>     // malloc, free
 
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
-#include "../include/mnv_tree.h"    // vrd_MNV_Tree, vrd_mnv_tree_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
-
-
-enum
-{
-    MAX_REFS = 1000,
-    MAX_TREE_NODES = 1000000,
-    MAX_TRIE_NODES = 1000
-}; // constants
+#include "../include/mnv_tree.h"    // vrd_MNV_Tree, vrd_mnv_tree_*
+#include "../include/varda.h"   // VRD_*
 
 
 struct vrd_MNV_Table
@@ -27,13 +20,15 @@ struct vrd_MNV_Table
 vrd_MNV_Table*
 vrd_mnv_table_init(void)
 {
-    vrd_MNV_Table* const table = malloc(sizeof(*table) + sizeof(table->tree[0]) * MAX_REFS);
+    vrd_MNV_Table* const table = malloc(sizeof(*table) +
+                                        sizeof(table->tree[0]) *
+                                        VRD_MAX_REFS);
     if (NULL == table)
     {
         return NULL;
     } // if
 
-    table->trie = vrd_ascii_trie_init(MAX_TRIE_NODES);
+    table->trie = vrd_ascii_trie_init(VRD_MAX_TRIE_SIZE);
     if (NULL == table->trie)
     {
         free(table);
@@ -74,15 +69,17 @@ vrd_mnv_table_insert(vrd_MNV_Table* const table,
 {
     assert(NULL != table);
 
-    vrd_MNV_Tree* restrict tree = vrd_ascii_trie_find(table->trie, len, reference);
+    vrd_MNV_Tree* restrict tree = vrd_ascii_trie_find(table->trie,
+                                                      len,
+                                                      reference);
     if (NULL == tree)
     {
-        if (MAX_REFS <= table->next)
+        if (VRD_MAX_REFS <= table->next)
         {
             return -1;
         } // if
 
-        table->tree[table->next] = vrd_mnv_tree_init(MAX_TREE_NODES);
+        table->tree[table->next] = vrd_mnv_tree_init(VRD_MAX_TREE_SIZE);
         if (NULL == table->tree[table->next])
         {
             return -1;
@@ -91,13 +88,21 @@ vrd_mnv_table_insert(vrd_MNV_Table* const table,
         tree = table->tree[table->next];
         table->next += 1;
 
-        if (NULL == vrd_ascii_trie_insert(table->trie, len, reference, tree))
+        if (NULL == vrd_ascii_trie_insert(table->trie,
+                                          len,
+                                          reference,
+                                          tree))
         {
             return -1;
         } // if
     } // if
 
-    if (NULL == vrd_mnv_tree_insert(tree, start, end, sample_id, phase, inserted))
+    if (NULL == vrd_mnv_tree_insert(tree,
+                                    start,
+                                    end,
+                                    sample_id,
+                                    phase,
+                                    inserted))
     {
         return -1;
     } // if

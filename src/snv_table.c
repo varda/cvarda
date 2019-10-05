@@ -5,14 +5,7 @@
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/snv_tree.h"    // vrd_SNV_Tree, vrd_snv_tree_*
-
-
-enum
-{
-    MAX_REFS = 1000,
-    MAX_TREE_NODES = 1000000,
-    MAX_TRIE_NODES = 1000
-}; // constants
+#include "../include/varda.h"   // VRD_*
 
 
 struct vrd_SNV_Table
@@ -27,13 +20,15 @@ struct vrd_SNV_Table
 vrd_SNV_Table*
 vrd_snv_table_init(void)
 {
-    vrd_SNV_Table* const table = malloc(sizeof(*table) + sizeof(table->tree[0]) * MAX_REFS);
+    vrd_SNV_Table* const table = malloc(sizeof(*table) +
+                                        sizeof(table->tree[0]) *
+                                        VRD_MAX_REFS);
     if (NULL == table)
     {
         return NULL;
     } // if
 
-    table->trie = vrd_ascii_trie_init(MAX_TRIE_NODES);
+    table->trie = vrd_ascii_trie_init(VRD_MAX_TRIE_SIZE);
     if (NULL == table->trie)
     {
         free(table);
@@ -73,15 +68,17 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
 {
     assert(NULL != table);
 
-    vrd_SNV_Tree* restrict tree = vrd_ascii_trie_find(table->trie, len, reference);
+    vrd_SNV_Tree* restrict tree = vrd_ascii_trie_find(table->trie,
+                                                      len,
+                                                      reference);
     if (NULL == tree)
     {
-        if (MAX_REFS <= table->next)
+        if (VRD_MAX_REFS <= table->next)
         {
             return -1;
         } // if
 
-        table->tree[table->next] = vrd_snv_tree_init(MAX_TREE_NODES);
+        table->tree[table->next] = vrd_snv_tree_init(VRD_MAX_TREE_SIZE);
         if (NULL == table->tree[table->next])
         {
             return -1;
@@ -90,13 +87,20 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
         tree = table->tree[table->next];
         table->next += 1;
 
-        if (NULL == vrd_ascii_trie_insert(table->trie, len, reference, tree))
+        if (NULL == vrd_ascii_trie_insert(table->trie,
+                                          len,
+                                          reference,
+                                          tree))
         {
             return -1;
         } // if
     } // if
 
-    if (NULL == vrd_snv_tree_insert(tree, position, sample_id, phase, type))
+    if (NULL == vrd_snv_tree_insert(tree,
+                                    position,
+                                    sample_id,
+                                    phase,
+                                    type))
     {
         return -1;
     } // if

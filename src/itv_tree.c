@@ -3,7 +3,8 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
-#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_is_element
+#include "../include/avl_tree.h"    // vrd_AVL_Tree,
+                                    // vrd_avl_tree_is_element
 #include "../include/itv_tree.h"    // vrd_Itv_*, vrd_itv_tree_*
 
 

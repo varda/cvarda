@@ -2,7 +2,6 @@
 #define ASCII_TRIE_H
 
 #ifdef __cplusplus
-
 #define restrict
 extern "C"
 {

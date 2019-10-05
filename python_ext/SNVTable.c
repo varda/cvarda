@@ -56,7 +56,7 @@ SNVTable_insert(SNVTableObject* const restrict self,
     size_t len_inserted = 0;
     uint32_t phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#IIs#|I:SNVTable.insert", &reference, &len, &position, &sample_id, &inserted, &len_inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#iis#|I:SNVTable.insert", &reference, &len, &position, &sample_id, &inserted, &len_inserted, &phase))
     {
         return NULL;
     } // if

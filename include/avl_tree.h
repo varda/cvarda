@@ -3,7 +3,6 @@
 
 #ifdef __cplusplus
 #define restrict
-
 extern "C"
 {
 #endif

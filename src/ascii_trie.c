@@ -7,9 +7,6 @@
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 
 
-#include <stdio.h>
-
-
 enum
 {
     NULLPTR = 0,
@@ -62,8 +59,9 @@ vrd_ASCII_Trie*
 vrd_ascii_trie_init(size_t const capacity)
 {
     // FIXME: overflow on capacity
-
-    vrd_ASCII_Trie* const trie = malloc(sizeof(*trie) + sizeof(trie->nodes[0]) * (capacity + 1));
+    vrd_ASCII_Trie* const trie = malloc(sizeof(*trie) +
+                                        sizeof(trie->nodes[0]) *
+                                        (capacity + 1));
     if (NULL == trie)
     {
         return NULL;
@@ -144,7 +142,6 @@ vrd_ascii_trie_find(vrd_ASCII_Trie const* const trie,
     for (size_t i = 0; i < len; ++i)
     {
         size_t const idx = ascii_to_idx(str[i]);
-
         if (ASCII_SIZE <= idx || NULLPTR == trie->nodes[tmp].child[idx])
         {
             return NULL;

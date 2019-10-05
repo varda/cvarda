@@ -2,7 +2,6 @@
 #define MNV_TREE_H
 
 #ifdef __cplusplus
-
 #define restrict
 extern "C"
 {
