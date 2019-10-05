@@ -9,7 +9,8 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
+
+#include "avl_tree.h"   // vrd_AVL_Tree
 
 
 /**
@@ -48,18 +49,37 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const table);
  * @param sample_id is the ID of the sample that contains the SNV.
  * @param phase is the phase group (position based) to which the SNV
  *              belongs.
- * @param type is the type of the SNV, e.g., A, C, G, or T, currently,
- *             nucleotide IUPAC is supported.
+ * @param type is the type of the SNV; nucleotide IUPAC is supported.
  * @return 0 on success; otherwise -1.
  */
 int
 vrd_snv_table_insert(vrd_SNV_Table* const table,
                      size_t const len,
                      char const reference[len],
-                     uint32_t const position,
-                     uint32_t const sample_id,
-                     uint32_t const phase,
-                     uint32_t const type);
+                     size_t const position,
+                     size_t const sample_id,
+                     size_t const phase,
+                     size_t const type);
+
+
+/**
+ * Query for SNVs in the table.
+ *
+ * @param table is the table.
+ * @param len the length of the reference ID (excluding the '\0').
+ * @param reference the reference ID.
+ * @param position is the position of the SNV.
+ * @param type is the type of the SNV.
+ * @param subset is the subset of sample IDs.
+ * @return The count of reported regions.
+ */
+size_t
+vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
+                    size_t const len,
+                    char const reference[len],
+                    size_t const position,
+                    size_t const type,
+                    vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

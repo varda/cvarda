@@ -8,7 +8,10 @@ extern "C"
 #endif
 
 
+#include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
+
+#include "avl_tree.h"   // vrd_AVL_Tree
 
 
 /**
@@ -63,6 +66,22 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
                     uint32_t const sample_id,
                     uint32_t const phase,
                     uint32_t const type);
+
+
+/**
+ * Query SNVs in the tree.
+ *
+ * @param tree is the tree.
+ * @param position is the position of the SNV.
+ * @param type is the type of the SNV.
+ * @param subset is the subset of sample IDs.
+ * @return The count of reported SNVs.
+ */
+size_t
+vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
+                   uint32_t const position,
+                   uint32_t const type,
+                   vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

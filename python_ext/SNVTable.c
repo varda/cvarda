@@ -60,9 +60,13 @@ SNVTable_insert(SNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    uint32_t type = 0;
+    if (1 != len_inserted)
+    {
+        PyErr_SetString(PyExc_ValueError, "SNVTable.insert: expected one inserted nucleotide");
+        return NULL;
+    } // if
 
-    if (-1 == vrd_snv_table_insert(self->table, len, reference, position, sample_id, phase, type))
+    if (-1 == vrd_snv_table_insert(self->table, len, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
     {
         PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_snv_table_insert() failed");
         return NULL;
@@ -72,6 +76,48 @@ SNVTable_insert(SNVTableObject* const restrict self,
 } // SNVTable_insert
 
 
+static PyObject*
+SNVTable_query(CoverageTableObject* const restrict self,
+               PyObject* const restrict args)
+{
+    char const* restrict reference = NULL;
+    size_t len = 0;
+    int position = 0;
+    char const* restrict inserted = NULL;
+    size_t len_inserted = 0;
+    PyObject* restrict list = NULL;
+
+    if (!PyArg_ParseTuple(args, "s#is#|O!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    if (1 != len_inserted)
+    {
+        PyErr_SetString(PyExc_ValueError, "SNVTable.query: expected one inserted nucleotide");
+        return NULL;
+    } // if
+
+    vrd_AVL_Tree* restrict subset = NULL;
+    if (NULL != list)
+    {
+        subset = sample_set(list);
+        if (NULL == subset)
+        {
+            return NULL;
+        } // if
+    } // if
+
+    size_t result = 0;
+    Py_BEGIN_ALLOW_THREADS
+    result = vrd_snv_table_query(self->table, len, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
+    vrd_avl_tree_destroy(&subset);
+    Py_END_ALLOW_THREADS
+
+    return Py_BuildValue("i", result);
+} // SNVTable_query
+
+
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
@@ -79,9 +125,19 @@ static PyMethodDef SNVTable_methods[] =
      ":param str reference: The reference sequence ID\n"
      ":param int position: The start position of the SNV.\n"
      ":param int sample_id: The sample ID\n"
-     ":param str type: The inserted base: 'A', 'C', 'G', or 'T'\n"
+     ":param str type: The inserted base from IUPAC\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
+
+    {"query", (PyCFunction) SNVTable_query, METH_VARARGS,
+     "Query for SNVs in the :py:class:`SNVTable`\n\n"
+     ":param str reference: The reference sequence ID\n"
+     ":param int position: The position of the SNV\n"
+     ":param str inserted: The inserted base from IUPAC\n"
+     ":param subset: A list of sample IDs, defaults to None\n"
+     ":type subset: list, optional\n"
+     ":return: The number of contained SNVs\n"
+     ":rtype: integer\n"},
 
     {NULL}  // sentinel
 }; // SNVTable_methods

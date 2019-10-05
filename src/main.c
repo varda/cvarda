@@ -58,10 +58,30 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
-    (void) fprintf(stderr, "query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 42, 84, NULL));
-    (void) fprintf(stderr, "query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 0, 10, NULL));
+    (void) fprintf(stderr, "cov query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 42, 84, NULL));
+    (void) fprintf(stderr, "cov query: %zu\n", vrd_cov_table_query(cov, 4, REFSEQ[0], 0, 10, NULL));
 
     vrd_cov_table_destroy(&cov);
+
+
+    vrd_SNV_Table* restrict snv = vrd_snv_table_init();
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_snv_table_init() failed\n");
+        return EXIT_FAILURE;
+    } // if
+
+    if (-1 == vrd_snv_table_insert(snv, 4, REFSEQ[0], 42, 0, 0, 1))
+    {
+        (void) fprintf(stderr, "vrd_snv_table_insert() failed\n");
+        vrd_snv_table_destroy(&snv);
+        return EXIT_FAILURE;
+    } // if
+
+    (void) fprintf(stderr, "snv query: %zu\n", vrd_snv_table_query(snv, 4, REFSEQ[0], 42, 1, NULL));
+    (void) fprintf(stderr, "snv query: %zu\n", vrd_snv_table_query(snv, 4, REFSEQ[0], 42, 10, NULL));
+
+    vrd_snv_table_destroy(&snv);
 
     return EXIT_SUCCESS;
 } // main

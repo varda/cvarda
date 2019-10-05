@@ -61,10 +61,10 @@ int
 vrd_snv_table_insert(vrd_SNV_Table* const table,
                      size_t const len,
                      char const reference[len],
-                     uint32_t const position,
-                     uint32_t const sample_id,
-                     uint32_t const phase,
-                     uint32_t const type)
+                     size_t const position,
+                     size_t const sample_id,
+                     size_t const phase,
+                     size_t const type)
 {
     assert(NULL != table);
 
@@ -107,3 +107,24 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
 
     return 0;
 } // vrd_snv_table_insert
+
+
+size_t
+vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
+                    size_t const len,
+                    char const reference[len],
+                    size_t const position,
+                    size_t const type,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != table);
+
+    vrd_SNV_Tree const* const restrict tree =
+        vrd_ascii_trie_find(table->trie, len, reference);
+    if (NULL == tree)
+    {
+        return 0;
+    } // if
+
+    return vrd_snv_tree_query(tree, position, type, subset);
+} // vrd_snv_table_query

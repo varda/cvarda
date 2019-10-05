@@ -1,8 +1,10 @@
 #include <assert.h>     // assert
-#include <stddef.h>     // NULL
+#include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
+#include "../include/avl_tree.h"    // vrd_AVL_Tree,
+                                    // vrd_avl_tree_is_element
 #include "../include/snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
 
 
@@ -19,10 +21,10 @@ struct vrd_SNV_Node
 {
     uint32_t child[2];
     uint32_t position;
-    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+    int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
     uint32_t phase     : 28;
-    uint32_t type      :  4;
+    uint32_t type      :  4;    // [0, ..., 15]
 }; // vrd_SNV_Node
 
 
@@ -255,3 +257,49 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
 
     return insert(tree, ptr);
 } // vrd_snv_tree_insert
+
+
+static size_t
+query_contains(vrd_SNV_Tree const* const restrict tree,
+               uint32_t const root,
+               uint32_t const position,
+               uint32_t const type,
+               vrd_AVL_Tree const* const restrict subset)
+{
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    if (tree->nodes[root].position > position)
+    {
+        return query_contains(tree, tree->nodes[root].child[LEFT], position, type, subset);
+    } // if
+
+    if (tree->nodes[root].position < position)
+    {
+        return query_contains(tree, tree->nodes[root].child[RIGHT], position, type, subset);
+    } // if
+
+    size_t res = 0;
+    if (tree->nodes[root].type == type &&
+        (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
+    {
+        res = 1;
+    } // if
+
+    return res + query_contains(tree, tree->nodes[root].child[LEFT], position, type, subset) +
+                 query_contains(tree, tree->nodes[root].child[RIGHT], position, type, subset);
+} // query_contains
+
+
+size_t
+vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
+                   uint32_t const position,
+                   uint32_t const type,
+                   vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != tree);
+
+    return query_contains(tree, tree->root, position, type, subset);
+} // vrd_snv_tree_query

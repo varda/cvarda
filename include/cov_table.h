@@ -9,7 +9,6 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 
@@ -56,9 +55,9 @@ int
 vrd_cov_table_insert(vrd_Cov_Table* const table,
                      size_t const len,
                      char const reference[len],
-                     uint32_t const start,
-                     uint32_t const end,
-                     uint32_t const sample_id);
+                     size_t const start,
+                     size_t const end,
+                     size_t const sample_id);
 
 
 /**
@@ -76,8 +75,8 @@ size_t
 vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
                     size_t const len,
                     char const reference[len],
-                    uint32_t const start,
-                    uint32_t const end,
+                    size_t const start,
+                    size_t const end,
                     vrd_AVL_Tree const* const restrict subset);
 
 

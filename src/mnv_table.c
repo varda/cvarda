@@ -61,10 +61,10 @@ int
 vrd_mnv_table_insert(vrd_MNV_Table* const table,
                      size_t const len,
                      char const reference[len],
-                     uint32_t const start,
-                     uint32_t const end,
-                     uint32_t const sample_id,
-                     uint32_t const phase,
+                     size_t const start,
+                     size_t const end,
+                     size_t const sample_id,
+                     size_t const phase,
                      void* const inserted)
 {
     assert(NULL != table);

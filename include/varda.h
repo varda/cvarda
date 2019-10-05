@@ -23,6 +23,7 @@ extern "C"
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
+#include "../include/iupac_trie.h"  // vrd_IUPAC_Trie, vrd_iupac_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 

@@ -115,13 +115,13 @@ static PyMethodDef CoverageTable_methods[] =
      ":param int sample_id: The sample ID\n"},
 
     {"query", (PyCFunction) CoverageTable_query, METH_VARARGS,
-     "Query for a region in the :py:class:`CoverageTable`\n\n"
+     "Query for covered regions in the :py:class:`CoverageTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int start: The start position of the region (included)\n"
      ":param int end: The end position of the region (excluded)\n"
-     ":param subset: A list of sample IDs, defaults to []\n"
+     ":param subset: A list of sample IDs, defaults to None\n"
      ":type subset: list, optional\n"
-     ":return: The number of contained intervals\n"
+     ":return: The number of contained covered regions\n"
      ":rtype: integer\n"},
 
     {NULL}  // sentinel
