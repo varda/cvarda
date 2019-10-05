@@ -9,6 +9,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdint.h>     // uint32_t
 
 
 static inline size_t
@@ -77,11 +78,11 @@ typedef struct vrd_IUPAC_Trie vrd_IUPAC_Trie;
 /**
  * Create and initialize a trie.
  *
- * @param capacity limits the number of nodes in the tree.
+ * @param capacity limits the number of nodes in the trie.
  * @return A pointer to the trie on success, otherwise NULL.
  */
 vrd_IUPAC_Trie*
-vrd_iupac_trie_init(size_t const capacity);
+vrd_iupac_trie_init(uint32_t const capacity);
 
 
 /**

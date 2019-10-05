@@ -20,7 +20,7 @@ typedef struct vrd_ASCII_Trie vrd_ASCII_Trie;
 /**
  * Create and initialize a trie.
  *
- * @param capacity limits the number of nodes in the tree.
+ * @param capacity limits the number of nodes in the trie.
  * @return A pointer to the trie on success, otherwise NULL.
  */
 vrd_ASCII_Trie*
@@ -41,7 +41,7 @@ vrd_ascii_trie_destroy(vrd_ASCII_Trie* restrict* const trie);
 /**
  * Insert a string with an associated data pointer to the trie.
  *
- * @param trie the trie.
+ * @param trie is the trie.
  * @param len the length of the string (excluding the '\0').
  * @param str the string.
  * @param data points to the data.

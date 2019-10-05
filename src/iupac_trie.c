@@ -1,7 +1,7 @@
 #include <assert.h>     // assert
 #include <ctype.h>      // isprint
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // SIZE_MAX
+#include <stdint.h>     // UINT32_MAX, uint32_t
 #include <stdlib.h>     // malloc, free
 
 #include "../include/iupac_trie.h"  // vrd_IUPAC_Trie, vrd_iupac_trie_*
@@ -18,31 +18,31 @@ enum
 struct Node
 {
     void* data;
-    size_t child[IUPAC_SIZE];
+    uint32_t child[IUPAC_SIZE];
 }; // Node
 
 
 struct vrd_IUPAC_Trie
 {
-    size_t root;
+    uint32_t root;
 
-    size_t next;
-    size_t capacity;
+    uint32_t next;
+    uint32_t capacity;
     struct Node nodes[];
 }; // vrd_IUPAC_Trie
 
 
-static size_t
+static uint32_t
 node_init(vrd_IUPAC_Trie* const trie)
 {
     assert(NULL != trie);
 
-    if (SIZE_MAX == trie->next || trie->capacity < trie->next)
+    if (UINT32_MAX == trie->next || trie->capacity < trie->next)
     {
         return NULLPTR;
     } // if
 
-    size_t const ptr = trie->next;
+    uint32_t const ptr = trie->next;
     trie->next += 1;
 
     trie->nodes[ptr].data = NULL;
@@ -56,7 +56,7 @@ node_init(vrd_IUPAC_Trie* const trie)
 
 
 vrd_IUPAC_Trie*
-vrd_iupac_trie_init(size_t const capacity)
+vrd_iupac_trie_init(uint32_t const capacity)
 {
     // FIXME: overflow on capacity
     vrd_IUPAC_Trie* const trie = malloc(sizeof(*trie) +
@@ -94,7 +94,7 @@ vrd_iupac_trie_insert(vrd_IUPAC_Trie* const restrict trie,
 {
     assert(NULL != trie);
 
-    size_t tmp = trie->root;
+    uint32_t tmp = trie->root;
     for (size_t i = 0; i < len; ++i)
     {
         size_t const idx = vrd_iupac_to_idx(str[i]);
@@ -123,7 +123,7 @@ vrd_iupac_trie_find(vrd_IUPAC_Trie const* const trie,
 {
     assert(NULL != trie);
 
-    size_t tmp = trie->root;
+    uint32_t tmp = trie->root;
     for (size_t i = 0; i < len; ++i)
     {
         size_t const idx = vrd_iupac_to_idx(str[i]);
