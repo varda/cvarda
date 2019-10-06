@@ -4,7 +4,7 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/avl_tree.h"    // vrd_avl_tree_destroy
-#include "../include/iupac_trie.h"  // vrd_iuapc_to_idx
+#include "../include/iupac.h"   // vrd_iuapc_to_idx
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "helpers.h"    // CFG_*, sample_set
 

@@ -4,8 +4,8 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t
 #include <stdlib.h>     // malloc, free
 
-#include "../include/iupac_trie.h"  // VRD_IUPAC_SIZE,
-                                    // vrd_IUPAC_Trie, vrd_iupac_trie_*
+#include "../include/iupac.h"   // VRD_IUPAC_SIZE, vrd_iupac_to_idx
+#include "../include/iupac_trie.h"  // vrd_IUPAC_Trie, vrd_iupac_trie_*
 
 
 enum

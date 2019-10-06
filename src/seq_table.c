@@ -14,7 +14,7 @@ struct vrd_Seq_Table
 
     size_t capacity;
     size_t next;
-    char* restrict table[];
+    char* restrict sequences[];
 }; // vrd_Seq_Table
 
 
@@ -29,7 +29,7 @@ vrd_seq_table_init(size_t const capacity,
     } // if
 
     vrd_Seq_Table* const table = malloc(sizeof(*table) +
-                                        sizeof(table->table[0]) *
+                                        sizeof(table->sequences[0]) *
                                         capacity);
     if (NULL == table)
     {
@@ -57,7 +57,7 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table)
     {
         for (size_t i = 0; i < (*table)->next; ++i)
         {
-            free((*table)->table[i]);
+            free((*table)->sequences[i]);
         } // for
         vrd_iupac_trie_destroy(&(*table)->trie);
         free(*table);
@@ -85,13 +85,13 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
         return NULL;
     } // if
 
-    table->table[table->next] = malloc(len);
-    if (NULL == table->table[table->next])
+    table->sequences[table->next] = malloc(len);
+    if (NULL == table->sequences[table->next])
     {
         return NULL;
     } // if
 
-    char* const restrict ptr = table->table[table->next];
+    char* const restrict ptr = table->sequences[table->next];
     (void*) strncpy(ptr, str, len);
 
     table->next += 1;

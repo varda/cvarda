@@ -9,22 +9,22 @@ extern "C"
 
 
 #ifndef VRD_VERSION_MAJOR
-#define VRD_VERSION_MAJOR 0
+#define VRD_VERSION_MAJOR 1
 #endif
 
 #ifndef VRD_VERSION_MINOR
-#define VRD_VERSION_MINOR 0
+#define VRD_VERSION_MINOR 1
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 0
+#define VRD_VERSION_PATCH 1
 #endif
 
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
-#include "../include/iupac_trie.h"  // vrd_IUPAC_Trie, vrd_iupac_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
+#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_tabel_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 
 
