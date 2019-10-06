@@ -9,7 +9,6 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 
@@ -32,7 +31,7 @@ typedef struct vrd_Itv_Tree vrd_Itv_Tree;
  * @return A pointer to the tree on success, otherwise NULL.
  */
 vrd_Itv_Tree*
-vrd_itv_tree_init(uint32_t const capacity);
+vrd_itv_tree_init(size_t const capacity);
 
 
 /**
@@ -59,9 +58,9 @@ vrd_itv_tree_destroy(vrd_Itv_Tree* restrict* const tree);
  */
 vrd_Itv_Node*
 vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
-                    uint32_t const start,
-                    uint32_t const end,
-                    uint32_t const sample_id);
+                    size_t const start,
+                    size_t const end,
+                    size_t const sample_id);
 
 
 /**
@@ -75,8 +74,8 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
  */
 size_t
 vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
-                   uint32_t const start,
-                   uint32_t const end,
+                   size_t const start,
+                   size_t const end,
                    vrd_AVL_Tree const* const restrict subset);
 
 

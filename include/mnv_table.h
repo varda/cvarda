@@ -20,10 +20,18 @@ typedef struct vrd_MNV_Table vrd_MNV_Table;
 /**
  * Create and initialize a MNV table.
  *
+ * @param ref_capacity limits the number of reference sequences in the
+ *                     table.
+ * @param ref_size_capacity limits the combined length of the reference
+ *                          sequences in the table.
+ * @param tree_capacity limits the number of entries per reference
+ *                      sequence in the table.
  * @return A pointer to the table on success, otherwise NULL.
  */
 vrd_MNV_Table*
-vrd_mnv_table_init(void);
+vrd_mnv_table_init(size_t const ref_capacity,
+                   size_t const ref_size_capacity,
+                   size_t const tree_capacity);
 
 
 /**
@@ -54,14 +62,14 @@ vrd_mnv_table_destroy(vrd_MNV_Table* restrict* const table);
  * @return 0 on success; otherwise -1.
  */
 int
-vrd_mnv_table_insert(vrd_MNV_Table* const table,
+vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
                      size_t const len,
                      char const reference[len],
                      size_t const start,
                      size_t const end,
                      size_t const sample_id,
                      size_t const phase,
-                     void* const inserted);
+                     void* const restrict inserted);
 
 
 #ifdef __cplusplus

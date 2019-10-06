@@ -9,7 +9,12 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
+
+
+enum
+{
+    VRD_IUPAC_SIZE = 16
+}; // constants
 
 
 static inline size_t
@@ -17,6 +22,10 @@ vrd_iupac_to_idx(char const ch)
 {
     switch (ch)
     {
+        case '.':
+        case 'Z':
+        case 'z':
+            return 0;
         case 'A':
         case 'a':
             return 1;
@@ -65,7 +74,7 @@ vrd_iupac_to_idx(char const ch)
         case 'n':
             return 15;
     } // switch
-    return 0;
+    return VRD_IUPAC_SIZE;
 } // vrd_iupac_to_idx
 
 
@@ -82,7 +91,7 @@ typedef struct vrd_IUPAC_Trie vrd_IUPAC_Trie;
  * @return A pointer to the trie on success, otherwise NULL.
  */
 vrd_IUPAC_Trie*
-vrd_iupac_trie_init(uint32_t const capacity);
+vrd_iupac_trie_init(size_t const capacity);
 
 
 /**

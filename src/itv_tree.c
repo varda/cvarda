@@ -39,8 +39,13 @@ struct vrd_Itv_Tree
 
 
 vrd_Itv_Tree*
-vrd_itv_tree_init(uint32_t const capacity)
+vrd_itv_tree_init(size_t const capacity)
 {
+    if ((size_t) UINT32_MAX <= capacity)
+    {
+        return NULL;
+    } // if
+
     vrd_Itv_Tree* const tree = malloc(sizeof(vrd_Itv_Tree) +
                                       sizeof(vrd_Itv_Node) *
                                       ((size_t) capacity + 1));
@@ -69,16 +74,14 @@ vrd_itv_tree_destroy(vrd_Itv_Tree* restrict* const tree)
 
 
 static inline uint32_t
-max(uint32_t const a,
-    uint32_t const b)
+max(uint32_t const a, uint32_t const b)
 {
     return a > b ? a : b;
 } // max
 
 
 static inline uint32_t
-update_max(vrd_Itv_Tree const* const tree,
-           uint32_t const root)
+update_max(vrd_Itv_Tree const* const tree, uint32_t const root)
 {
     uint32_t res = tree->nodes[root].max;
     if (NULLPTR != tree->nodes[root].child[LEFT])
@@ -94,9 +97,8 @@ update_max(vrd_Itv_Tree const* const tree,
 
 
 // Adapted from:
-// http://adtinfo.org/libitv.html/Inserting-into-an-Itv-Tree.html
-static
-vrd_Itv_Node*
+// http://adtinfo.org/libitv.html/Inserting-into-an-AVL-Tree.html
+static vrd_Itv_Node*
 insert(vrd_Itv_Tree* const tree, uint32_t const ptr)
 {
     assert(NULL != tree);
@@ -268,9 +270,9 @@ insert(vrd_Itv_Tree* const tree, uint32_t const ptr)
 
 vrd_Itv_Node*
 vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
-                    uint32_t const start,
-                    uint32_t const end,
-                    uint32_t const sample_id)
+                    size_t const start,
+                    size_t const end,
+                    size_t const sample_id)
 {
     assert(NULL != tree);
 
@@ -297,9 +299,9 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 static
 size_t
 query_contains(vrd_Itv_Tree const* const restrict tree,
-               uint32_t const root,
-               uint32_t const start,
-               uint32_t const end,
+               size_t const root,
+               size_t const start,
+               size_t const end,
                vrd_AVL_Tree const* const restrict subset)
 {
     if (NULLPTR == root || tree->nodes[root].max < start)
@@ -327,8 +329,8 @@ query_contains(vrd_Itv_Tree const* const restrict tree,
 
 size_t
 vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
-                   uint32_t const start,
-                   uint32_t const end,
+                   size_t const start,
+                   size_t const end,
                    vrd_AVL_Tree const* const restrict subset)
 {
     assert(NULL != tree);

@@ -22,10 +22,18 @@ typedef struct vrd_Cov_Table vrd_Cov_Table;
 /**
  * Create and initialize a coverage table.
  *
+ * @param ref_capacity limits the number of reference sequences in the
+ *                     table.
+ * @param ref_size_capacity limits the combined length of the reference
+ *                          sequences in the table.
+ * @param tree_capacity limits the number of entries per reference
+ *                      sequence in the table.
  * @return A pointer to the table on success, otherwise NULL.
  */
 vrd_Cov_Table*
-vrd_cov_table_init(void);
+vrd_cov_table_init(size_t const ref_capacity,
+                   size_t const ref_size_capacity,
+                   size_t const tree_capacity);
 
 
 /**

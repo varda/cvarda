@@ -58,7 +58,11 @@ node_init(vrd_ASCII_Trie* const trie)
 vrd_ASCII_Trie*
 vrd_ascii_trie_init(size_t const capacity)
 {
-    // FIXME: overflow on capacity
+    if ((size_t) UINT32_MAX <= capacity)
+    {
+        return NULL;
+    } // if
+
     vrd_ASCII_Trie* const trie = malloc(sizeof(*trie) +
                                         sizeof(trie->nodes[0]) *
                                         (capacity + 1));

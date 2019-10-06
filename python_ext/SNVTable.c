@@ -3,7 +3,10 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/varda.h"   // vrd_*
+#include "../include/avl_tree.h"    // vrd_avl_tree_destroy
+#include "../include/iupac_trie.h"  // vrd_iuapc_to_idx
+#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+#include "helpers.h"    // CFG_*, sample_set
 
 
 typedef struct
@@ -18,12 +21,20 @@ SNVTable_new(PyTypeObject* const restrict type,
              PyObject* const restrict args,
              PyObject* const restrict kwds)
 {
-    (void) args;
     (void) kwds;
+
+    size_t ref_capacity = CFG_REF_CAPACITY;
+    size_t ref_size_capacity = CFG_REF_SIZE_CAPACITY;
+    size_t tree_capacity = CFG_TREE_CAPACITY;
+
+    if (!PyArg_ParseTuple(args, "|nnn:SNVTable", &ref_capacity, &ref_size_capacity, &tree_capacity))
+    {
+        return NULL;
+    } // if
 
     SNVTableObject* const restrict self = (SNVTableObject*) type->tp_alloc(type, 0);
 
-    self->table = vrd_snv_table_init();
+    self->table = vrd_snv_table_init(ref_capacity, ref_size_capacity, tree_capacity);
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);

@@ -6,10 +6,9 @@
 #include <stdlib.h>     // EXIT_*
 
 #include "../include/varda.h"   // vrd_version
-
-
 #include "CoverageTable.c"  // CoverageTable
 #include "MNVTable.c"       // MNVTable
+#include "SequenceTable.c"  // SequenceTable
 #include "SNVTable.c"       // SNVTable
 
 
@@ -31,6 +30,11 @@ PyInit_cvarda(void)
     } // if
 
     if (0 > PyType_Ready(&MNVTable))
+    {
+        return NULL;
+    } // if
+
+    if (0 > PyType_Ready(&SequenceTable))
     {
         return NULL;
     } // if
@@ -72,6 +76,12 @@ PyInit_cvarda(void)
 
     Py_INCREF(&MNVTable);
     if (0 > PyModule_AddObject(mod, "MNVTable", (PyObject*) &MNVTable))
+    {
+        return NULL;
+    } // if
+
+    Py_INCREF(&SequenceTable);
+    if (0 > PyModule_AddObject(mod, "SequenceTable", (PyObject*) &SequenceTable))
     {
         return NULL;
     } // if

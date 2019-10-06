@@ -9,7 +9,6 @@ extern "C"
 
 
 #include <stdbool.h>    // bool
-#include <stdint.h>     // uint32_t
 
 
 /**
@@ -30,7 +29,7 @@ typedef struct vrd_AVL_Tree vrd_AVL_Tree;
  * @return A pointer to the tree on success, otherwise NULL.
  */
 vrd_AVL_Tree*
-vrd_avl_tree_init(uint32_t const capacity);
+vrd_avl_tree_init(size_t const capacity);
 
 
 /**
@@ -54,7 +53,7 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree);
  * @return A pointer to the item in the tree on success, otherwise NULL.
  */
 vrd_AVL_Node*
-vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value);
+vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value);
 
 
 /**
@@ -66,7 +65,7 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value);
  */
 bool
 vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
-                        uint32_t const value);
+                        size_t const value);
 
 
 #ifndef NDEBUG

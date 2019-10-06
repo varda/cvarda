@@ -9,7 +9,6 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 
@@ -32,7 +31,7 @@ typedef struct vrd_SNV_Tree vrd_SNV_Tree;
  * @return A pointer to the tree on success, otherwise NULL.
  */
 vrd_SNV_Tree*
-vrd_snv_tree_init(uint32_t const capacity);
+vrd_snv_tree_init(size_t const capacity);
 
 
 /**
@@ -62,10 +61,10 @@ vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree);
  */
 vrd_SNV_Node*
 vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
-                    uint32_t const position,
-                    uint32_t const sample_id,
-                    uint32_t const phase,
-                    uint32_t const type);
+                    size_t const position,
+                    size_t const sample_id,
+                    size_t const phase,
+                    size_t const type);
 
 
 /**
@@ -79,8 +78,8 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
  */
 size_t
 vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
-                   uint32_t const position,
-                   uint32_t const type,
+                   size_t const position,
+                   size_t const type,
                    vrd_AVL_Tree const* const restrict subset);
 
 

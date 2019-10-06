@@ -39,8 +39,13 @@ struct vrd_SNV_Tree
 
 
 vrd_SNV_Tree*
-vrd_snv_tree_init(uint32_t const capacity)
+vrd_snv_tree_init(size_t const capacity)
 {
+    if ((size_t) UINT32_MAX <= capacity)
+    {
+        return NULL;
+    } // if
+
     vrd_SNV_Tree* const tree = malloc(sizeof(vrd_SNV_Tree) +
                                       sizeof(vrd_SNV_Node) *
                                       ((size_t) capacity + 1));
@@ -69,9 +74,8 @@ vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree)
 
 
 // Adapted from:
-// http://adtinfo.org/libsnv.html/Inserting-into-an-SNV-Tree.html
-static
-vrd_SNV_Node*
+// http://adtinfo.org/libsnv.html/Inserting-into-an-AVL-Tree.html
+static vrd_SNV_Node*
 insert(vrd_SNV_Tree* tree, uint32_t const ptr)
 {
     assert(NULL != tree);
@@ -232,10 +236,10 @@ insert(vrd_SNV_Tree* tree, uint32_t const ptr)
 
 vrd_SNV_Node*
 vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
-                    uint32_t const position,
-                    uint32_t const sample_id,
-                    uint32_t const phase,
-                    uint32_t const type)
+                    size_t const position,
+                    size_t const sample_id,
+                    size_t const phase,
+                    size_t const type)
 {
     assert(NULL != tree);
 
@@ -262,8 +266,8 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
 static size_t
 query_contains(vrd_SNV_Tree const* const restrict tree,
                uint32_t const root,
-               uint32_t const position,
-               uint32_t const type,
+               size_t const position,
+               size_t const type,
                vrd_AVL_Tree const* const restrict subset)
 {
     if (NULLPTR == root)
@@ -282,6 +286,7 @@ query_contains(vrd_SNV_Tree const* const restrict tree,
     } // if
 
     size_t res = 0;
+    // TODO: IUPAC match on type
     if (tree->nodes[root].type == type &&
         (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
     {
@@ -295,8 +300,8 @@ query_contains(vrd_SNV_Tree const* const restrict tree,
 
 size_t
 vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
-                   uint32_t const position,
-                   uint32_t const type,
+                   size_t const position,
+                   size_t const type,
                    vrd_AVL_Tree const* const restrict subset)
 {
     assert(NULL != tree);

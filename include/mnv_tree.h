@@ -8,7 +8,7 @@ extern "C"
 #endif
 
 
-#include <stdint.h>     // uint32_t
+#include <stddef.h>     // size_t
 
 
 /**
@@ -29,7 +29,7 @@ typedef struct vrd_MNV_Tree vrd_MNV_Tree;
  * @return A pointer to the tree on success, otherwise NULL.
  */
 vrd_MNV_Tree*
-vrd_mnv_tree_init(uint32_t const capacity);
+vrd_mnv_tree_init(size_t const capacity);
 
 
 /**
@@ -60,12 +60,12 @@ vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree);
  * @return A pointer to the item in the tree on success, otherwise NULL.
  */
 vrd_MNV_Node*
-vrd_mnv_tree_insert(vrd_MNV_Tree* const tree,
-                    uint32_t const start,
-                    uint32_t const end,
-                    uint32_t const sample_id,
-                    uint32_t const phase,
-                    void* const inserted);
+vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
+                    size_t const start,
+                    size_t const end,
+                    size_t const sample_id,
+                    size_t const phase,
+                    void* const restrict inserted);
 
 
 #ifdef __cplusplus

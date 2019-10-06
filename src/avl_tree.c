@@ -36,8 +36,13 @@ struct vrd_AVL_Tree
 
 
 vrd_AVL_Tree*
-vrd_avl_tree_init(uint32_t const capacity)
+vrd_avl_tree_init(size_t const capacity)
 {
+    if ((size_t) UINT32_MAX <= capacity)
+    {
+        return NULL;
+    } // if
+
     vrd_AVL_Tree* const tree = malloc(sizeof(vrd_AVL_Tree) +
                                       sizeof(vrd_AVL_Node) *
                                       ((size_t) capacity + 1));
@@ -67,8 +72,7 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
 
 // Adapted from:
 // http://adtinfo.org/libavl.html/Inserting-into-an-AVL-Tree.html
-static
-vrd_AVL_Node*
+static vrd_AVL_Node*
 insert(vrd_AVL_Tree* tree, uint32_t const ptr)
 {
     assert(NULL != tree);
@@ -228,7 +232,7 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
 
 
 vrd_AVL_Node*
-vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
+vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value)
 {
     assert(NULL != tree);
 
@@ -252,7 +256,7 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, uint32_t const value)
 
 bool
 vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
-                        uint32_t const value)
+                        size_t const value)
 {
     assert(NULL != tree);
 

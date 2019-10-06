@@ -20,10 +20,14 @@ typedef struct vrd_Seq_Table vrd_Seq_Table;
 /**
  * Create and initialize a table.
  *
+ * @param capacity limits the number of sequences in the table.
+ * @param size_capacity limits the combined length of the sequences in
+ *                      the table.
  * @return A pointer to the table on success, otherwise NULL.
  */
 vrd_Seq_Table*
-vrd_seq_table_init(void);
+vrd_seq_table_init(size_t const capacity,
+                   size_t const size_capacity);
 
 
 /**
@@ -46,7 +50,7 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table);
  * @return A pointer to the inserted data on success, otherwise NULL.
  */
 void*
-vrd_seq_table_insert(vrd_Seq_Table* const restrict table,
+vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
                      char const str[len]);
 

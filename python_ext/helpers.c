@@ -3,7 +3,7 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/varda.h"   // vrd_AVL_Tree, vrd_avl_tree_*
+#include "../include/avl_tree.h"   // vrd_AVL_Tree, vrd_avl_tree_*
 
 #include "helpers.h"    // sample_set
 

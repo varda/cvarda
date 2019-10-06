@@ -1,40 +1,53 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
+#include <stdint.h>     // UINT32_MAX
 #include <stdlib.h>     // malloc, free
 
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/snv_tree.h"    // vrd_SNV_Tree, vrd_snv_tree_*
-#include "../include/varda.h"   // VRD_*
 
 
 struct vrd_SNV_Table
 {
     vrd_ASCII_Trie* restrict trie;
 
+    size_t ref_capacity;
+    size_t tree_capacity;
     size_t next;
     vrd_SNV_Tree* restrict tree[];
 }; // vrd_SNV_Table
 
 
 vrd_SNV_Table*
-vrd_snv_table_init(void)
+vrd_snv_table_init(size_t const ref_capacity,
+                   size_t const ref_size_capacity,
+                   size_t const tree_capacity)
 {
+    if ((size_t) UINT32_MAX <= ref_capacity ||
+        (size_t) UINT32_MAX <= ref_size_capacity ||
+        (size_t) UINT32_MAX <= tree_capacity)
+    {
+        return NULL;
+    } // if
+
     vrd_SNV_Table* const table = malloc(sizeof(*table) +
                                         sizeof(table->tree[0]) *
-                                        VRD_MAX_REFS);
+                                        ref_capacity);
     if (NULL == table)
     {
         return NULL;
     } // if
 
-    table->trie = vrd_ascii_trie_init(VRD_MAX_TRIE_SIZE);
+    table->trie = vrd_ascii_trie_init(ref_size_capacity);
     if (NULL == table->trie)
     {
         free(table);
         return NULL;
     } // if
 
+    table->ref_capacity = ref_capacity;
+    table->tree_capacity = tree_capacity;
     table->next = 0;
 
     return table;
@@ -73,12 +86,13 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
                                                       reference);
     if (NULL == tree)
     {
-        if (VRD_MAX_REFS <= table->next)
+        if (table->ref_capacity <= table->next)
         {
             return -1;
         } // if
 
-        table->tree[table->next] = vrd_snv_tree_init(VRD_MAX_TREE_SIZE);
+        table->tree[table->next] =
+            vrd_snv_tree_init(table->tree_capacity);
         if (NULL == table->tree[table->next])
         {
             return -1;
