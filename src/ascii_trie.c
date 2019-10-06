@@ -131,7 +131,7 @@ vrd_ascii_trie_insert(vrd_ASCII_Trie* const restrict trie,
     } // for
 
     trie->nodes[tmp].data = data;
-    return &trie->nodes[tmp];
+    return trie->nodes[tmp].data;
 } // vrd_ascii_trie_insert
 
 

@@ -73,6 +73,13 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
 {
     assert(NULL != table);
 
+    void* const restrict result =
+        vrd_iupac_trie_find(table->trie, len, str);
+    if (NULL != result)
+    {
+        return result;
+    } // if
+
     if (table->capacity <= table->next)
     {
         return NULL;

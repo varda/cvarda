@@ -61,16 +61,22 @@ MNVTable_insert(MNVTableObject* const restrict self,
     int start = 0;
     int end = 0;
     int sample_id = 0;
-    char const* restrict inserted = NULL;
-    size_t len_inserted = 0;
+    PyObject* restrict sequence = NULL;
     int phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iii|s#i:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &inserted, &len_inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#iii|Oi:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &sequence, &phase))
     {
         return NULL;
     } // if
 
-    if (-1 == vrd_mnv_table_insert(self->table, len, reference, start, end, sample_id, phase, NULL))
+    void* restrict inserted = PyCapsule_GetPointer(sequence, "sequence");
+    if (NULL == inserted)
+    {
+        PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
+        return NULL;
+    } // if
+
+    if (-1 == vrd_mnv_table_insert(self->table, len, reference, start, end, sample_id, phase, inserted))
     {
         PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert: vrd_mnv_table_insert() failed");
         return NULL;

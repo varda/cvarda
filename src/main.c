@@ -51,6 +51,7 @@ main(int argc, char* argv[])
     } // if
 
     fprintf(stderr, "insert: %p\n", vrd_seq_table_insert(seq, 4, "ACGT"));
+    fprintf(stderr, "insert: %p\n", vrd_seq_table_insert(seq, 4, "ACGT"));
 
     vrd_seq_table_destroy(&seq);
 

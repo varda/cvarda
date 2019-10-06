@@ -63,13 +63,14 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (-1 == vrd_seq_table_insert(self->table, len, sequence))
+    void* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    if (NULL == result)
     {
         PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_seq_table_insert() failed");
         return NULL;
     } // if
 
-    Py_RETURN_NONE;
+    return PyCapsule_New(result, "sequence", NULL);
 } // SequenceTable_insert
 
 

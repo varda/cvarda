@@ -119,7 +119,7 @@ vrd_iupac_trie_insert(vrd_IUPAC_Trie* const restrict trie,
     } // for
 
     trie->nodes[tmp].data = data;
-    return &trie->nodes[tmp];
+    return trie->nodes[tmp].data;
 } // vrd_iupac_trie_insert
 
 
