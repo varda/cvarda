@@ -64,7 +64,7 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 
 
 /**
- * Query intevals in the tree.
+ * Query intervals in the tree.
  *
  * @param tree is the tree.
  * @param start is the start position of the interval (included).
