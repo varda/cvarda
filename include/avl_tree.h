@@ -12,21 +12,24 @@ extern "C"
 
 
 /**
+ * Opaque data type for an AVL tree.
+ *
+ * see: https://en.wikipedia.org/wiki/Opaque_data_type
+ */
+typedef struct vrd_AVL_Tree vrd_AVL_Tree;
+
+
+/**
  * Opaque data structure for AVL nodes.
  */
 typedef struct vrd_AVL_Node vrd_AVL_Node;
-
-/**
- * Opaque data structure for an AVL tree.
- */
-typedef struct vrd_AVL_Tree vrd_AVL_Tree;
 
 
 /**
  * Create and initialize an AVL tree.
  *
  * @param capacity limits the number of nodes in the tree.
- * @return A pointer to the tree on success, otherwise NULL.
+ * @return An opaque pointer to the tree on success, otherwise `NULL`.
  */
 vrd_AVL_Tree*
 vrd_avl_tree_init(size_t const capacity);
@@ -35,7 +38,7 @@ vrd_avl_tree_init(size_t const capacity);
 /**
  * Destroy an AVL tree.
  *
- * All associated data is deallocated and the reference is set to NULL.
+ * All associated data is deallocated and the reference is set to `NULL`.
  *
  * @param tree is the reference to the tree.
  */
@@ -50,7 +53,7 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree);
  *
  * @param tree is the tree.
  * @param value is the value to insert in the tree.
- * @return A pointer to the item in the tree on success, otherwise NULL.
+ * @return A pointer to the item in the tree on success, otherwise `NULL`.
  */
 vrd_AVL_Node*
 vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value);
@@ -61,7 +64,7 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value);
  *
  * @param tree is the tree.
  * @param value is the value to search in the tree.
- * @return True if the value occurs in the tree, otherwise false.
+ * @return `true` if the value occurs in the tree, otherwise `false`.
  */
 bool
 vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
@@ -78,7 +81,7 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
  *
  * @param stream write to this output file stream.
  * @param tree is the tree.
- * @return The number of characters written on succes, otherwise -1.
+ * @return The number of characters written on success, otherwise `-1`.
  */
 int
 vrd_avl_tree_print(FILE* restrict stream,

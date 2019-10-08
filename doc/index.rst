@@ -11,6 +11,9 @@ Welcome to cvarda's documentation!
 .. doxygenfunction:: vrd_version
    :project: cvarda
 
+.. doxygenfile:: avl_tree.h
+   :project: cvarda
+
 
 Indices and tables
 ==================
