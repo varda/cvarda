@@ -89,6 +89,7 @@ MNVTable_insert(MNVTableObject* const restrict self,
 static PyMethodDef MNVTable_methods[] =
 {
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
+     "insert(reference, start, end, sample_id, type [, phase])\n"
      "Insert a region in the :py:class:`MNVTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int start: The start position of the deleted part of the MNV\n"

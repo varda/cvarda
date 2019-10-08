@@ -77,6 +77,7 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
 static PyMethodDef SequenceTable_methods[] =
 {
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
+     "insert(sequence)\n"
      "Insert a region in the :py:class:`SequenceTable`\n\n"
      ":param str sequence: The (inserted) sequence.\n"},
 

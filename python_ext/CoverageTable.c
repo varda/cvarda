@@ -116,6 +116,7 @@ CoverageTable_query(CoverageTableObject* const restrict self,
 static PyMethodDef CoverageTable_methods[] =
 {
     {"insert", (PyCFunction) CoverageTable_insert, METH_VARARGS,
+     "insert(reference, start, end, sample_id)\n"
      "Insert a region in the :py:class:`CoverageTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int start: The start position of the region (included)\n"
@@ -123,11 +124,12 @@ static PyMethodDef CoverageTable_methods[] =
      ":param int sample_id: The sample ID\n"},
 
     {"query", (PyCFunction) CoverageTable_query, METH_VARARGS,
+     "query(reference, start, end [, subset])\n"
      "Query for covered regions in the :py:class:`CoverageTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int start: The start position of the region (included)\n"
      ":param int end: The end position of the region (excluded)\n"
-     ":param subset: A list of sample IDs, defaults to None\n"
+     ":param subset: A list of sample IDs, defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained covered regions\n"
      ":rtype: integer\n"},

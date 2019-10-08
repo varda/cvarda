@@ -132,6 +132,7 @@ SNVTable_query(CoverageTableObject* const restrict self,
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
+     "insert(reference, position, sample_id, type [, phase])\n"
      "Insert a region in the :py:class:`SNVTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int position: The start position of the SNV.\n"
@@ -141,11 +142,12 @@ static PyMethodDef SNVTable_methods[] =
      ":type phase: integer, optional\n"},
 
     {"query", (PyCFunction) SNVTable_query, METH_VARARGS,
+     "query(reference, position, inserted [, subset])\n"
      "Query for SNVs in the :py:class:`SNVTable`\n\n"
      ":param str reference: The reference sequence ID\n"
      ":param int position: The position of the SNV\n"
      ":param str inserted: The inserted base from IUPAC\n"
-     ":param subset: A list of sample IDs, defaults to None\n"
+     ":param subset: A list of sample IDs, defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained SNVs\n"
      ":rtype: integer\n"},
