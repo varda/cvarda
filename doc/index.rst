@@ -6,13 +6,7 @@ Welcome to cvarda's documentation!
    :caption: Contents:
 
    python
-
-
-.. doxygenfunction:: vrd_version
-   :project: cvarda
-
-.. doxygenfile:: avl_tree.h
-   :project: cvarda
+   c
 
 
 Indices and tables
