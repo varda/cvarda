@@ -6,7 +6,7 @@ Version
 .. doxygenfunction:: vrd_version
    :project: cvarda
 
-AVL
----
+AVL tree
+--------
 .. doxygenfile:: avl_tree.h
    :project: cvarda

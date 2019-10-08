@@ -8,13 +8,13 @@
 #include "tree.h"   // NULLPTR, LEFT, RIGHT
 
 
-struct vrd_AVL_Node
+typedef struct
 {
     uint32_t child[2];
     uint32_t value;
     int32_t  balance :  3;  // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t extra   : 29;  // this extra space can be used to store data
-}; // vrd_AVL_Node
+} vrd_AVL_Node;
 
 
 struct vrd_AVL_Tree
@@ -73,7 +73,7 @@ insert(vrd_AVL_Tree* tree, uint32_t const ptr)
 } // insert
 
 
-vrd_AVL_Node*
+void*
 vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value)
 {
     assert(NULL != tree);
