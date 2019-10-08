@@ -14,7 +14,7 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
            -Wmissing-include-dirs $(addprefix -D, $(OPTIONS))
 CPPFLAGS = $(addprefix -I, $(INC_DIR))
 
-.PHONY: all check clean debug release
+.PHONY: all check clean debug docs release
 
 debug: CFLAGS += -O0 -ggdb3 -DDEBUG
 debug: all
@@ -24,10 +24,15 @@ release: all
 
 all: $(TARGET)
 
-check: $(TARGET)
+export OBJECTS
+check: $(OBJECTS)
+	$(MAKE) -C tests
 
 clean:
 	rm -f $(OBJECTS) $(DEPS) $(TARGET)
+
+docs:
+	$(MAKE) html -C doc
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TARGET) $(OBJECTS)
