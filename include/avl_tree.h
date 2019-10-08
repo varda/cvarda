@@ -4,13 +4,14 @@
  * Defines an AVL tree, i.e., a self-balancing binary tree. See also:
  * https://en.wikipedia.org/wiki/AVL_tree
  *
- * The tree stores a multiset of integers. The supported operations are:
+ * The tree implements a multiset of integers. The supported operations
+ * are:
  *   - create an empty tree (vrd_avl_tree_init())
  *   - destroy a tree (vrd_avl_tree_destroy())
  *   - insert a value (vrd_avl_tree_insert())
  *   - check whether a value is in the tree (vrd_avl_tree_is_element())
  * @note Deleting values from the tree is not supported.
- * @note Duplicate values are explicitly allowed (because it is a
+ * @note Duplicate values are explicitly allowed (because it implements a
  *       multiset).
  * @note It is safe to `free()` a reference to an AVL tree.
  * @warning The size of the integers as well as the number of nodes in
@@ -91,6 +92,8 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value);
  * @param tree is a valid reference to an AVL tree.
  * @param value is the value to check in the tree.
  * @return `true` if the value is found in the tree, otherwise `false`.
+ * @note The reference to the tree must be valid, otherwise it results in
+ *       undefined behavior.
  * @note The value is not bound checked.
  */
 bool
@@ -109,6 +112,8 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
  * @param stream is a valid output file stream.
  * @param tree is a valid reference to an AVL tree.
  * @return The number of characters written on success, otherwise `-1`.
+ * @note The reference to the tree must be valid, otherwise it results in
+ *       undefined behavior.
  * @note This function may be unavailable when `NDEBUG` is defined.
  */
 int
