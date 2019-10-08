@@ -57,18 +57,3 @@ main(int argc, char* argv[])
 
     return EXIT_SUCCESS;
 } // main
-
-
-/*! \mainpage Varda2 Genetic Variant Frequency Database
- *
- * \section intro_sec Introduction
- *
- * This is the introduction.
- *
- * \section requirements_sec Requirements
- *
- * \subsection req_python Virtual Environment
- *
- * RTFM.
- *
- */
