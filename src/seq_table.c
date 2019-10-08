@@ -92,7 +92,7 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
     } // if
 
     char* const restrict ptr = table->sequences[table->next];
-    (void*) strncpy(ptr, str, len);
+    (void) strncpy(ptr, str, len);
 
     table->next += 1;
 
