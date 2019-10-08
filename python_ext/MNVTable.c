@@ -91,11 +91,11 @@ static PyMethodDef MNVTable_methods[] =
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
      "insert(reference, start, end, sample_id, type [, phase])\n"
      "Insert a region in the :py:class:`MNVTable`\n\n"
-     ":param str reference: The reference sequence ID\n"
-     ":param int start: The start position of the deleted part of the MNV\n"
-     ":param int end: The end position of the deleted part of the MNV\n"
-     ":param int sample_id: The sample ID\n"
-     ":param str type: The inserted sequence\n"
+     ":param string reference: The reference sequence ID\n"
+     ":param integer start: The start position of the deleted part of the MNV\n"
+     ":param integer end: The end position of the deleted part of the MNV\n"
+     ":param integer sample_id: The sample ID\n"
+     ":param string type: The inserted sequence\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
@@ -107,8 +107,15 @@ static PyTypeObject MNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.MNVTable",
-    .tp_doc = "This class is a conceptual representation of a database"
-              "table containing multi nucleotide variants (MNV).",
+    .tp_doc = "MNVTable([ref_capacity[, ref_size_capacity[, tree_capacity]]])\n"
+              "This class is a conceptual representation of a database"
+              "table containing multi nucleotide variants (MNV).\n\n"
+              ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
+              ":type ref_capacity: integer, optional\n"
+              ":param ref_size_capacity:  defaults to :c:data:`CFG_REF_SIZE_CAPACITY`\n"
+              ":type ref_size_capacity: integer, optional\n"
+              ":param tree_capacity:  defaults to :c:data:`CFG_REF_TREE_CAPACITY`\n"
+              ":type tree_capacity: integer, optional\n",
     .tp_basicsize = sizeof(MNVTableObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,

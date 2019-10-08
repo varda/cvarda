@@ -132,22 +132,22 @@ SNVTable_query(CoverageTableObject* const restrict self,
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
-     "insert(reference, position, sample_id, type [, phase])\n"
+     "insert(reference, position, sample_id, type[, phase])\n"
      "Insert a region in the :py:class:`SNVTable`\n\n"
-     ":param str reference: The reference sequence ID\n"
-     ":param int position: The start position of the SNV.\n"
-     ":param int sample_id: The sample ID\n"
-     ":param str type: The inserted base from IUPAC\n"
+     ":param string reference: The reference sequence ID\n"
+     ":param integer position: The start position of the SNV.\n"
+     ":param integer sample_id: The sample ID\n"
+     ":param string type: The inserted base from IUPAC\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
     {"query", (PyCFunction) SNVTable_query, METH_VARARGS,
-     "query(reference, position, inserted [, subset])\n"
+     "query(reference, position, inserted[, subset])\n"
      "Query for SNVs in the :py:class:`SNVTable`\n\n"
-     ":param str reference: The reference sequence ID\n"
-     ":param int position: The position of the SNV\n"
-     ":param str inserted: The inserted base from IUPAC\n"
-     ":param subset: A list of sample IDs, defaults to `None`\n"
+     ":param string reference: The reference sequence ID\n"
+     ":param integer position: The position of the SNV\n"
+     ":param string inserted: The inserted base from IUPAC\n"
+     ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained SNVs\n"
      ":rtype: integer\n"},
@@ -160,8 +160,15 @@ static PyTypeObject SNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.SNVTable",
-    .tp_doc = "This class is a conceptual representation of a database"
-              "table containing single nucleotide variants (SNV).",
+    .tp_doc = "SNVTable([ref_capacity[, ref_size_capacity[, tree_capacity]]])\n"
+              "This class is a conceptual representation of a database"
+              "table containing single nucleotide variants (SNV).\n\n"
+              ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
+              ":type ref_capacity: integer, optional\n"
+              ":param ref_size_capacity:  defaults to :c:data:`CFG_REF_SIZE_CAPACITY`\n"
+              ":type ref_size_capacity: integer, optional\n"
+              ":param tree_capacity:  defaults to :c:data:`CFG_REF_TREE_CAPACITY`\n"
+              ":type tree_capacity: integer, optional\n",
     .tp_basicsize = sizeof(SNVTableObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,

@@ -79,7 +79,7 @@ static PyMethodDef SequenceTable_methods[] =
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
      "insert(sequence)\n"
      "Insert a region in the :py:class:`SequenceTable`\n\n"
-     ":param str sequence: The (inserted) sequence.\n"},
+     ":param string sequence: The (inserted) sequence.\n"},
 
     {NULL}  // sentinel
 }; // SequenceTable_methods
@@ -89,8 +89,13 @@ static PyTypeObject SequenceTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.SequenceTable",
-    .tp_doc = "This class is a conceptual representation of a database"
-              "table containing (inserted) sequences.",
+    .tp_doc = "SequenceTable([ref_capacity[, ref_size_capacity]])\n"
+              "This class is a conceptual representation of a database"
+              "table containing (inserted) sequences.\n\n"
+              ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
+              ":type ref_capacity: integer, optional\n"
+              ":param ref_size_capacity:  defaults to :c:data:`CFG_REF_SIZE_CAPACITY`\n"
+              ":type ref_size_capacity: integer, optional\n",
     .tp_basicsize = sizeof(SequenceTableObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,

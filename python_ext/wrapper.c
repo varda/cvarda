@@ -16,7 +16,7 @@ static struct PyModuleDef module =
 {
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "cvarda",
-    .m_doc = "Varda2 Variant frequency database C library",
+    .m_doc = "Python module around the Varda2 C library",
     .m_size = -1
 }; // module
 
