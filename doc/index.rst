@@ -5,6 +5,7 @@ Welcome to cvarda's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   python
 
 .. doxygenfunction:: vrd_version
    :project: cvarda
