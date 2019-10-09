@@ -47,12 +47,26 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table);
  * @param table is the table.
  * @param len the length of the string (excluding the '\0').
  * @param str the string.
- * @return A pointer to the inserted data on success, otherwise NULL.
+ * @return A pointer to the inserted sequence on success, otherwise NULL.
  */
-char*
+char const*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
                      char const str[len]);
+
+
+/**
+ * Query for a sequence in the table.
+ *
+ * @param table is the table.
+ * @param len the length of the string (excluding the '\0').
+ * @param str the string.
+ * @return A pointer to the sequence on success, otherwise NULL.
+ */
+char const*
+vrd_seq_table_query(vrd_Seq_Table* const table,
+                    size_t const len,
+                    char const str[len]);
 
 
 #ifdef __cplusplus

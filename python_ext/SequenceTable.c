@@ -63,7 +63,7 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    char const* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
     if (NULL == result)
     {
         PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_seq_table_insert() failed");
@@ -74,12 +74,38 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
 } // SequenceTable_insert
 
 
+static PyObject*
+SequenceTable_query(SequenceTableObject* const restrict self,
+                    PyObject* const restrict args)
+{
+    char const* restrict sequence = NULL;
+    size_t len = 0;
+
+    if (!PyArg_ParseTuple(args, "s#:SequenceTable.query", &sequence, &len))
+    {
+        return NULL;
+    } // if
+
+    void* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    return PyCapsule_New(result, "sequence", NULL);
+} // SequenceTable_query
+
+
 static PyMethodDef SequenceTable_methods[] =
 {
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
      "insert(sequence)\n"
      "Insert a region in the :py:class:`SequenceTable`\n\n"
-     ":param string sequence: The (inserted) sequence.\n"},
+     ":param string sequence: The sequence.\n"
+     ":return: A reference to the inserted sequence\n"
+     ":rtype: Py_Capsulated pointer\n"},
+
+    {"query", (PyCFunction) SequenceTable_query, METH_VARARGS,
+     "query(sequence)\n"
+     "Query for a region in the :py:class:`SequenceTable`\n\n"
+     ":param string sequence: The sequence.\n"
+     ":return: A reference to the found sequence\n"
+     ":rtype: Py_Capsulated pointer\n"},
 
     {NULL}  // sentinel
 }; // SequenceTable_methods

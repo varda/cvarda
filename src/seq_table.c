@@ -66,14 +66,14 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table)
 } // vrd_seq_table_destroy
 
 
-char*
+char const*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
                      char const str[len])
 {
     assert(NULL != table);
 
-    void* const restrict result =
+    char const* const restrict result =
         vrd_iupac_trie_find(table->trie, len, str);
     if (NULL != result)
     {
@@ -98,3 +98,14 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
 
     return vrd_iupac_trie_insert(table->trie, len, str, ptr);
 } // vrd_seq_table_insert
+
+
+char const*
+vrd_seq_table_query(vrd_Seq_Table* const table,
+                    size_t const len,
+                    char const str[len])
+{
+    assert(NULL != table);
+
+    return vrd_iupac_trie_find(table->trie, len, str);
+} // vrd_seq_table_query
