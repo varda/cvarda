@@ -10,6 +10,8 @@ extern "C"
 
 #include <stddef.h>     // size_t
 
+#include "avl_tree.h"   // vrd_AVL_Tree
+
 
 /**
  * Opaque data structure for a multi nucleotide variant (MNV) table.
@@ -69,7 +71,31 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
                      size_t const end,
                      size_t const sample_id,
                      size_t const phase,
-                     void* const restrict inserted);
+                     char const* const restrict inserted);
+
+
+/**
+ * Query for MNVs in the table.
+ *
+ * @param table is the table.
+ * @param len the length of the reference ID (excluding the '\0').
+ * @param reference the reference ID.
+ * @param start is the start position of the deleted part of the MNV
+ *              (included).
+ * @param end is the end position of the deleted part of the MNV
+ *            (excluded).
+ * @param inserted is the inserted sequence of the MNV.
+ * @param subset is the subset of sample IDs.
+ * @return The count of reported regions.
+ */
+size_t
+vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
+                    size_t const len,
+                    char const reference[len],
+                    size_t const start,
+                    size_t const end,
+                    char const* const restrict inserted,
+                    vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

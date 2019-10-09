@@ -16,7 +16,7 @@ struct vrd_MNV_Node
     int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
     uint32_t phase;
-    void* inserted;
+    char const* inserted;
 }; // vrd_MNV_Node
 
 
@@ -100,7 +100,7 @@ vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
                     size_t const end,
                     size_t const sample_id,
                     size_t const phase,
-                    void* const restrict inserted)
+                    char const* const restrict inserted)
 {
     assert(NULL != tree);
 
@@ -124,3 +124,50 @@ vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
 
     return insert(tree, ptr);
 } // vrd_mnv_tree_insert
+
+
+static
+size_t
+query_contains(vrd_MNV_Tree const* const restrict tree,
+               size_t const root,
+               size_t const start,
+               size_t const end,
+               char const* const restrict inserted,
+               vrd_AVL_Tree const* const restrict subset)
+{
+    if (NULLPTR == root || tree->nodes[root].max < start)
+    {
+        return 0;
+    } // if
+
+    if (tree->nodes[root].start > start)
+    {
+        return query_contains(tree, tree->nodes[root].child[LEFT], start, end, inserted, subset);
+    } // if
+
+    // TODO: semantics on inserted
+    size_t res = 0;
+    if (start >= tree->nodes[root].start &&
+        end <= tree->nodes[root].end &&
+        inserted == tree->nodes[root].inserted &&
+        (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
+    {
+        res = 1;
+    } // if
+
+    return res + query_contains(tree, tree->nodes[root].child[LEFT], start, end, inserted, subset) +
+                 query_contains(tree, tree->nodes[root].child[RIGHT], start, end, inserted, subset);
+} // query_contains
+
+
+size_t
+vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
+                   size_t const start,
+                   size_t const end,
+                   char const* const restrict inserted,
+                   vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != tree);
+
+    return query_contains(tree, tree->root, start, end, inserted, subset);
+} // vrd_mnv_tree_query

@@ -10,6 +10,8 @@ extern "C"
 
 #include <stddef.h>     // size_t
 
+#include "avl_tree.h"   // vrd_AVL_Tree
+
 
 /**
  * Opaque data structure for MNV nodes.
@@ -65,7 +67,27 @@ vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
                     size_t const end,
                     size_t const sample_id,
                     size_t const phase,
-                    void* const restrict inserted);
+                    char const* const restrict inserted);
+
+
+/**
+ * Query MNVs in the tree.
+ *
+ * @param tree is the tree.
+ * @param start is the start position of the deleted part of the MNV
+ *              (included).
+ * @param end is the end position of the deleted part of the MNV
+ *            (excluded).
+ * @param inserted is the inserted sequence.
+ * @param subset is the subset of sample IDs.
+ * @return The count of reported MNVs.
+ */
+size_t
+vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
+                   size_t const start,
+                   size_t const end,
+                   char const* const restrict inserted,
+                   vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

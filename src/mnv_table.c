@@ -4,6 +4,7 @@
 #include <stdlib.h>     // malloc, free
 
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
 #include "../include/mnv_tree.h"    // vrd_MNV_Tree, vrd_mnv_tree_*
 
@@ -78,7 +79,7 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
                      size_t const end,
                      size_t const sample_id,
                      size_t const phase,
-                     void* const restrict inserted)
+                     char const* const restrict inserted)
 {
     assert(NULL != table);
 
@@ -123,3 +124,25 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
 
     return 0;
 } // vrd_mnv_table_insert
+
+
+size_t
+vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
+                    size_t const len,
+                    char const reference[len],
+                    size_t const start,
+                    size_t const end,
+                    char const* const restrict inserted,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != table);
+
+    vrd_MNV_Tree const* const restrict tree =
+        vrd_ascii_trie_find(table->trie, len, reference);
+    if (NULL == tree)
+    {
+        return 0;
+    } // if
+
+    return vrd_mnv_tree_query(tree, start, end, inserted, subset);
+} // vrd_mnv_table_query

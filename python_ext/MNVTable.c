@@ -69,7 +69,7 @@ MNVTable_insert(MNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* restrict inserted = PyCapsule_GetPointer(sequence, "sequence");
+    char const* const restrict inserted = PyCapsule_GetPointer(sequence, "sequence");
     if (NULL == inserted)
     {
         PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
@@ -86,6 +86,49 @@ MNVTable_insert(MNVTableObject* const restrict self,
 } // MNVTable_insert
 
 
+static PyObject*
+MNVTable_query(MNVTableObject* const restrict self,
+               PyObject* const restrict args)
+{
+    char const* restrict reference = NULL;
+    size_t len = 0;
+    int start = 0;
+    int end = 0;
+    PyObject* restrict sequence = NULL;
+    PyObject* restrict list = NULL;
+
+    if (!PyArg_ParseTuple(args, "s#ii|OO!:MNVTable.insert", &reference, &len, &start, &end, &sequence, &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    char const* const restrict inserted = PyCapsule_GetPointer(sequence, "sequence");
+    if (NULL == inserted)
+    {
+        PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
+        return NULL;
+    } // if
+
+    vrd_AVL_Tree* restrict subset = NULL;
+    if (NULL != list)
+    {
+        subset = sample_set(list);
+        if (NULL == subset)
+        {
+            return NULL;
+        } // if
+    } // if
+
+    size_t result = 0;
+    Py_BEGIN_ALLOW_THREADS
+    result = vrd_mnv_table_query(self->table, len, reference, start, end, inserted, subset);
+    vrd_avl_tree_destroy(&subset);
+    Py_END_ALLOW_THREADS
+
+    return Py_BuildValue("i", result);
+} // MNVTable_query
+
+
 static PyMethodDef MNVTable_methods[] =
 {
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
@@ -99,6 +142,19 @@ static PyMethodDef MNVTable_methods[] =
      ":type sequence: Py_Capsulated pointer\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
+
+    {"query", (PyCFunction) MNVTable_query, METH_VARARGS,
+     "query(reference, start, end, inserted[, subset])\n"
+     "Query for MNVs in the :py:class:`MNVTable`\n\n"
+     ":param string reference: The reference sequence ID\n"
+     ":param integer start: The start position of the deleted part of the MNV\n"
+     ":param integer end: The end position of the deleted part of the MNV\n"
+     ":param sequence: A reference to an object stored in :py:class:`SequenceTable`\n"
+     ":type sequence: Py_Capsulated pointer\n"
+     ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
+     ":type subset: list, optional\n"
+     ":return: The number of contained MNVs\n"
+     ":rtype: integer\n"},
 
     {NULL}  // sentinel
 }; // MNVTable_methods

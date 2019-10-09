@@ -88,7 +88,7 @@ SNVTable_insert(SNVTableObject* const restrict self,
 
 
 static PyObject*
-SNVTable_query(CoverageTableObject* const restrict self,
+SNVTable_query(SNVTableObject* const restrict self,
                PyObject* const restrict args)
 {
     char const* restrict reference = NULL;
