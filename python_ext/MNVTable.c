@@ -139,7 +139,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param integer sample_id: The sample ID\n"
      ":param sequence: A reference to an object stored in :py:class:`SequenceTable`\n"
-     ":type sequence: Py_Capsulated pointer\n"
+     ":type sequence: PyCapsule object\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
@@ -150,7 +150,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param sequence: A reference to an object stored in :py:class:`SequenceTable`\n"
-     ":type sequence: Py_Capsulated pointer\n"
+     ":type sequence: PyCapsule object\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained MNVs\n"

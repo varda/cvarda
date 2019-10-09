@@ -98,14 +98,14 @@ static PyMethodDef SequenceTable_methods[] =
      "Insert a region in the :py:class:`SequenceTable`\n\n"
      ":param string sequence: The sequence.\n"
      ":return: A reference to the inserted sequence\n"
-     ":rtype: Py_Capsulated pointer\n"},
+     ":rtype: PyCapsule object\n"},
 
     {"query", (PyCFunction) SequenceTable_query, METH_VARARGS,
      "query(sequence)\n"
      "Query for a region in the :py:class:`SequenceTable`\n\n"
      ":param string sequence: The sequence.\n"
      ":return: A reference to the found sequence\n"
-     ":rtype: Py_Capsulated pointer\n"},
+     ":rtype: PyCapsule object\n"},
 
     {NULL}  // sentinel
 }; // SequenceTable_methods
