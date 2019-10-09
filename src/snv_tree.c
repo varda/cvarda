@@ -16,7 +16,7 @@ struct vrd_SNV_Node
     int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
     uint32_t phase     : 28;
-    uint32_t type      :  4;    // [0, ..., 15]
+    uint32_t inserted  :  4;    // [0, ..., 15]
 }; // vrd_SNV_Node
 
 
@@ -81,7 +81,7 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
                     size_t const position,
                     size_t const sample_id,
                     size_t const phase,
-                    size_t const type)
+                    size_t const inserted)
 {
     assert(NULL != tree);
 
@@ -99,7 +99,7 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
     tree->nodes[ptr].balance = 0;
     tree->nodes[ptr].sample_id = sample_id;
     tree->nodes[ptr].phase = phase;
-    tree->nodes[ptr].type = type;
+    tree->nodes[ptr].inserted = inserted;
 
     return insert(tree, ptr);
 } // vrd_snv_tree_insert
@@ -109,7 +109,7 @@ static size_t
 query_contains(vrd_SNV_Tree const* const restrict tree,
                uint32_t const root,
                size_t const position,
-               size_t const type,
+               size_t const inserted,
                vrd_AVL_Tree const* const restrict subset)
 {
     if (NULLPTR == root)
@@ -119,34 +119,34 @@ query_contains(vrd_SNV_Tree const* const restrict tree,
 
     if (tree->nodes[root].position > position)
     {
-        return query_contains(tree, tree->nodes[root].child[LEFT], position, type, subset);
+        return query_contains(tree, tree->nodes[root].child[LEFT], position, inserted, subset);
     } // if
 
     if (tree->nodes[root].position < position)
     {
-        return query_contains(tree, tree->nodes[root].child[RIGHT], position, type, subset);
+        return query_contains(tree, tree->nodes[root].child[RIGHT], position, inserted, subset);
     } // if
 
     size_t res = 0;
-    // TODO: IUPAC match on type
-    if (tree->nodes[root].type == type &&
+    // TODO: IUPAC match on inserted
+    if (tree->nodes[root].inserted == inserted &&
         (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
     {
         res = 1;
     } // if
 
-    return res + query_contains(tree, tree->nodes[root].child[LEFT], position, type, subset) +
-                 query_contains(tree, tree->nodes[root].child[RIGHT], position, type, subset);
+    return res + query_contains(tree, tree->nodes[root].child[LEFT], position, inserted, subset) +
+                 query_contains(tree, tree->nodes[root].child[RIGHT], position, inserted, subset);
 } // query_contains
 
 
 size_t
 vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
                    size_t const position,
-                   size_t const type,
+                   size_t const inserted,
                    vrd_AVL_Tree const* const restrict subset)
 {
     assert(NULL != tree);
 
-    return query_contains(tree, tree->root, position, type, subset);
+    return query_contains(tree, tree->root, position, inserted, subset);
 } // vrd_snv_tree_query

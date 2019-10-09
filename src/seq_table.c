@@ -66,7 +66,7 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table)
 } // vrd_seq_table_destroy
 
 
-void*
+char*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
                      char const str[len])

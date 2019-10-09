@@ -137,7 +137,7 @@ static PyMethodDef SNVTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer position: The start position of the SNV.\n"
      ":param integer sample_id: The sample ID\n"
-     ":param string type: The inserted base from IUPAC\n"
+     ":param string inserted: The inserted nucleotide from IUPAC\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
@@ -146,7 +146,7 @@ static PyMethodDef SNVTable_methods[] =
      "Query for SNVs in the :py:class:`SNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer position: The position of the SNV\n"
-     ":param string inserted: The inserted base from IUPAC\n"
+     ":param string inserted: The inserted nucleotide from IUPAC\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained SNVs\n"

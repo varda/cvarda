@@ -49,7 +49,7 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table);
  * @param str the string.
  * @return A pointer to the inserted data on success, otherwise NULL.
  */
-void*
+char*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
                      char const str[len]);

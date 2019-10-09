@@ -77,7 +77,7 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
                      size_t const position,
                      size_t const sample_id,
                      size_t const phase,
-                     size_t const type)
+                     size_t const inserted)
 {
     assert(NULL != table);
 
@@ -114,7 +114,7 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
                                     position,
                                     sample_id,
                                     phase,
-                                    type))
+                                    inserted))
     {
         return -1;
     } // if
@@ -128,7 +128,7 @@ vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
                     size_t const len,
                     char const reference[len],
                     size_t const position,
-                    size_t const type,
+                    size_t const inserted,
                     vrd_AVL_Tree const* const restrict subset)
 {
     assert(NULL != table);
@@ -140,5 +140,5 @@ vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
         return 0;
     } // if
 
-    return vrd_snv_tree_query(tree, position, type, subset);
+    return vrd_snv_tree_query(tree, position, inserted, subset);
 } // vrd_snv_table_query

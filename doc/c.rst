@@ -10,3 +10,8 @@ AVL tree
 --------
 .. doxygenfile:: avl_tree.h
    :project: cvarda
+
+Interval tree
+-------------
+.. doxygenfile:: itv_tree.h
+   :project: cvarda

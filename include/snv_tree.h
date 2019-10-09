@@ -55,8 +55,9 @@ vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree);
  * @param sample_id is the ID of the sample that contains the SNV.
  * @param phase is the phase group (position based) to which the SNV
  *              belongs.
- * @param type is the type of the SNV, e.g., A, C, G, or T, currently,
- *             nucleotide IUPAC is supported.
+ * @param inserted is the inserted nucleotide of the SNV, e.g., A, C, G,
+ *                 or T, currently,
+ *                 nucleotide IUPAC is supported.
  * @return A pointer to the item in the tree on success, otherwise NULL.
  */
 vrd_SNV_Node*
@@ -64,7 +65,7 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
                     size_t const position,
                     size_t const sample_id,
                     size_t const phase,
-                    size_t const type);
+                    size_t const inserted);
 
 
 /**
@@ -72,14 +73,14 @@ vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
  *
  * @param tree is the tree.
  * @param position is the position of the SNV.
- * @param type is the type of the SNV.
+ * @param inserted is the inserted nucleotide of the SNV.
  * @param subset is the subset of sample IDs.
  * @return The count of reported SNVs.
  */
 size_t
 vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
                    size_t const position,
-                   size_t const type,
+                   size_t const inserted,
                    vrd_AVL_Tree const* const restrict subset);
 
 
