@@ -95,7 +95,8 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param integer sample_id: The sample ID\n"
-     ":param string type: The inserted sequence\n"
+     ":param sequence: A reference to an object stored in :py:class:`SequenceTable`\n"
+     ":type sequence: Py_Capsulated pointer\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
