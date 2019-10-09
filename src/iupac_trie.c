@@ -4,8 +4,8 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t
 #include <stdlib.h>     // malloc, free
 
-#include "../include/iupac.h"   // VRD_IUPAC_SIZE, vrd_iupac_to_idx
 #include "../include/iupac_trie.h"  // vrd_IUPAC_Trie, vrd_iupac_trie_*
+#include "iupac.h"   // IUPAC_SIZE, iupac_to_idx
 
 
 enum
@@ -17,7 +17,7 @@ enum
 struct Node
 {
     void* data;
-    uint32_t child[VRD_IUPAC_SIZE];
+    uint32_t child[IUPAC_SIZE];
 }; // Node
 
 
@@ -45,7 +45,7 @@ node_init(vrd_IUPAC_Trie* const trie)
     trie->next += 1;
 
     trie->nodes[ptr].data = NULL;
-    for (size_t i = 0; i < VRD_IUPAC_SIZE; ++i)
+    for (size_t i = 0; i < IUPAC_SIZE; ++i)
     {
         trie->nodes[ptr].child[i] = NULLPTR;
     } // for
@@ -100,8 +100,8 @@ vrd_iupac_trie_insert(vrd_IUPAC_Trie* const restrict trie,
     uint32_t tmp = trie->root;
     for (size_t i = 0; i < len; ++i)
     {
-        size_t const idx = vrd_iupac_to_idx(str[i]);
-        if (VRD_IUPAC_SIZE <= idx)
+        size_t const idx = iupac_to_idx(str[i]);
+        if (IUPAC_SIZE <= idx)
         {
             return NULL;
         } // if
@@ -133,8 +133,8 @@ vrd_iupac_trie_find(vrd_IUPAC_Trie const* const trie,
     uint32_t tmp = trie->root;
     for (size_t i = 0; i < len; ++i)
     {
-        size_t const idx = vrd_iupac_to_idx(str[i]);
-        if (VRD_IUPAC_SIZE <= idx)
+        size_t const idx = iupac_to_idx(str[i]);
+        if (IUPAC_SIZE <= idx)
         {
             return NULL;
         } // if

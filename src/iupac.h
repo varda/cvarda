@@ -13,12 +13,12 @@ extern "C"
 
 enum
 {
-    VRD_IUPAC_SIZE = 16
+    IUPAC_SIZE = 16
 }; // constants
 
 
 static inline size_t
-vrd_iupac_to_idx(char const ch)
+iupac_to_idx(char const ch)
 {
     switch (ch)
     {
@@ -74,8 +74,8 @@ vrd_iupac_to_idx(char const ch)
         case 'n':
             return 15;
     } // switch
-    return VRD_IUPAC_SIZE;
-} // vrd_iupac_to_idx
+    return IUPAC_SIZE;
+} // iupac_to_idx
 
 
 #ifdef __cplusplus
