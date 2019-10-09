@@ -87,6 +87,11 @@ SequenceTable_query(SequenceTableObject* const restrict self,
     } // if
 
     void* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    if (NULL == result)
+    {
+        Py_RETURN_NONE;
+    } // if
+
     return PyCapsule_New(result, "sequence", NULL);
 } // SequenceTable_query
 
