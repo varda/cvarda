@@ -4,7 +4,6 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/avl_tree.h"   // vrd_AVL_Tree, vrd_avl_tree_*
-
 #include "helpers.h"    // sample_set
 
 
@@ -12,10 +11,11 @@ vrd_AVL_Tree*
 sample_set(PyObject* const list)
 {
     size_t const n = PyList_Size(list);
-    vrd_AVL_Tree* const tree = vrd_avl_tree_init(n);
+    vrd_AVL_Tree* tree = vrd_avl_tree_init(n);
     if (NULL == tree)
     {
-        return PyErr_NoMemory();
+        PyErr_SetNone(PyExc_MemoryError);
+        return NULL;
     } // if
 
     for (size_t i = 0; i < n; ++i)
