@@ -44,7 +44,7 @@ typedef struct vrd_ASCII_Trie vrd_ASCII_Trie;
 
 /**
  * Create an empty ASCII trie.
- *
+ *. 
  * @param capacity limits the number of nodes in the trie. The actual
  *                 number of nodes in the tree may be further limited by
  *                 the implementation.
@@ -68,7 +68,7 @@ vrd_ascii_trie_destroy(vrd_ASCII_Trie* restrict* const trie);
 
 
 /**
- * Insert a ASCII key with a data value in a trie.
+ * Insert an ASCII key with a data value in a trie.
  *
  * New nodes representing the key may be created in the trie. If the
  * key is already present in the trie, the data value is updated. This

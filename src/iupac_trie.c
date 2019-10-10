@@ -16,7 +16,7 @@ enum
 
 struct Node
 {
-    void* data;
+    char const* data;
     uint32_t child[VRD_IUPAC_SIZE];
 }; // Node
 
@@ -89,11 +89,11 @@ vrd_iupac_trie_destroy(vrd_IUPAC_Trie* restrict* const trie)
 } // vrd_iupac_trie_destroy
 
 
-void*
+char const*
 vrd_iupac_trie_insert(vrd_IUPAC_Trie* const restrict trie,
                       size_t const len,
                       char const str[len],
-                      void* restrict data)
+                      char const* const restrict data)
 {
     assert(NULL != trie);
 
@@ -123,7 +123,7 @@ vrd_iupac_trie_insert(vrd_IUPAC_Trie* const restrict trie,
 } // vrd_iupac_trie_insert
 
 
-void*
+char const*
 vrd_iupac_trie_find(vrd_IUPAC_Trie const* const trie,
                     size_t const len,
                     char const str[len])

@@ -25,3 +25,8 @@ Interval tree
 -------------
 .. doxygenfile:: itv_tree.h
    :project: cvarda
+
+IUPAC trie
+----------
+.. doxygenfile:: iupac_trie.h
+   :project: cvarda
