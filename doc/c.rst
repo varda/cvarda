@@ -1,17 +1,17 @@
 C Interface
 ===========
 
-Version
--------
-.. doxygenfunction:: vrd_version
+Varda
+-----
+.. doxygenfile:: varda.h
+   :project: cvarda
+
+ASCII trie
+----------
+.. doxygenfile:: ascii_trie.h
    :project: cvarda
 
 AVL tree
 --------
 .. doxygenfile:: avl_tree.h
-   :project: cvarda
-
-Interval tree
--------------
-.. doxygenfile:: itv_tree.h
    :project: cvarda

@@ -8,33 +8,14 @@
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 
 
-static char const* const REFSEQ[24] =
+enum
 {
-    "chr1",
-    "chr2",
-    "chr3",
-    "chr4",
-    "chr5",
-    "chr6",
-    "chr7",
-    "chr8",
-    "chr9",
-    "chr10",
-    "chr11",
-    "chr12",
-    "chr13",
-    "chr14",
-    "chr15",
-    "chr16",
-    "chr17",
-    "chr18",
-    "chr19",
-    "chr20",
-    "chr21",
-    "chrX",
-    "chrY",
-    "chrM"
-}; // REFSEQ
+    SEQ_CAPACITY = 100000,
+    SEQ_SIZE_CAPACITY = 1000000,
+    REF_CAPACITY = 1000,
+    REF_SIZE_CAPACITY = 10000,
+    TREE_CAPACITY = 1 << 28
+}; // constants
 
 
 int
@@ -43,17 +24,51 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_Seq_Table* seq = vrd_seq_table_init(1000, 100000);
+    vrd_Seq_Table* seq = NULL;
+    vrd_Cov_Table* cov = NULL;
+    vrd_SNV_Table* snv = NULL;
+    vrd_MNV_Table* mnv = NULL;
+
+    seq = vrd_seq_table_init(SEQ_CAPACITY, SEQ_SIZE_CAPACITY);
     if (NULL == seq)
     {
         (void) fprintf(stderr, "vrd_seq_table_init() failed\n");
-        return EXIT_FAILURE;
+        goto error;
     } // if
 
-    fprintf(stderr, "insert: %p\n", vrd_seq_table_insert(seq, 4, "ACGT"));
-    fprintf(stderr, "insert: %p\n", vrd_seq_table_insert(seq, 4, "ACGT"));
+    cov = vrd_cov_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
+    if (NULL == cov)
+    {
+        (void) fprintf(stderr, "vrd_cov_table_init() failed\n");
+        goto error;
+    } // if
+
+    snv = vrd_snv_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_snv_table_init() failed\n");
+        goto error;
+    } // if
+
+    mnv = vrd_mnv_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
+    if (NULL == mnv)
+    {
+        (void) fprintf(stderr, "vrd_mnv_table_init() failed\n");
+        goto error;
+    } // if
 
     vrd_seq_table_destroy(&seq);
+    vrd_cov_table_destroy(&cov);
+    vrd_snv_table_destroy(&snv);
+    vrd_mnv_table_destroy(&mnv);
 
     return EXIT_SUCCESS;
+
+error:
+    vrd_seq_table_destroy(&seq);
+    vrd_cov_table_destroy(&cov);
+    vrd_snv_table_destroy(&snv);
+    vrd_mnv_table_destroy(&mnv);
+
+    return EXIT_FAILURE;
 } // main

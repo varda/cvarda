@@ -38,7 +38,7 @@ typedef struct vrd_AVL_Tree vrd_AVL_Tree;
 
 
 /**
- * Create an empty AVL tree
+ * Create an empty AVL tree.
  *
  * @param capacity limits the number of nodes in the tree. The actual
  *                 number of nodes in the tree may be further limited by

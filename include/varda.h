@@ -1,3 +1,13 @@
+/**
+ * @file varda.h
+ *
+ * Provides the public C API in one header and defines the version. See
+ * also: https://semver.org/
+ *
+ * The prefices `VRD_` and `vrd_` are reserved.
+ */
+
+
 #ifndef VARDA_H
 #define VARDA_H
 
@@ -9,14 +19,26 @@ extern "C"
 
 
 #ifndef VRD_VERSION_MAJOR
+/**
+ * The default major version number. This should be defined by the build
+ * engine (`make`) on compile time, e.g., `-DVRD_VERSION_MAJOR=2`.
+ */
 #define VRD_VERSION_MAJOR 1
 #endif
 
 #ifndef VRD_VERSION_MINOR
+/**
+ * The default minor version number. This should be defined by the build
+ * engine (`make`) on compile time, e.g., `-DVRD_VERSION_MINOR=2`.
+ */
 #define VRD_VERSION_MINOR 1
 #endif
 
 #ifndef VRD_VERSION_PATCH
+/**
+ * The default patch version number. This should be defined by the build
+ * engine (`make`) on compile time, e.g., `-DVRD_VERSION_PATCH=2`.
+ */
 #define VRD_VERSION_PATCH 2
 #endif
 
@@ -24,16 +46,16 @@ extern "C"
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
-#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_tabel_*
+#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 
 
 /**
- * Determine the semantic versioning information on run time.
+ * The semantic versioning information on run time.
  *
- * @param major is the major version number
- * @param minor is the minor version number
- * @param patch is the patch version number
+ * @param major is the major version number.
+ * @param minor is the minor version number.
+ * @param patch is the patch version number.
  */
 static inline void
 vrd_version(int* const restrict major,

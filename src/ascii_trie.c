@@ -105,7 +105,7 @@ void*
 vrd_ascii_trie_insert(vrd_ASCII_Trie* const restrict trie,
                       size_t const len,
                       char const str[len],
-                      void* restrict data)
+                      void* const restrict data)
 {
     assert(NULL != trie);
 

@@ -113,6 +113,15 @@ CoverageTable_query(CoverageTableObject* const restrict self,
 } // CoverageTable_query
 
 
+static PyObject*
+CoverageTable_address(CoverageTableObject* const restrict self,
+                      PyObject* const restrict args)
+{
+    (void) args;
+    return Py_BuildValue("i", self->table);
+} // CoverageTable_address
+
+
 static PyMethodDef CoverageTable_methods[] =
 {
     {"insert", (PyCFunction) CoverageTable_insert, METH_VARARGS,
@@ -132,6 +141,12 @@ static PyMethodDef CoverageTable_methods[] =
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained covered regions\n"
+     ":rtype: integer\n"},
+
+    {"get_address", (PyCFunction) CoverageTable_address, METH_NOARGS,
+     "get_address()\n"
+     "Get the memory address of the :py:class:`CoverageTable`\n\n"
+     ":return: The memory address\n"
      ":rtype: integer\n"},
 
     {NULL}  // sentinel
