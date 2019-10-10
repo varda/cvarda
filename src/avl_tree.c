@@ -1,3 +1,9 @@
+/**
+ * @file avl_tree.c
+ *
+ * Implements an AVL tree
+ */
+
 #include <assert.h>     // assert
 #include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL
@@ -12,8 +18,7 @@ typedef struct
 {
     uint32_t child[2];
     uint32_t value;
-    int32_t  balance :  3;  // [-4, ..., 3], we use [-2, ..., 2]
-    uint32_t extra   : 29;  // this extra space can be used to store data
+    int32_t  balance;  // we use [-2, ..., 2]
 } vrd_AVL_Node;
 
 
@@ -90,7 +95,6 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value)
     tree->nodes[ptr].child[RIGHT] = NULLPTR;
     tree->nodes[ptr].value = value;
     tree->nodes[ptr].balance = 0;
-    tree->nodes[ptr].extra = 0;
 
     return insert(tree, ptr);
 } // vrd_avl_tree_insert
@@ -119,7 +123,7 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
 #ifndef NDEBUG
 
 #include <errno.h>  // errno
-#include <inttypes.h>   // PRIu32
+#include <inttypes.h>   // PRIu32, PRId32
 #include <stdio.h>  // FILE, fprintf, perror
 
 
@@ -145,7 +149,7 @@ print(FILE* restrict stream,
     int written = ret;
 
     errno = 0;
-    ret = fprintf(stream, "%*s%" PRIu32 " (%2d)\n", indent, "", tree->nodes[root].value, tree->nodes[root].balance);
+    ret = fprintf(stream, "%*s%" PRIu32 " (%2" PRId32 ")\n", indent, "", tree->nodes[root].value, tree->nodes[root].balance);
     if (0 > ret)
     {
         perror("fprintf() failed");

@@ -70,7 +70,7 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    return PyCapsule_New(result, "sequence", NULL);
+    return PyCapsule_New((void*) result, "sequence", NULL);
 } // SequenceTable_insert
 
 
@@ -86,13 +86,13 @@ SequenceTable_query(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    char const* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
     } // if
 
-    return PyCapsule_New(result, "sequence", NULL);
+    return PyCapsule_New((void*) result, "sequence", NULL);
 } // SequenceTable_query
 
 
