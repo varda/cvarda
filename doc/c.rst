@@ -20,3 +20,8 @@ Coverage table
 --------------
 .. doxygenfile:: cov_table.h
    :project: cvarda
+
+Interval tree
+-------------
+.. doxygenfile:: itv_tree.h
+   :project: cvarda

@@ -9,7 +9,7 @@
 #include "tree.h"   // NULLPTR, LEFT, RIGHT, max
 
 
-struct vrd_Itv_Node
+typedef struct
 {
     uint32_t child[2];
     uint32_t start;
@@ -17,7 +17,7 @@ struct vrd_Itv_Node
     uint32_t max;
     int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
-}; // vrd_Itv_Node
+} vrd_Itv_Node;
 
 
 struct vrd_Itv_Tree
@@ -94,7 +94,7 @@ insert(vrd_Itv_Tree* const tree, uint32_t const ptr)
 } // insert
 
 
-vrd_Itv_Node*
+void*
 vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
                     size_t const start,
                     size_t const end,
