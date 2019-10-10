@@ -14,6 +14,9 @@
  *   - find a data value for a key (vrd_ascii_trie_find())
  * @warning The number of nodes in the trie may be limited by the
  *          implementation.
+ *
+ * The ASCII trie is used to store (and retrieve) reference sequence
+ * identifiers within a coverage table, SNV table or MNV table.
  */
 
 
@@ -57,8 +60,8 @@ vrd_ascii_trie_init(size_t const capacity);
  * All internal data is deallocated and the reference is set to `NULL`.
  * The data values are not deallocated.
  *
- * @param trie is a reference to a trie. The reference might be `NULL`.
- *             Calling this function mulitple times is safe.
+ * @param trie is a reference to a trie. The reference may be `NULL`.
+ *             Calling this function multiple times is safe.
  */
 void
 vrd_ascii_trie_destroy(vrd_ASCII_Trie* restrict* const trie);
@@ -67,17 +70,19 @@ vrd_ascii_trie_destroy(vrd_ASCII_Trie* restrict* const trie);
 /**
  * Insert a ASCII key with a data value in a trie.
  *
- * New nodes representing the key might be created in the trie. If the
+ * New nodes representing the key may be created in the trie. If the
  * key is already present in the trie, the data value is updated. This
  * doesn't deallocate the existing data value.
  *
  * @param trie is a valid reference to a trie. The reference to the
  *             trie must be valid, otherwise this function results in
  *             undefined behavior.
- * @param len is the length of the key. `strlen()` can be used to
+ * @param len is the length of the key (`str`). `strlen()` may be used to
  *            calculate the length of a `\0`-terminated string.
  * @param str is the key given as an ASCII string with length `len`.
- * @param data is a pointer to an arbitrary data value.
+ * @param data is a pointer to an arbitrary data value.  Storing `NULL`
+ *             data values is problematic, beacuse there is no way to
+ *             distinguish between successful or failed insertion.
  * @return A pointer to the data value in the trie on success, otherwise
  *         `NULL`.
  */
@@ -94,11 +99,13 @@ vrd_ascii_trie_insert(vrd_ASCII_Trie* const restrict trie,
  * @param trie is a valid reference to a trie. The reference to the
  *             trie must be valid, otherwise this function results in
  *             undefined behavior.
- * @param len is the length of the key. `strlen()` can be used to
+ * @param len is the length of the key (`str`). `strlen()` may be used to
  *            calculate the length of a `\0`-terminated string.
  * @param str is the key given as an ASCII string with length `len`.
- * @return A pointer to the data value in the trie on success, otherwise
- *         `NULL`.
+ * @return A pointer to the data value in the trie if the key is found
+ *         succesfully, otherwise `NULL`. Storing `NULL` data values is
+ *         problematic, beacuse there is no way to distinguish between
+ *         found and unfound keys.
  */
 void*
 vrd_ascii_trie_find(vrd_ASCII_Trie const* const trie,

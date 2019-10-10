@@ -1,3 +1,19 @@
+/**
+ * @file cov_table.h
+ *
+ * Defines a table to store covered genomic regions, possibly on multiple
+ * reference sequences. The supported operations are:
+ *   - create an empty table (vrd_cov_table_init())
+ *   - destroy a table (vrd_cov_table_destroy())
+ *   - insert a covered region (vrd_cov_table_insert())
+ *   - count the number of times a region is contained within the regions
+ *     in the table (vrd_cov_table_query())
+ * @warning The number and length of the reference sequence identifiers
+ *          may be limited by the implementation. The number of regions
+ *          per reference sequence may by limited by the implementation.
+ */
+
+
 #ifndef COV_TABLE_H
 #define COV_TABLE_H
 
@@ -14,21 +30,28 @@ extern "C"
 
 
 /**
- * Opaque data structure for a coverage table.
+ * Opaque data type for a coverage table.
+ *
+ * Provides an opaque reference to a coverage table. See also:
+ * https://en.wikipedia.org/wiki/Opaque_data_type
  */
 typedef struct vrd_Cov_Table vrd_Cov_Table;
 
 
 /**
- * Create and initialize a coverage table.
+ * Create an empty coverage table.
  *
- * @param ref_capacity limits the number of reference sequences in the
- *                     table.
- * @param ref_size_capacity limits the combined length of the reference
- *                          sequences in the table.
- * @param tree_capacity limits the number of entries per reference
- *                      sequence in the table.
- * @return A pointer to the table on success, otherwise NULL.
+ * @param ref_capacity limits the number of distinct reference sequence
+ *                     identifiers in the table. This number may be
+ *                     further limited by the implementation.
+ * @param ref_size_capacity limits the number of distinct reference
+ *                          sequence identifiers prefices in the table.
+ *                          This number may be further limited by the
+ *                          implementation.
+ * @param tree_capacity limits the number of covered regions per
+ *                      reference sequence in the table. This number may
+ *                      be further limited by the implementation.
+ * @return An opaque pointer to the table on success, otherwise `NULL`.
  */
 vrd_Cov_Table*
 vrd_cov_table_init(size_t const ref_capacity,
@@ -41,23 +64,38 @@ vrd_cov_table_init(size_t const ref_capacity,
  *
  * All associated data is deallocated and the reference is set to NULL.
  *
- * @param table is the reference to the table.
+ * @param table is a reference to a table. The reference may be `NULL`.
+ *              Calling this function multiple times is safe.
  */
 void
 vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table);
 
 
 /**
- * Insert a coverage region in the table.
+ * Insert a covered region to a coverage table.
  *
- * @param table is the table.
- * @param len the length of the reference ID (excluding the '\0').
- * @param reference the reference ID.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param len is the length of the reference sequence identifier
+              (`reference`).  `strlen()` may be used to
+ *            calculate the length of a `\0`-terminated string.
+ * @param reference is the reference sequence identifier in printable
+ *                  ASCII.
  * @param start is the start position of the covered region (included).
+ *              This value is not bound checked. It is the resposibility
+ *              of the caller to make sure that the table can actually
+ *              store the value.
  * @param end is the end position of the covered region (excluded).
- * @param sample_id is the ID of the sample that contains the covered
- *                  region.
- * @return 0 on success; otherwise -1.
+ *            This value is not bound checked. It is the resposibility
+ *            of the caller to make sure that the table can actually
+ *            store the value.
+ * @param sample_id is an sample identifier indicating to which sample
+ *                  the covered region belongs. This value is not bound
+ *                  checked. It is the resposibility of the caller to
+ *                  make sure that the table can actually store the
+ *                  value.
+ * @return `0` on success, otherwise `-1`.
  */
 int
 vrd_cov_table_insert(vrd_Cov_Table* const table,
@@ -69,15 +107,32 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
 
 
 /**
- * Query for coverage regions in the table.
+ * Count the number of times a region is contained within the regions
+ * in the table.
  *
- * @param table is the table.
- * @param len the length of the reference ID (excluding the '\0').
- * @param reference the reference ID.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param len is the length of the reference sequence identifier
+              (`reference`).  `strlen()` may be used to
+ *            calculate the length of a `\0`-terminated string.
+ * @param reference is the reference sequence identifier in printable
+ *                  ASCII.
  * @param start is the start position of the covered region (included).
+ *              This value is not bound checked. It is the resposibility
+ *              of the caller to make sure that the table can actually
+ *              store the value.
  * @param end is the end position of the covered region (excluded).
- * @param subset is the subset of sample IDs.
- * @return The count of reported regions.
+ *            This value is not bound checked. It is the resposibility
+ *            of the caller to make sure that the table can actually
+ *            store the value.
+ * @param subset is an AVL tree holding sample identifiers that define a
+ *               subset of the samples in the table. Only regions that
+ *               belong to a sample in this tree are considered. If the
+ *               subset is `NULL`, all regions in the table are
+ *               considered.
+ * @return The number of covered regions (for the subset) that include
+ *         the query region.
  */
 size_t
 vrd_cov_table_query(vrd_Cov_Table const* const restrict table,

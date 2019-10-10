@@ -12,6 +12,9 @@
  *   - check whether a value is in the tree (vrd_avl_tree_is_element())
  * @warning The size of the integers as well as the number of nodes in
  *          the tree may be limited by the implementation.
+ *
+ * The AVL tree is used to contain a subset of sample identifiers when
+ * querying a coverage tables, SNV tables or MNV tables.
  */
 
 
@@ -54,8 +57,8 @@ vrd_avl_tree_init(size_t const capacity);
  *
  * All associated data is deallocated and the reference is set to `NULL`.
  *
- * @param tree is a reference to an AVL tree. The reference might be
- *             `NULL`. Calling this function mulitple times is safe.
+ * @param tree is a reference to a tree. The reference may be `NULL`.
+ *             Calling this function multiple times is safe.
  */
 void
 vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree);
@@ -66,8 +69,8 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree);
  *
  * A new node with a given value is created and inserted in the tree.
  *
- * @param tree is a valid reference to an AVL tree. The reference to the
- *             tree must be valid, otherwise this function results in
+ * @param tree is a valid reference to a tree. The reference to the tree
+ *             must be valid, otherwise this function results in
  *             undefined behavior.
  * @param value is the value to insert in the tree. The value is not
  *              bound checked. It is the resposibility of the caller to
@@ -82,8 +85,8 @@ vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value);
 /**
  * Check whether a value is in an AVL tree.
  *
- * @param tree is a valid reference to an AVL tree. The reference to the
- *             tree must be valid, otherwise this function results in
+ * @param tree is a valid reference to a tree. The reference to the tree
+ *             must be valid, otherwise this function results in
  *             undefined behavior.
  * @param value is the value to insert in the tree. The value is not
  *              bound checked. It is the resposibility of the caller to
@@ -104,8 +107,8 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
  * Print an AVL tree (for debugging).
  *
  * @param stream is a valid output file stream.
- * @param tree is a valid reference to an AVL tree. The reference to the
- *             tree must be valid, otherwise this function results in
+ * @param tree is a valid reference to a tree. The reference to the tree
+ *             must be valid, otherwise this function results in
  *             undefined behavior.
  * @return The number of characters written on success, otherwise `-1`.
  * @warning This function may be unavailable when `NDEBUG` is defined.
