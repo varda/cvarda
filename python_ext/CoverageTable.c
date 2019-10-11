@@ -149,7 +149,7 @@ static PyMethodDef CoverageTable_methods[] =
      ":return: The memory address\n"
      ":rtype: integer\n"},
 
-    {NULL}  // sentinel
+    {NULL, NULL, 0, NULL}  // sentinel
 }; // CoverageTable_methods
 
 

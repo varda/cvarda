@@ -156,7 +156,7 @@ static PyMethodDef MNVTable_methods[] =
      ":return: The number of contained MNVs\n"
      ":rtype: integer\n"},
 
-    {NULL}  // sentinel
+    {NULL, NULL, 0, NULL}  // sentinel
 }; // MNVTable_methods
 
 

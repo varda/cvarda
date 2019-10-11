@@ -152,7 +152,7 @@ static PyMethodDef SNVTable_methods[] =
      ":return: The number of contained SNVs\n"
      ":rtype: integer\n"},
 
-    {NULL}  // sentinel
+    {NULL, NULL, 0, NULL}  // sentinel
 }; // SNVTable_methods
 
 

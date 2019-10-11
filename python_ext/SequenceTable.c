@@ -112,7 +112,7 @@ static PyMethodDef SequenceTable_methods[] =
      ":return: A reference to the found sequence\n"
      ":rtype: PyCapsule object\n"},
 
-    {NULL}  // sentinel
+    {NULL, NULL, 0, NULL}  // sentinel
 }; // SequenceTable_methods
 
 
