@@ -1,6 +1,8 @@
+#include <errno.h>      // errno
 #include <stddef.h>     // NULL
-#include <stdio.h>      // fprintf, stderr
+#include <stdio.h>      // FILE, fprintf, stderr, stdout, fscanf
 #include <stdlib.h>     // EXIT_*
+#include <string.h>     // strlen
 
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
@@ -24,51 +26,62 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_Seq_Table* seq = NULL;
-    vrd_Cov_Table* cov = NULL;
-    vrd_SNV_Table* snv = NULL;
-    vrd_MNV_Table* mnv = NULL;
+    FILE* restrict fdb = NULL;
+    FILE* restrict fsample = NULL;
 
-    seq = vrd_seq_table_init(SEQ_CAPACITY, SEQ_SIZE_CAPACITY);
-    if (NULL == seq)
-    {
-        (void) fprintf(stderr, "vrd_seq_table_init() failed\n");
-        goto error;
-    } // if
-
-    cov = vrd_cov_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
+    vrd_Cov_Table* cov = vrd_cov_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
     if (NULL == cov)
     {
         (void) fprintf(stderr, "vrd_cov_table_init() failed\n");
         goto error;
     } // if
 
-    snv = vrd_snv_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
-    if (NULL == snv)
+    errno = 0;
+    fdb = fopen("../data/chr1_giab_faststab.bed", "r");
+    if (NULL == fdb)
     {
-        (void) fprintf(stderr, "vrd_snv_table_init() failed\n");
+        perror("fopen()");
         goto error;
     } // if
 
-    mnv = vrd_mnv_table_init(REF_CAPACITY, REF_SIZE_CAPACITY, TREE_CAPACITY);
-    if (NULL == mnv)
+    char reference[128] = {0};
+    int start = 0;
+    int end = 0;
+    while (3 == fscanf(fdb, "%127s %d %d", reference, &start, &end))
     {
-        (void) fprintf(stderr, "vrd_mnv_table_init() failed\n");
+        if (-1 == vrd_cov_table_insert(cov, strlen(reference), reference, start, end, 0))
+        {
+            (void) fprintf(stderr, "vrd_cov_table_insert() failed\n");
+            goto error;
+        } // if
+    } // while
+
+    fclose(fdb);
+    fdb = NULL;
+
+    errno = 0;
+    fsample = fopen("../data/hg001_chr1.bed", "r");
+    if (NULL == fsample)
+    {
+        perror("fopen()");
         goto error;
     } // if
 
-    vrd_seq_table_destroy(&seq);
+    while (3 == fscanf(fsample, "%127s %d %d", reference, &start, &end))
+    {
+        size_t const count = vrd_cov_table_query(cov, strlen(reference), reference, start, end, NULL);
+        (void) fprintf(stdout, "%s\t%i\t%i\t%zu\t0\n", reference, start, end, count);
+    } // while
+
+    fclose(fsample);
     vrd_cov_table_destroy(&cov);
-    vrd_snv_table_destroy(&snv);
-    vrd_mnv_table_destroy(&mnv);
 
     return EXIT_SUCCESS;
 
 error:
-    vrd_seq_table_destroy(&seq);
+    fclose(fdb);
+    fclose(fsample);
     vrd_cov_table_destroy(&cov);
-    vrd_snv_table_destroy(&snv);
-    vrd_mnv_table_destroy(&mnv);
 
     return EXIT_FAILURE;
 } // main
