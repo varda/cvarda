@@ -122,15 +122,21 @@ vrd_itv_tree_insert(vrd_Itv_Tree* const tree,
 } // vrd_itv_tree_insert
 
 
-static
-size_t
+static size_t
 query_contains(vrd_Itv_Tree const* const restrict tree,
-               size_t const root,
+               uint32_t const root,
                size_t const start,
                size_t const end,
                vrd_AVL_Tree const* const restrict subset)
 {
-    if (NULLPTR == root || tree->nodes[root].max < start)
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    node_count += 1;
+
+    if (tree->nodes[root].max < start)
     {
         return 0;
     } // if
@@ -142,8 +148,7 @@ query_contains(vrd_Itv_Tree const* const restrict tree,
 
     size_t res = 0;
     if (start >= tree->nodes[root].start &&
-        end <= tree->nodes[root].end &&
-        (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
+        end <= tree->nodes[root].end)
     {
         res = 1;
     } // if
@@ -163,3 +168,37 @@ vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
 
     return query_contains(tree, tree->root, start, end, subset);
 } // vrd_itv_tree_query
+
+
+
+
+// vvvv  DEBUG
+
+
+size_t node_count = 0;
+
+
+static size_t
+height(vrd_Itv_Tree const* const tree,
+       uint32_t const root)
+{
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    node_count += 1;
+
+    return max(height(tree, tree->nodes[root].child[LEFT]),
+               height(tree, tree->nodes[root].child[RIGHT])) + 1;
+} // height
+
+
+size_t
+vrd_itv_tree_height(vrd_Itv_Tree const* const tree)
+{
+    assert(NULL != tree);
+
+    node_count = 0;
+    return height(tree, tree->root);
+} // vrd_itv_tree_height
