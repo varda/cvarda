@@ -27,7 +27,8 @@ while (NULLPTR != tmp)
 {
 
 #ifdef ITV
-    tree->nodes[tmp].max = max(tree->nodes[tmp].max, tree->nodes[ptr].end);
+    tree->nodes[tmp].max = max(tree->nodes[tmp].max,
+                               tree->nodes[ptr].end);
 #endif
 
     if (0 != tree->nodes[tmp].balance)

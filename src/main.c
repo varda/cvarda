@@ -37,7 +37,7 @@ main(int argc, char* argv[])
     } // if
 
     errno = 0;
-    fdb = fopen("../data/chr1_giab_faststab.bed", "r");
+    fdb = fopen("../data/chr1_encode_faststab.bed", "r");
     if (NULL == fdb)
     {
         perror("fopen()");
@@ -60,7 +60,7 @@ main(int argc, char* argv[])
     fdb = NULL;
 
     errno = 0;
-    fsample = fopen("../data/hg001_chr1.bed", "r");
+    fsample = fopen("../data/gnomad.genomes.r2.0.1.sites.chr1.bed", "r");
     if (NULL == fsample)
     {
         perror("fopen()");
