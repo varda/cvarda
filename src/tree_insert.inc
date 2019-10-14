@@ -25,6 +25,11 @@ uint32_t unbal_par = tree->root;    // parent of unbalanced
 // Insert a new node at the BST position
 while (NULLPTR != tmp)
 {
+
+#ifdef ITV
+    tree->nodes[tmp].max = max(tree->nodes[tmp].max, tree->nodes[ptr].end);
+#endif
+
     if (0 != tree->nodes[tmp].balance)
     {
         // this is now the first unbalanced ancestor of tmp
@@ -93,7 +98,7 @@ if (-2 == tree->nodes[unbal].balance)
         {
             tree->nodes[child].balance = 0;
             tree->nodes[unbal].balance = 1;
-        } // if#include <inttypes.h>
+        } // if
         else if (0 == tree->nodes[root].balance)
         {
             tree->nodes[child].balance = 0;
@@ -170,7 +175,5 @@ if (tree->root == unbal)
 
 tree->nodes[unbal_par].child[unbal !=
                              tree->nodes[unbal_par].child[LEFT]] = root;
-#ifdef ITV
-tree->nodes[unbal_par].max = update_max(tree, unbal_par);
-#endif
+
 return &tree->nodes[ptr];
