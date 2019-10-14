@@ -132,13 +132,6 @@ vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
                    vrd_AVL_Tree const* const restrict subset);
 
 
-extern size_t node_count;
-
-
-size_t
-vrd_itv_tree_height(vrd_Itv_Tree const* const tree);
-
-
 #ifdef __cplusplus
 } // extern "C"
 #endif
