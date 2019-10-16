@@ -11,9 +11,16 @@ extern "C"
 #include <stddef.h>     // size_t
 #include <stdio.h>      // FILE
 
+#include "../include/cov_table.h"   // vrd_Cov_Table
 #include "../include/mnv_table.h"   // vrd_MNV_Table
 #include "../include/seq_table.h"   // vrd_Seq_Table
 #include "../include/snv_table.h"   // vrd_SNV_Table
+
+
+size_t
+vrd_coverage_from_file(FILE* restrict stream,
+                       vrd_Cov_Table* const restrict cov,
+                       size_t const sample_id);
 
 
 size_t

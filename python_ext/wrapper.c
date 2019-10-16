@@ -6,11 +6,46 @@
 #include <stdio.h>      // FILE, fprintf, stderr
 #include <stdlib.h>     // EXIT_*
 
-#include "../include/varda.h"   // vrd_version, vrd_variants_from_file
+#include "../include/varda.h"   // vrd_version, vrd_coverage_from_file,
+                                // vrd_variants_from_file
 #include "CoverageTable.c"  // CoverageTable, CoverageTableObject
 #include "MNVTable.c"       // MNVTable, MNVTableObject
 #include "SequenceTable.c"  // SequenceTable, SequenceTableObject
 #include "SNVTable.c"       // SNVTable, SNVTableObject
+
+
+static PyObject*
+coverage_from_file(PyObject* const restrict self,
+                   PyObject* const restrict args)
+{
+    (void) self;
+
+    char const* restrict path = NULL;
+    int sample_id = 0;
+    CoverageTableObject* restrict cov = NULL;
+
+    if (!PyArg_ParseTuple(args, "siO!:coverage_from_file", &path, &sample_id, &CoverageTable, &cov))
+    {
+        return NULL;
+    } // if
+
+    errno = 0;
+    FILE* restrict stream = fopen(path, "r");
+    if (NULL == stream)
+    {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    size_t const count = vrd_coverage_from_file(stream, cov->table, sample_id);
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    return Py_BuildValue("i", count);
+} // coverage_from_file
 
 
 static PyObject*
@@ -51,6 +86,9 @@ variants_from_file(PyObject* const restrict self,
 
 static PyMethodDef methods[] =
 {
+    {"coverage_from_file", (PyCFunction) coverage_from_file, METH_VARARGS,
+     "coverage_from_file(path, sample_id, cov_table)\n"},
+
     {"variants_from_file", (PyCFunction) variants_from_file, METH_VARARGS,
      "variants_from_file(path, sample_id, snv_table, mnv_table, seq_table)\n"},
 

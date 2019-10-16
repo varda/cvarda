@@ -49,7 +49,7 @@ extern "C"
 #include "mnv_table.h"  // vrd_MNV_Table, vrd_mnv_table_*
 #include "seq_table.h"  // vrd_Seq_Table, vrd_seq_table_*
 #include "snv_table.h"  // vrd_SNV_Table, vrd_snv_table_*
-#include "utils.h"      // vrd_variants_from_file
+#include "utils.h"      // vrd_coverage_from_file, vrd_variants_from_file
 
 
 /**

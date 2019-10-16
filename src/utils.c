@@ -3,11 +3,44 @@
 #include <stdio.h>      // FILE, fscanf
 #include <string.h>     // strlen
 
+#include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
 #include "../include/iupac.h"       // vrd_iupac_to_idx
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
-#include "../include/utils.h"       // vrd_variants_from_file
+#include "../include/utils.h"       // vrd_coverage_from_file,
+                                    // vrd_variants_from_file
+
+
+size_t
+vrd_coverage_from_file(FILE* restrict stream,
+                       vrd_Cov_Table* const restrict cov,
+                       size_t const sample_id)
+{
+    assert(NULL != stream);
+    assert(NULL != cov);
+
+    char reference[128] = {'\0'};
+    int start = 0;
+    int end = 0;
+
+    size_t count = 0;
+    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end))
+    {
+        if (-1 == vrd_cov_table_insert(cov,
+                                       strlen(reference),
+                                       reference,
+                                       start,
+                                       end,
+                                       sample_id))
+        {
+            break;
+        } // if
+        count += 1;
+    } // while
+
+    return count;
+} // vrd_coverage_from_file
 
 
 size_t
