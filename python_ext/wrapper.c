@@ -7,10 +7,10 @@
 #include <stdlib.h>     // EXIT_*
 
 #include "../include/varda.h"   // vrd_version, vrd_variants_from_file
-#include "CoverageTable.c"  // CoverageTable
-#include "MNVTable.c"       // MNVTable
-#include "SequenceTable.c"  // SequenceTable
-#include "SNVTable.c"       // SNVTable
+#include "CoverageTable.c"  // CoverageTable, CoverageTableObject
+#include "MNVTable.c"       // MNVTable, MNVTableObject
+#include "SequenceTable.c"  // SequenceTable, SequenceTableObject
+#include "SNVTable.c"       // SNVTable, SNVTableObject
 
 
 static PyObject*
@@ -21,9 +21,9 @@ variants_from_file(PyObject* const restrict self,
 
     char const* restrict path = NULL;
     int sample_id = 0;
-    PyObject* restrict snv = NULL;
-    PyObject* restrict mnv = NULL;
-    PyObject* restrict seq = NULL;
+    SNVTableObject* restrict snv = NULL;
+    MNVTableObject* restrict mnv = NULL;
+    SequenceTableObject* restrict seq = NULL;
 
     if (!PyArg_ParseTuple(args, "siO!O!O!:variants_from_file", &path, &sample_id, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq))
     {
@@ -37,7 +37,7 @@ variants_from_file(PyObject* const restrict self,
         return PyErr_SetFromErrno(PyExc_OSError);
     } // if
 
-    size_t const count = vrd_variants_from_file(stream, snv, mnv, seq, sample_id);
+    size_t const count = vrd_variants_from_file(stream, snv->table, mnv->table, seq->table, sample_id);
 
     errno = 0;
     if (0 != fclose(stream))
