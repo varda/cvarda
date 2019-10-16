@@ -9,6 +9,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 
@@ -69,6 +70,12 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
                      size_t const sample_id,
                      size_t const phase,
                      size_t const inserted);
+
+
+size_t
+vrd_snv_table_from_file(vrd_SNV_Table* const restrict table,
+                        FILE* restrict stream,
+                        size_t const sample_id);
 
 
 /**
