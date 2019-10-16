@@ -1,9 +1,7 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX
-#include <stdio.h>      // FILE, fscanf
 #include <stdlib.h>     // malloc, free
-#include <string.h>     // strlen
 
 #include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
@@ -119,39 +117,6 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
 
     return 0;
 } // vrd_cov_table_insert
-
-
-size_t
-vrd_cov_table_from_file(vrd_Cov_Table* const restrict table,
-                        FILE* restrict stream,
-                        size_t const sample_id)
-{
-    assert(NULL != table);
-    assert(NULL != stream);
-
-    // NOTE: fscanf is unsafe
-    // NOTE: strlen is unsafe
-
-    char reference[128] = {0};
-    int start = 0;
-    int end = 0;
-
-    size_t lines = 0;
-    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end))
-    {
-        if (-1 == vrd_cov_table_insert(table,
-                                       strlen(reference),
-                                       reference,
-                                       start,
-                                       end,
-                                       sample_id))
-        {
-            break;
-        } // if
-        lines += 1;
-    } // while
-    return lines;
-} // vrd_cov_table_from_file
 
 
 size_t

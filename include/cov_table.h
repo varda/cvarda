@@ -25,7 +25,6 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdio.h>      // FILE
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 
@@ -105,12 +104,6 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
                      size_t const start,
                      size_t const end,
                      size_t const sample_id);
-
-
-size_t
-vrd_cov_table_from_file(vrd_Cov_Table* const restrict table,
-                        FILE* restrict stream,
-                        size_t const sample_id);
 
 
 /**
