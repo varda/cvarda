@@ -39,15 +39,17 @@ extern "C"
  * The default patch version number. This should be defined by the build
  * engine (`make`) on compile time, e.g., `-DVRD_VERSION_PATCH=2`.
  */
-#define VRD_VERSION_PATCH 4
+#define VRD_VERSION_PATCH 5
 #endif
 
 
-#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_*
-#include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
-#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
-#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
-#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+#include "iupac.h"      // VRD_IUPAC_SIZE, vrd_iupac_to_idx
+#include "avl_tree.h"   // vrd_AVL_Tree, vrd_avl_tree_*
+#include "cov_table.h"  // vrd_Cov_Table, vrd_cov_table_*
+#include "mnv_table.h"  // vrd_MNV_Table, vrd_mnv_table_*
+#include "seq_table.h"  // vrd_Seq_Table, vrd_seq_table_*
+#include "snv_table.h"  // vrd_SNV_Table, vrd_snv_table_*
+#include "utils.h"      // vrd_variants_from_file
 
 
 /**

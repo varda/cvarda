@@ -1,15 +1,61 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*
 
+#include <errno.h>      // errno
 #include <stddef.h>     // NULL
-#include <stdio.h>      // fprintf, stderr
+#include <stdio.h>      // FILE, fprintf, stderr
 #include <stdlib.h>     // EXIT_*
 
-#include "../include/varda.h"   // vrd_version
+#include "../include/varda.h"   // vrd_version, vrd_variants_from_file
 #include "CoverageTable.c"  // CoverageTable
 #include "MNVTable.c"       // MNVTable
 #include "SequenceTable.c"  // SequenceTable
 #include "SNVTable.c"       // SNVTable
+
+
+static PyObject*
+variants_from_file(PyObject* const restrict self,
+                   PyObject* const restrict args)
+{
+    (void) self;
+
+    char const* restrict path = NULL;
+    int sample_id = 0;
+    PyObject* restrict snv = NULL;
+    PyObject* restrict mnv = NULL;
+    PyObject* restrict seq = NULL;
+
+    if (!PyArg_ParseTuple(args, "siO!O!O!:variants_from_file", &path, &sample_id, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq))
+    {
+        return NULL;
+    } // if
+
+    errno = 0;
+    FILE* restrict stream = fopen(path, "r");
+    if (NULL == stream)
+    {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    size_t const count = vrd_variants_from_file(stream, snv, mnv, seq, sample_id);
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    return Py_BuildValue("i", count);
+} // variants_from_file
+
+
+static PyMethodDef methods[] =
+{
+    {"variants_from_file", (PyCFunction) variants_from_file, METH_VARARGS,
+     "variants_from_file(path, sample_id, snv_table, mnv_table, seq_table)\n"},
+
+    {NULL, NULL, 0, NULL}  // sentinel
+}; // methods
 
 
 static struct PyModuleDef module =
@@ -17,7 +63,8 @@ static struct PyModuleDef module =
     .m_base = PyModuleDef_HEAD_INIT,
     .m_name = "cvarda",
     .m_doc = "Python module around the Varda2 C library",
-    .m_size = -1
+    .m_size = -1,
+    .m_methods = methods
 }; // module
 
 
