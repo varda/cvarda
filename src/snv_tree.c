@@ -6,7 +6,7 @@
 #include "../include/avl_tree.h"    // vrd_AVL_Tree,
                                     // vrd_avl_tree_is_element
 #include "../include/snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT
+#include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
 
 
 struct vrd_SNV_Node
@@ -133,6 +133,10 @@ query_contains(vrd_SNV_Tree const* const restrict tree,
         (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
     {
         res = 1;
+        if (HOMOZYGOUS == tree->nodes[root].phase)
+        {
+            res = 2;
+        } // if
     } // if
 
     return res + query_contains(tree, tree->nodes[root].child[LEFT], position, inserted, subset) +

@@ -4,7 +4,7 @@
 #include <stdlib.h>     // malloc, free
 
 #include "../include/mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT, max
+#include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS, max
 
 
 struct vrd_MNV_Node
@@ -153,6 +153,10 @@ query_contains(vrd_MNV_Tree const* const restrict tree,
         (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
     {
         res = 1;
+        if (HOMOZYGOUS == tree->nodes[root].phase)
+        {
+            res = 2;
+        } // if
     } // if
 
     return res + query_contains(tree, tree->nodes[root].child[LEFT], start, end, inserted, subset) +

@@ -16,7 +16,9 @@ enum
     NULLPTR = 0,
 
     LEFT =  0,
-    RIGHT = 1
+    RIGHT = 1,
+
+    HOMOZYGOUS = (1 << 28) - 1
 }; // constants
 
 

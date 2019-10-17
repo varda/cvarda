@@ -101,7 +101,7 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
 
 
 char const*
-vrd_seq_table_query(vrd_Seq_Table* const table,
+vrd_seq_table_query(vrd_Seq_Table const* const table,
                     size_t const len,
                     char const str[len])
 {
