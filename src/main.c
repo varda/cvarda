@@ -21,7 +21,7 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    for (int i = 0; i < 20; ++i)
+    for (int i = 0; i < 22; ++i)
     {
         int position = rand() % 100;
 
@@ -34,7 +34,7 @@ main(int argc, char* argv[])
         } // if
     } // for
 
-    vrd_snv_tree_remove(tree, 40);
+    vrd_snv_tree_remove(tree, 92);
 
     vrd_snv_tree_destroy(&tree);
 

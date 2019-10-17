@@ -185,6 +185,73 @@ print(FILE* restrict stream,
 } // print
 
 
+void
+remove_node(vrd_SNV_Tree* const tree,
+            int const depth,
+            uint64_t const path,
+            size_t const sample_id)
+{
+    (void) fprintf(stderr, "remove_node: %zu\n", sample_id);
+
+    uint32_t nodes[64] = {NULLPTR};
+    int dir[64] = {LEFT};
+    uint32_t tmp = tree->root;
+    for (int i = 0; i < depth; ++i)
+    {
+        (void) fprintf(stderr, "%d ", tree->nodes[tmp].position);
+        nodes[i] = tmp;
+        dir[i] = ((path >> (depth - i - 1)) & RIGHT);
+        tmp = tree->nodes[tmp].child[((path >> (depth - i - 1)) & RIGHT)];
+    } // for
+    (void) fprintf(stderr, ": %d\n", tree->nodes[tmp].position);
+
+    for (int i = 0; i < depth; ++i)
+    {
+        (void) fprintf(stderr, "%d ", dir[i]);
+    } // for
+    (void) fprintf(stderr, "\n");
+
+    (void) fprintf(stderr, "updating node: %d (%d child)\n", tree->nodes[nodes[depth - 1]].position, dir[depth - 1]);
+    if (NULLPTR == tree->nodes[tmp].child[RIGHT])
+    {
+        tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = tree->nodes[tmp].child[LEFT];
+    } // if
+    else if (NULLPTR == tree->nodes[tmp].child[LEFT])
+    {
+        tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = tree->nodes[tmp].child[RIGHT];
+    } // if
+    else
+    {
+        tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = 
+    } // else
+
+} // remove_node
+
+
+void
+traverse(vrd_SNV_Tree* const tree,
+         uint32_t const root,
+         int const depth,
+         uint64_t const path,
+         size_t const sample_id)
+{
+    if (NULLPTR == root)
+    {
+        return;
+    } // if
+
+    traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, sample_id);
+
+    (void) fprintf(stderr, "traverse: %d\n", tree->nodes[root].position);
+
+    if (sample_id == tree->nodes[root].position) // FIXME
+    {
+        remove_node(tree, depth, path, sample_id);
+    } // if
+    traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, sample_id);
+} // traverse
+
+
 size_t
 vrd_snv_tree_remove(vrd_SNV_Tree* const tree, size_t const sample_id)
 {
@@ -192,42 +259,9 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const tree, size_t const sample_id)
 
     print(stderr, tree, tree->root, 0);
 
+    traverse(tree, tree->root, 0, 0, sample_id);
 
-    uint32_t path[64] = {NULLPTR};
-    int len = 0;
-    uint32_t tmp = tree->root;
-
-    while (NULLPTR != tmp || 0 != len)
-    {
-        while (NULLPTR != tmp)
-        {
-            path[len] = tmp;
-            len += 1;
-            tmp = tree->nodes[tmp].child[LEFT];
-        } // while
-
-        tmp = path[len - 1];
-        len -= 1;
-
-        uint32_t const rem = tmp;
-        tmp = tree->nodes[tmp].child[RIGHT];
-
-        if (sample_id == tree->nodes[rem].position)
-        {
-            // delete this node (with this path from root)
-
-            (void) fprintf(stderr, "remove: %zu\npath from root:\n", sample_id);
-
-            for (int i = 0; i < len; ++i)
-            {
-                (void) fprintf(stderr, "%d\n", tree->nodes[path[i]].position);
-            } // for
-
-
-
-            // restore balance (up to the root)
-        } // if
-    } // while
+    print(stderr, tree, tree->root, 0);
 
     return 0;
 } // vrd_snv_tree_remove
