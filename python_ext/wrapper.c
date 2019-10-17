@@ -36,7 +36,10 @@ coverage_from_file(PyObject* const restrict self,
         return PyErr_SetFromErrno(PyExc_OSError);
     } // if
 
-    size_t const count = vrd_coverage_from_file(stream, cov->table, sample_id);
+    size_t count = 0;
+    Py_BEGIN_ALLOW_THREADS
+    count = vrd_coverage_from_file(stream, cov->table, sample_id);
+    Py_END_ALLOW_THREADS
 
     errno = 0;
     if (0 != fclose(stream))
@@ -72,7 +75,10 @@ variants_from_file(PyObject* const restrict self,
         return PyErr_SetFromErrno(PyExc_OSError);
     } // if
 
-    size_t const count = vrd_variants_from_file(stream, snv->table, mnv->table, seq->table, sample_id);
+    size_t count = 0;
+    Py_BEGIN_ALLOW_THREADS
+    count = vrd_variants_from_file(stream, snv->table, mnv->table, seq->table, sample_id);
+    Py_END_ALLOW_THREADS
 
     errno = 0;
     if (0 != fclose(stream))

@@ -222,7 +222,7 @@ remove_node(vrd_SNV_Tree* const tree,
     } // if
     else
     {
-        tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = 
+        //tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = 
     } // else
 
 } // remove_node
