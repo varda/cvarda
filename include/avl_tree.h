@@ -98,29 +98,6 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
                         size_t const value);
 
 
-#ifndef NDEBUG
-
-#include <stdio.h>  // FILE
-
-
-/**
- * Print an AVL tree (for debugging).
- *
- * @param stream is a valid output file stream.
- * @param tree is a valid reference to a tree. The reference to the tree
- *             must be valid, otherwise this function results in
- *             undefined behavior.
- * @return The number of characters written on success, otherwise `-1`.
- * @warning This function may be unavailable when `NDEBUG` is defined.
- */
-int
-vrd_avl_tree_print(FILE* restrict stream,
-                   vrd_AVL_Tree const* const restrict tree);
-
-
-#endif
-
-
 #ifdef __cplusplus
 } // extern "C"
 #endif
