@@ -73,7 +73,6 @@ vrd_variants_from_file(FILE* restrict stream,
     {
         if (1023 < len)
         {
-            (void) fprintf(stderr, "len > 1023\n");
             break;
         } // if
 
@@ -92,7 +91,6 @@ vrd_variants_from_file(FILE* restrict stream,
                                            phase,
                                            vrd_iupac_to_idx(inserted[0])))
             {
-                (void) fprintf(stderr, "vrd_snv_table_insert() failed\n");
                 break;
             } // if
         } // if
@@ -102,7 +100,6 @@ vrd_variants_from_file(FILE* restrict stream,
                 vrd_seq_table_insert(seq, len, inserted);
             if (0 != len && NULL == ins_ptr)
             {
-                (void) fprintf(stderr, "vrd_seq_table_insert() failed\n");
                 break;
             } // if
 
@@ -115,7 +112,6 @@ vrd_variants_from_file(FILE* restrict stream,
                                            phase,
                                            ins_ptr))
             {
-                (void) fprintf(stderr, "vrd_mnv_table_insert() failed\n");
                 break;
             } // if
 
