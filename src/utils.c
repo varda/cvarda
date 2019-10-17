@@ -102,7 +102,7 @@ vrd_variants_from_file(FILE* restrict stream,
                 vrd_seq_table_insert(seq, len, inserted);
             if (0 != len && NULL == ins_ptr)
             {
-                (void) fprintf(stderr, "vrd_seq_table_insert() failed: %s\n", inserted);
+                (void) fprintf(stderr, "vrd_seq_table_insert() failed\n");
                 break;
             } // if
 
