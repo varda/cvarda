@@ -129,6 +129,15 @@ MNVTable_query(MNVTableObject* const restrict self,
 } // MNVTable_query
 
 
+static PyObject*
+MNVTable_address(MNVTableObject* const restrict self,
+                 PyObject* const restrict args)
+{
+    (void) args;
+    return Py_BuildValue("i", self->table);
+} // MNVTable_address
+
+
 static PyMethodDef MNVTable_methods[] =
 {
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
@@ -154,6 +163,12 @@ static PyMethodDef MNVTable_methods[] =
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained MNVs\n"
+     ":rtype: integer\n"},
+
+    {"get_address", (PyCFunction) MNVTable_address, METH_NOARGS,
+     "get_address()\n"
+     "Get the memory address of the :py:class:`MNVTable`\n\n"
+     ":return: The memory address\n"
      ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel

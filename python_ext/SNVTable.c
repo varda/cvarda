@@ -129,6 +129,15 @@ SNVTable_query(SNVTableObject* const restrict self,
 } // SNVTable_query
 
 
+static PyObject*
+SNVTable_address(SNVTableObject* const restrict self,
+                 PyObject* const restrict args)
+{
+    (void) args;
+    return Py_BuildValue("i", self->table);
+} // SNVTable_address
+
+
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
@@ -150,6 +159,12 @@ static PyMethodDef SNVTable_methods[] =
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained SNVs\n"
+     ":rtype: integer\n"},
+
+    {"get_address", (PyCFunction) SNVTable_address, METH_NOARGS,
+     "get_address()\n"
+     "Get the memory address of the :py:class:`SNVTable`\n\n"
+     ":return: The memory address\n"
      ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel

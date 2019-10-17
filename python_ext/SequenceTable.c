@@ -96,6 +96,15 @@ SequenceTable_query(SequenceTableObject* const restrict self,
 } // SequenceTable_query
 
 
+static PyObject*
+SequenceTable_address(SequenceTableObject* const restrict self,
+                      PyObject* const restrict args)
+{
+    (void) args;
+    return Py_BuildValue("i", self->table);
+} // SequenceTable_address
+
+
 static PyMethodDef SequenceTable_methods[] =
 {
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
@@ -111,6 +120,12 @@ static PyMethodDef SequenceTable_methods[] =
      ":param string sequence: The sequence.\n"
      ":return: A reference to the found sequence\n"
      ":rtype: PyCapsule object\n"},
+
+    {"get_address", (PyCFunction) SequenceTable_address, METH_NOARGS,
+     "get_address()\n"
+     "Get the memory address of the :py:class:`SequenceTable`\n\n"
+     ":return: The memory address\n"
+     ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SequenceTable_methods
