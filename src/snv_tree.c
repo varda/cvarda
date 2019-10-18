@@ -211,19 +211,195 @@ remove_node(vrd_SNV_Tree* const tree,
     } // for
     (void) fprintf(stderr, "\n");
 
-    (void) fprintf(stderr, "updating node: %d (%d child)\n", tree->nodes[nodes[depth - 1]].position, dir[depth - 1]);
+    int len = depth;
+
     if (NULLPTR == tree->nodes[tmp].child[RIGHT])
     {
-        tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = tree->nodes[tmp].child[LEFT];
-    } // if
-    else if (NULLPTR == tree->nodes[tmp].child[LEFT])
-    {
-        tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = tree->nodes[tmp].child[RIGHT];
+        if (0 == depth)
+        {
+            tree->root = tree->nodes[tmp].child[LEFT];
+        } // if
+        else
+        {
+            (void) fprintf(stderr, "No right child: update %d\n", tree->nodes[nodes[depth - 1]].position);
+            tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = tree->nodes[tmp].child[LEFT];
+        } // else
     } // if
     else
     {
-        //tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = 
+        uint32_t right = tree->nodes[tmp].child[RIGHT]; // right sub tree
+
+        if (NULLPTR == tree->nodes[right].child[LEFT])
+        {
+            (void) fprintf(stderr, "Right child has no left child\n");
+
+            tree->nodes[right].child[LEFT] = tree->nodes[tmp].child[LEFT];
+            tree->nodes[right].balance = tree->nodes[tmp].balance;
+
+            if (0 == depth)
+            {
+                tree->root = right;
+            } // if
+            else
+            {
+                (void) fprintf(stderr, "Update %d\n", tree->nodes[nodes[depth - 1]].position);
+                tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = right;
+            } // else
+            dir[len] = RIGHT;
+            nodes[len] = right;
+            len += 1;
+        } // if
+        else
+        {
+            uint32_t suc = NULLPTR; // find the inorder successor
+
+            (void) fprintf(stderr, "Find inorder successor\n");
+
+            len += 1;
+            while (1)
+            {
+                dir[len] = LEFT;
+                nodes[len] = right;
+                len += 1;
+                suc = tree->nodes[right].child[LEFT];
+                if (NULLPTR == tree->nodes[suc].child[LEFT])
+                {
+                    break;
+                } // if
+                right = suc;
+            } // while
+
+            (void) fprintf(stderr, "Inorder successor: %d\n", tree->nodes[suc].position);
+
+            tree->nodes[suc].child[LEFT] = tree->nodes[tmp].child[LEFT];
+            tree->nodes[right].child[LEFT] = tree->nodes[suc].child[RIGHT];
+            tree->nodes[suc].child[RIGHT] = tree->nodes[tmp].child[RIGHT];
+            tree->nodes[suc].balance = tree->nodes[tmp].balance;
+
+            if (0 == depth)
+            {
+                tree->root = suc;
+            } // if
+            else
+            {
+                (void) fprintf(stderr, "Update %d\n", tree->nodes[nodes[depth - 1]].position);
+                tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = suc;
+            } // else
+            dir[depth] = RIGHT;
+            nodes[depth] = suc;
+        } // else
     } // else
+
+    // Rebalancing
+    while (0 < len)
+    {
+        len -= 1;
+        uint32_t const unbal = nodes[len];
+        if (dir[len] == LEFT)
+        {
+            tree->nodes[unbal].balance += 1;
+            if (1 == tree->nodes[unbal].balance)
+            {
+                break;
+            } // if
+            else if (2 == tree->nodes[unbal].balance)
+            {
+                uint32_t const child = tree->nodes[unbal].child[RIGHT];
+                if (-1 == tree->nodes[child].balance)
+                {
+                    uint32_t const root = tree->nodes[child].child[LEFT];
+                    tree->nodes[child].child[LEFT] = tree->nodes[root].child[RIGHT];
+                    tree->nodes[root].child[RIGHT] = child;
+                    tree->nodes[unbal].child[RIGHT] = tree->nodes[root].child[LEFT];
+                    tree->nodes[root].child[LEFT] = unbal;
+                    if (1 == tree->nodes[root].balance)
+                    {
+                        tree->nodes[child].balance = 0;
+                        tree->nodes[unbal].balance = -1;
+                    } // if
+                    else if (0 == tree->nodes[root].balance)
+                    {
+                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
+                    }
+                    else // if (-1 == tree->nodes[root].balance)
+                    {
+                        tree->nodes[child].balance = 1,
+                        tree->nodes[unbal].balance = 0;
+                    } // else
+                    tree->nodes[root].balance = 0;
+                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = root;
+                } // if
+                else
+                {
+                    tree->nodes[unbal].child[RIGHT] = tree->nodes[child].child[LEFT];
+                    tree->nodes[child].child[LEFT] = unbal;
+                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = child;
+                    if (0 == tree->nodes[child].balance)
+                    {
+                        tree->nodes[child].balance = -1;
+                        tree->nodes[unbal].balance = 1;
+                        break;
+                    } // if
+                    else
+                    {
+                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
+                    } // else
+                } // else
+            } // if
+        } // if
+        else // RIGHT
+        {
+            tree->nodes[unbal].balance -= 1;
+            if (-1 == tree->nodes[unbal].balance)
+            {
+                break;
+            } // if
+            else if (-2 == tree->nodes[unbal].balance)
+            {
+                uint32_t const child = tree->nodes[unbal].child[LEFT];
+                if (1 == tree->nodes[child].balance)
+                {
+                    uint32_t const root = tree->nodes[child].child[RIGHT];
+                    tree->nodes[child].child[RIGHT] = tree->nodes[root].child[LEFT];
+                    tree->nodes[root].child[LEFT] = child;
+                    tree->nodes[unbal].child[LEFT] = tree->nodes[root].child[RIGHT];
+                    tree->nodes[root].child[RIGHT] = unbal;
+                    if (-1 == tree->nodes[root].balance)
+                    {
+                        tree->nodes[child].balance = 0;
+                        tree->nodes[unbal].balance = 1;
+                    } // if
+                    else if (0 == tree->nodes[root].balance)
+                    {
+                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
+                    } // if
+                    else // if (1 == tree->nodes[root].balance)
+                    {
+                        tree->nodes[child].balance = -1;
+                        tree->nodes[unbal].balance = 0;
+                    } // else
+                    tree->nodes[root].balance = 0;
+                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = root;
+                } // if
+                else
+                {
+                    tree->nodes[unbal].child[LEFT] = tree->nodes[child].child[RIGHT];
+                    tree->nodes[child].child[RIGHT] = unbal;
+                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = child;
+                    if (0 == tree->nodes[child].balance)
+                    {
+                        tree->nodes[child].balance = 1;
+                        tree->nodes[unbal].balance = -1;
+                        break;
+                    } // if
+                    else
+                    {
+                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
+                    } // else
+                } // else
+            } // if
+        } // else
+    } // while
 
 } // remove_node
 
