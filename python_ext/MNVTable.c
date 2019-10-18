@@ -102,11 +102,15 @@ MNVTable_query(MNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    char const* const restrict inserted = PyCapsule_GetPointer(sequence, "sequence");
-    if (NULL == inserted)
+    char const* restrict inserted = NULL;
+    if (Py_None != sequence)
     {
-        PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
-        return NULL;
+        inserted = PyCapsule_GetPointer(sequence, "sequence");
+        if (NULL == inserted)
+        {
+            PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
+            return NULL;
+        } // if
     } // if
 
     vrd_AVL_Tree* restrict subset = NULL;
