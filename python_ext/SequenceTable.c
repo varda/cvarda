@@ -86,7 +86,7 @@ SequenceTable_query(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    char const* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    char const* const restrict result = vrd_seq_table_query(self->table, len, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
