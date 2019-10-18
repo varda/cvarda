@@ -186,13 +186,40 @@ print(FILE* restrict stream,
 
 
 void
+balance(vrd_SNV_Tree* const tree)
+{
+    uint32_t tmp = tree->root;
+
+    while (NULLPTR != tmp)
+    {
+        while (NULLPTR != tree->nodes[tmp].child[LEFT])
+        {
+            uint32_t const left = tree->nodes[tmp].child[LEFT];
+            tree->nodes[tmp].child[LEFT] = tree->nodes[left].child[RIGHT];
+            tree->nodes[left].child[RIGHT] = tmp;
+            if (tree->root == tmp)
+            {
+                (void) fprintf(stderr, ".\n");
+                tree->root = left;
+            } // if
+            tmp = left;
+        } // while
+        tmp = tree->nodes[tmp].child[RIGHT];
+    } // while
+
+
+    print(stderr, tree, tree->root, 0);
+
+} // balance
+
+
+// Adapted from:
+// http://adtinfo.org/libavl.html/Deleting-from-an-AVL-Tree.html
+void
 remove_node(vrd_SNV_Tree* const tree,
             int const depth,
-            uint64_t const path,
-            size_t const sample_id)
+            uint64_t const path)
 {
-    (void) fprintf(stderr, "remove_node: %zu\n", sample_id);
-
     uint32_t nodes[64] = {NULLPTR};
     int dir[64] = {LEFT};
     uint32_t tmp = tree->root;
@@ -251,9 +278,8 @@ remove_node(vrd_SNV_Tree* const tree,
         } // if
         else
         {
-            uint32_t suc = NULLPTR; // find the inorder successor
-
             (void) fprintf(stderr, "Find inorder successor\n");
+            uint32_t suc = NULLPTR; // find the inorder successor
 
             len += 1;
             while (1)
@@ -290,10 +316,13 @@ remove_node(vrd_SNV_Tree* const tree,
         } // else
     } // else
 
+    balance(tree);
+    return;
+
+
     // Rebalancing
-    while (0 < len)
+    while (0 < --len)
     {
-        len -= 1;
         uint32_t const unbal = nodes[len];
         if (dir[len] == LEFT)
         {
@@ -418,13 +447,15 @@ traverse(vrd_SNV_Tree* const tree,
 
     traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, sample_id);
 
-    (void) fprintf(stderr, "traverse: %d\n", tree->nodes[root].position);
+    (void) fprintf(stderr, "visit: %d\n", tree->nodes[root].position);
 
-    if (sample_id == tree->nodes[root].position) // FIXME
+    if (sample_id == tree->nodes[root].sample_id)
     {
-        remove_node(tree, depth, path, sample_id);
+        remove_node(tree, depth, path);
     } // if
+
     traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, sample_id);
+
 } // traverse
 
 
@@ -435,9 +466,11 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const tree, size_t const sample_id)
 
     print(stderr, tree, tree->root, 0);
 
-    traverse(tree, tree->root, 0, 0, sample_id);
+    //traverse(tree, tree->root, 0, 0, sample_id);
+    balance(tree);
 
-    print(stderr, tree, tree->root, 0);
+
+    //print(stderr, tree, tree->root, 0);
 
     return 0;
 } // vrd_snv_tree_remove

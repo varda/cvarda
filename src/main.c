@@ -34,7 +34,8 @@ main(int argc, char* argv[])
         } // if
     } // for
 
-    vrd_snv_tree_remove(tree, 49);
+
+    vrd_snv_tree_remove(tree, 0);
 
     vrd_snv_tree_destroy(&tree);
 
