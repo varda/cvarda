@@ -185,30 +185,116 @@ print(FILE* restrict stream,
 } // print
 
 
+static inline int
+ilog2(size_t const x)
+{
+    return 64 - __builtin_clzll(x);
+} // ilog2
+
+
+static inline size_t
+ipow2(int const x)
+{
+    return (1ull << x);
+} // ipow2
+
+
 void
+compress(vrd_SNV_Tree* const tree, size_t const count)
+{
+    uint32_t tmp = tree->nodes[tree->root].child[LEFT];
+    tree->nodes[tree->root].child[LEFT] = tree->nodes[tmp].child[RIGHT];
+    tree->nodes[tmp].child[RIGHT] = tree->root;
+    tree->root = tmp;
+
+    tmp = tree->root;
+    for (size_t i = 1; i < count; ++i)
+    {
+        uint32_t const p = tree->nodes[tmp].child[LEFT];
+        uint32_t const q = tree->nodes[p].child[LEFT];
+
+        tree->nodes[p].child[LEFT] = tree->nodes[q].child[RIGHT];
+        tree->nodes[q].child[RIGHT] = p;
+        tree->nodes[tmp].child[LEFT] = q;
+        tmp = q;
+    } // for
+} // compress
+
+
+static int
+update_avl(vrd_SNV_Tree* const tree, uint32_t const root)
+{
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    int const left = update_avl(tree, tree->nodes[root].child[LEFT]);
+    int const right = update_avl(tree, tree->nodes[root].child[RIGHT]);
+    tree->nodes[root].balance = right - left;
+    return 1 + max(left, right);
+} // update_avl
+
+
+static void
 balance(vrd_SNV_Tree* const tree)
 {
+    uint32_t par = tree->root;
     uint32_t tmp = tree->root;
 
+    // tree to vine
+    size_t count = 0;
     while (NULLPTR != tmp)
     {
-        while (NULLPTR != tree->nodes[tmp].child[LEFT])
+        fprintf(stderr, "tmp (%u): %d\n", tmp , tree->nodes[tmp].position);
+        if (NULLPTR == tree->nodes[tmp].child[RIGHT])
         {
-            uint32_t const left = tree->nodes[tmp].child[LEFT];
-            tree->nodes[tmp].child[LEFT] = tree->nodes[left].child[RIGHT];
-            tree->nodes[left].child[RIGHT] = tmp;
-            if (tree->root == tmp)
+            fprintf(stderr, "tmp has no right child; traverse left\n");
+            par = tmp;
+            tmp = tree->nodes[tmp].child[LEFT];
+            count += 1;
+        } // if
+        else
+        {
+            fprintf(stderr, "tmp has a right child\n");
+            uint32_t const right = tree->nodes[tmp].child[RIGHT];
+            fprintf(stderr, "right (%u): %d\n", right, tree->nodes[right].position);
+            tree->nodes[tmp].child[RIGHT] = tree->nodes[right].child[LEFT];
+            tree->nodes[right].child[LEFT] = tmp;
+            if (tmp == tree->root)
             {
-                (void) fprintf(stderr, ".\n");
-                tree->root = left;
+                tree->root = right;
+                par = right;
             } // if
-            tmp = left;
-        } // while
-        tmp = tree->nodes[tmp].child[RIGHT];
+            else
+            {
+                tree->nodes[par].child[LEFT] = right;
+            } // else
+            tmp = right;
+            print(stderr, tree, tree->root, 0);
+            fprintf(stderr, "par (%u): %d\n", par, tree->nodes[par].position);
+            fprintf(stderr, "tmp (%u): %d\n", tmp, tree->nodes[tmp].position);
+        } // else
     } // while
 
+    // vine to tree
+    size_t const leaves = count - (ipow2(ilog2(count + 1) - 1) - 1);
+    if (0 < leaves)
+    {
+        fprintf(stderr, "LEAVES: %zu\n", leaves);
+        compress(tree, leaves);
+    } // if
 
-    print(stderr, tree, tree->root, 0);
+    fprintf(stderr, "REM: %zu\n", count - leaves);
+    size_t rem = count - leaves;
+    while (1 < rem)
+    {
+        rem /= 2;
+        compress(tree, rem);
+    } // while
+
+    update_avl(tree, tree->root);
+
 
 } // balance
 
@@ -316,7 +402,6 @@ remove_node(vrd_SNV_Tree* const tree,
         } // else
     } // else
 
-    balance(tree);
     return;
 
 
@@ -449,7 +534,7 @@ traverse(vrd_SNV_Tree* const tree,
 
     (void) fprintf(stderr, "visit: %d\n", tree->nodes[root].position);
 
-    if (sample_id == tree->nodes[root].sample_id)
+    if (sample_id == tree->nodes[root].position)
     {
         remove_node(tree, depth, path);
     } // if
@@ -466,11 +551,11 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const tree, size_t const sample_id)
 
     print(stderr, tree, tree->root, 0);
 
-    //traverse(tree, tree->root, 0, 0, sample_id);
+    traverse(tree, tree->root, 0, 0, sample_id);
     balance(tree);
 
 
-    //print(stderr, tree, tree->root, 0);
+    print(stderr, tree, tree->root, 0);
 
     return 0;
 } // vrd_snv_tree_remove

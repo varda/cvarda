@@ -20,7 +20,6 @@ main(int argc, char* argv[])
         (void) fprintf(stderr, "vrd_snv_tree_init() failed\n");
         goto error;
     } // if
-
     for (int i = 0; i < 22; ++i)
     {
         int position = rand() % 100;
@@ -34,8 +33,7 @@ main(int argc, char* argv[])
         } // if
     } // for
 
-
-    vrd_snv_tree_remove(tree, 0);
+    vrd_snv_tree_remove(tree, 62);
 
     vrd_snv_tree_destroy(&tree);
 
