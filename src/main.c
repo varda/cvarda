@@ -14,12 +14,23 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_SNV_Tree* restrict tree = vrd_snv_tree_init(1000);
+    vrd_SNV_Tree* restrict tree = NULL;
+    vrd_AVL_Tree* restrict subset = NULL;
+
+    tree = vrd_snv_tree_init(1000);
     if (NULL == tree)
     {
         (void) fprintf(stderr, "vrd_snv_tree_init() failed\n");
         goto error;
     } // if
+
+    subset = vrd_avl_tree_init(100);
+    if (NULL == subset)
+    {
+        (void) fprintf(stderr, "vrd_avl_tree_init() failed\n");
+        goto error;
+    } // if
+
     for (int i = 0; i < 22; ++i)
     {
         int position = rand() % 100;
@@ -31,15 +42,23 @@ main(int argc, char* argv[])
             (void) fprintf(stderr, "vrd_snv_tree_insert() failed\n");
             goto error;
         } // if
+
+        if (NULL == vrd_avl_tree_insert(subset, position))
+        {
+            (void) fprintf(stderr, "vrd_avl_tree_insert() failed\n");
+            goto error;
+        } // if
     } // for
 
-    vrd_snv_tree_remove(tree, 62);
+    vrd_snv_tree_remove(tree, subset);
 
+    vrd_avl_tree_destroy(&subset);
     vrd_snv_tree_destroy(&tree);
 
     return EXIT_SUCCESS;
 
 error:
+    vrd_avl_tree_destroy(&subset);
     vrd_snv_tree_destroy(&tree);
 
     return EXIT_FAILURE;

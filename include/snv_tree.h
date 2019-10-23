@@ -85,7 +85,8 @@ vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
 
 
 size_t
-vrd_snv_tree_remove(vrd_SNV_Tree* const tree, size_t const sample_id);
+vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
+                    vrd_AVL_Tree const* const restrict subset);
 
 
 #ifdef __cplusplus

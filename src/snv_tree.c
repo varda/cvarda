@@ -185,6 +185,41 @@ print(FILE* restrict stream,
 } // print
 
 
+static size_t
+tree_to_vine(vrd_SNV_Tree* const tree)
+{
+    uint32_t par = tree->root;
+    uint32_t tmp = tree->root;
+    size_t count = 0;
+    while (NULLPTR != tmp)
+    {
+        if (NULLPTR == tree->nodes[tmp].child[RIGHT])
+        {
+            par = tmp;
+            tmp = tree->nodes[tmp].child[LEFT];
+            count += 1;
+        } // if
+        else
+        {
+            uint32_t const right = tree->nodes[tmp].child[RIGHT];
+            tree->nodes[tmp].child[RIGHT] = tree->nodes[right].child[LEFT];
+            tree->nodes[right].child[LEFT] = tmp;
+            if (tmp == tree->root)
+            {
+                tree->root = right;
+                par = right;
+            } // if
+            else
+            {
+                tree->nodes[par].child[LEFT] = right;
+            } // else
+            tmp = right;
+        } // else
+    } // while
+    return count;
+} // tree_to_vine
+
+
 static inline int
 ilog2(size_t const x)
 {
@@ -221,87 +256,30 @@ compress(vrd_SNV_Tree* const tree, size_t const count)
 } // compress
 
 
-static int
-update_avl(vrd_SNV_Tree* const tree, uint32_t const root)
-{
-    if (NULLPTR == root)
-    {
-        return 0;
-    } // if
-
-    int const left = update_avl(tree, tree->nodes[root].child[LEFT]);
-    int const right = update_avl(tree, tree->nodes[root].child[RIGHT]);
-    tree->nodes[root].balance = right - left;
-    return 1 + max(left, right);
-} // update_avl
-
-
+// Day Stout Warren algorithm
 static void
 balance(vrd_SNV_Tree* const tree)
 {
-    uint32_t par = tree->root;
-    uint32_t tmp = tree->root;
+    size_t const nodes = tree_to_vine(tree);
 
-    // tree to vine
-    size_t count = 0;
-    while (NULLPTR != tmp)
-    {
-        fprintf(stderr, "tmp (%u): %d\n", tmp , tree->nodes[tmp].position);
-        if (NULLPTR == tree->nodes[tmp].child[RIGHT])
-        {
-            fprintf(stderr, "tmp has no right child; traverse left\n");
-            par = tmp;
-            tmp = tree->nodes[tmp].child[LEFT];
-            count += 1;
-        } // if
-        else
-        {
-            fprintf(stderr, "tmp has a right child\n");
-            uint32_t const right = tree->nodes[tmp].child[RIGHT];
-            fprintf(stderr, "right (%u): %d\n", right, tree->nodes[right].position);
-            tree->nodes[tmp].child[RIGHT] = tree->nodes[right].child[LEFT];
-            tree->nodes[right].child[LEFT] = tmp;
-            if (tmp == tree->root)
-            {
-                tree->root = right;
-                par = right;
-            } // if
-            else
-            {
-                tree->nodes[par].child[LEFT] = right;
-            } // else
-            tmp = right;
-            print(stderr, tree, tree->root, 0);
-            fprintf(stderr, "par (%u): %d\n", par, tree->nodes[par].position);
-            fprintf(stderr, "tmp (%u): %d\n", tmp, tree->nodes[tmp].position);
-        } // else
-    } // while
-
-    // vine to tree
-    size_t const leaves = count - (ipow2(ilog2(count + 1) - 1) - 1);
+    size_t const leaves = nodes - (ipow2(ilog2(nodes + 1) - 1) - 1);
     if (0 < leaves)
     {
-        fprintf(stderr, "LEAVES: %zu\n", leaves);
         compress(tree, leaves);
     } // if
 
-    fprintf(stderr, "REM: %zu\n", count - leaves);
-    size_t rem = count - leaves;
+    size_t rem = nodes - leaves;
     while (1 < rem)
     {
         rem /= 2;
         compress(tree, rem);
     } // while
-
-    update_avl(tree, tree->root);
-
-
 } // balance
 
 
 // Adapted from:
 // http://adtinfo.org/libavl.html/Deleting-from-an-AVL-Tree.html
-void
+static void
 remove_node(vrd_SNV_Tree* const tree,
             int const depth,
             uint64_t const path)
@@ -311,18 +289,10 @@ remove_node(vrd_SNV_Tree* const tree,
     uint32_t tmp = tree->root;
     for (int i = 0; i < depth; ++i)
     {
-        (void) fprintf(stderr, "%d ", tree->nodes[tmp].position);
         nodes[i] = tmp;
         dir[i] = ((path >> (depth - i - 1)) & RIGHT);
         tmp = tree->nodes[tmp].child[((path >> (depth - i - 1)) & RIGHT)];
     } // for
-    (void) fprintf(stderr, ": %d\n", tree->nodes[tmp].position);
-
-    for (int i = 0; i < depth; ++i)
-    {
-        (void) fprintf(stderr, "%d ", dir[i]);
-    } // for
-    (void) fprintf(stderr, "\n");
 
     int len = depth;
 
@@ -334,7 +304,6 @@ remove_node(vrd_SNV_Tree* const tree,
         } // if
         else
         {
-            (void) fprintf(stderr, "No right child: update %d\n", tree->nodes[nodes[depth - 1]].position);
             tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = tree->nodes[tmp].child[LEFT];
         } // else
     } // if
@@ -344,8 +313,6 @@ remove_node(vrd_SNV_Tree* const tree,
 
         if (NULLPTR == tree->nodes[right].child[LEFT])
         {
-            (void) fprintf(stderr, "Right child has no left child\n");
-
             tree->nodes[right].child[LEFT] = tree->nodes[tmp].child[LEFT];
             tree->nodes[right].balance = tree->nodes[tmp].balance;
 
@@ -355,7 +322,6 @@ remove_node(vrd_SNV_Tree* const tree,
             } // if
             else
             {
-                (void) fprintf(stderr, "Update %d\n", tree->nodes[nodes[depth - 1]].position);
                 tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = right;
             } // else
             dir[len] = RIGHT;
@@ -364,7 +330,6 @@ remove_node(vrd_SNV_Tree* const tree,
         } // if
         else
         {
-            (void) fprintf(stderr, "Find inorder successor\n");
             uint32_t suc = NULLPTR; // find the inorder successor
 
             len += 1;
@@ -381,8 +346,6 @@ remove_node(vrd_SNV_Tree* const tree,
                 right = suc;
             } // while
 
-            (void) fprintf(stderr, "Inorder successor: %d\n", tree->nodes[suc].position);
-
             tree->nodes[suc].child[LEFT] = tree->nodes[tmp].child[LEFT];
             tree->nodes[right].child[LEFT] = tree->nodes[suc].child[RIGHT];
             tree->nodes[suc].child[RIGHT] = tree->nodes[tmp].child[RIGHT];
@@ -394,165 +357,63 @@ remove_node(vrd_SNV_Tree* const tree,
             } // if
             else
             {
-                (void) fprintf(stderr, "Update %d\n", tree->nodes[nodes[depth - 1]].position);
                 tree->nodes[nodes[depth - 1]].child[dir[depth - 1]] = suc;
             } // else
             dir[depth] = RIGHT;
             nodes[depth] = suc;
         } // else
     } // else
-
-    return;
-
-
-    // Rebalancing
-    while (0 < --len)
-    {
-        uint32_t const unbal = nodes[len];
-        if (dir[len] == LEFT)
-        {
-            tree->nodes[unbal].balance += 1;
-            if (1 == tree->nodes[unbal].balance)
-            {
-                break;
-            } // if
-            else if (2 == tree->nodes[unbal].balance)
-            {
-                uint32_t const child = tree->nodes[unbal].child[RIGHT];
-                if (-1 == tree->nodes[child].balance)
-                {
-                    uint32_t const root = tree->nodes[child].child[LEFT];
-                    tree->nodes[child].child[LEFT] = tree->nodes[root].child[RIGHT];
-                    tree->nodes[root].child[RIGHT] = child;
-                    tree->nodes[unbal].child[RIGHT] = tree->nodes[root].child[LEFT];
-                    tree->nodes[root].child[LEFT] = unbal;
-                    if (1 == tree->nodes[root].balance)
-                    {
-                        tree->nodes[child].balance = 0;
-                        tree->nodes[unbal].balance = -1;
-                    } // if
-                    else if (0 == tree->nodes[root].balance)
-                    {
-                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
-                    }
-                    else // if (-1 == tree->nodes[root].balance)
-                    {
-                        tree->nodes[child].balance = 1,
-                        tree->nodes[unbal].balance = 0;
-                    } // else
-                    tree->nodes[root].balance = 0;
-                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = root;
-                } // if
-                else
-                {
-                    tree->nodes[unbal].child[RIGHT] = tree->nodes[child].child[LEFT];
-                    tree->nodes[child].child[LEFT] = unbal;
-                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = child;
-                    if (0 == tree->nodes[child].balance)
-                    {
-                        tree->nodes[child].balance = -1;
-                        tree->nodes[unbal].balance = 1;
-                        break;
-                    } // if
-                    else
-                    {
-                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
-                    } // else
-                } // else
-            } // if
-        } // if
-        else // RIGHT
-        {
-            tree->nodes[unbal].balance -= 1;
-            if (-1 == tree->nodes[unbal].balance)
-            {
-                break;
-            } // if
-            else if (-2 == tree->nodes[unbal].balance)
-            {
-                uint32_t const child = tree->nodes[unbal].child[LEFT];
-                if (1 == tree->nodes[child].balance)
-                {
-                    uint32_t const root = tree->nodes[child].child[RIGHT];
-                    tree->nodes[child].child[RIGHT] = tree->nodes[root].child[LEFT];
-                    tree->nodes[root].child[LEFT] = child;
-                    tree->nodes[unbal].child[LEFT] = tree->nodes[root].child[RIGHT];
-                    tree->nodes[root].child[RIGHT] = unbal;
-                    if (-1 == tree->nodes[root].balance)
-                    {
-                        tree->nodes[child].balance = 0;
-                        tree->nodes[unbal].balance = 1;
-                    } // if
-                    else if (0 == tree->nodes[root].balance)
-                    {
-                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
-                    } // if
-                    else // if (1 == tree->nodes[root].balance)
-                    {
-                        tree->nodes[child].balance = -1;
-                        tree->nodes[unbal].balance = 0;
-                    } // else
-                    tree->nodes[root].balance = 0;
-                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = root;
-                } // if
-                else
-                {
-                    tree->nodes[unbal].child[LEFT] = tree->nodes[child].child[RIGHT];
-                    tree->nodes[child].child[RIGHT] = unbal;
-                    tree->nodes[nodes[len - 1]].child[dir[len - 1]] = child;
-                    if (0 == tree->nodes[child].balance)
-                    {
-                        tree->nodes[child].balance = 1;
-                        tree->nodes[unbal].balance = -1;
-                        break;
-                    } // if
-                    else
-                    {
-                        tree->nodes[child].balance = tree->nodes[unbal].balance = 0;
-                    } // else
-                } // else
-            } // if
-        } // else
-    } // while
-
 } // remove_node
 
 
-void
-traverse(vrd_SNV_Tree* const tree,
+static void
+traverse(vrd_SNV_Tree* const restrict tree,
          uint32_t const root,
          int const depth,
          uint64_t const path,
-         size_t const sample_id)
+         vrd_AVL_Tree const* const restrict subset)
 {
     if (NULLPTR == root)
     {
         return;
     } // if
 
-    traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, sample_id);
+    traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset);
+    traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset);
 
-    (void) fprintf(stderr, "visit: %d\n", tree->nodes[root].position);
-
-    if (sample_id == tree->nodes[root].position)
+    if (vrd_avl_tree_is_element(subset, tree->nodes[root].position))
     {
         remove_node(tree, depth, path);
     } // if
-
-    traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, sample_id);
-
 } // traverse
 
 
+static int
+update_avl(vrd_SNV_Tree* const tree, uint32_t const root)
+{
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    int const left = update_avl(tree, tree->nodes[root].child[LEFT]);
+    int const right = update_avl(tree, tree->nodes[root].child[RIGHT]);
+    tree->nodes[root].balance = right - left;
+    return 1 + max(left, right);
+} // update_avl
+
+
 size_t
-vrd_snv_tree_remove(vrd_SNV_Tree* const tree, size_t const sample_id)
+vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
+                    vrd_AVL_Tree const* const restrict subset)
 {
     assert(NULL != tree);
 
     print(stderr, tree, tree->root, 0);
 
-    traverse(tree, tree->root, 0, 0, sample_id);
+    traverse(tree, tree->root, 0, 0, subset);
     balance(tree);
+    update_avl(tree, tree->root);
 
 
     print(stderr, tree, tree->root, 0);
