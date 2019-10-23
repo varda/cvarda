@@ -175,3 +175,25 @@ vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
 
     return query_contains(tree, tree->root, start, end, inserted, subset);
 } // vrd_mnv_tree_query
+
+
+#define TREE vrd_MNV_Tree
+#define ITV
+#include "tree_remove.inc"
+#undef ITV
+#undef TREE
+
+
+size_t
+vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != tree);
+
+    size_t const count = traverse(tree, tree->root, 0, 0, subset);
+    balance(tree);
+    uint32_t new_max = 0;
+    update_avl(tree, tree->root, &new_max);
+
+    return count;
+} // vrd_mnv_tree_remove

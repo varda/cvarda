@@ -90,6 +90,11 @@ vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
                    vrd_AVL_Tree const* const restrict subset);
 
 
+size_t
+vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
+                    vrd_AVL_Tree const* const restrict subset);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
