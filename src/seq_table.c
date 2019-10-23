@@ -4,8 +4,8 @@
 #include <stdlib.h>     // malloc, free
 #include <string.h>     // strncpy
 
-#include "../include/iupac_trie.h"  // vrd_IUPAC_Trie
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
+#include "iupac_trie.h"  // vrd_IUPAC_Trie
 
 
 struct vrd_Seq_Table

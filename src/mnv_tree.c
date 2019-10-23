@@ -3,7 +3,7 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
-#include "../include/mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
+#include "mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
 #include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS, max
 
 

@@ -3,9 +3,9 @@
 #include <stdint.h>     // UINT32_MAX
 #include <stdlib.h>     // malloc, free
 
-#include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
-#include "../include/snv_tree.h"    // vrd_SNV_Tree, vrd_snv_tree_*
+#include "ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "snv_tree.h"    // vrd_SNV_Tree, vrd_snv_tree_*
 
 
 struct vrd_SNV_Table

@@ -4,7 +4,7 @@
 #include <stdint.h>     // SIZE_MAX
 #include <stdlib.h>     // malloc, free
 
-#include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 
 
 enum

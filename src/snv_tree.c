@@ -5,7 +5,7 @@
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree,
                                     // vrd_avl_tree_is_element
-#include "../include/snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
+#include "snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
 #include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
 
 

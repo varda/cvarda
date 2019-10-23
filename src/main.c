@@ -6,7 +6,7 @@
 
 #include "../include/varda.h"   // VRD_*, vrd_*
 
-#include "../include/itv_tree.h"
+#include "../src/itv_tree.h"
 
 int
 main(int argc, char* argv[])

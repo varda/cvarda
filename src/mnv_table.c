@@ -3,10 +3,10 @@
 #include <stdint.h>     // UINT32_MAX
 #include <stdlib.h>     // malloc, free
 
-#include "../include/ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
-#include "../include/mnv_tree.h"    // vrd_MNV_Tree, vrd_mnv_tree_*
+#include "ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "mnv_tree.h"    // vrd_MNV_Tree, vrd_mnv_tree_*
 
 
 struct vrd_MNV_Table
