@@ -1,5 +1,5 @@
 #include <errno.h>      // errno
-#include <stddef.h>     // NULL
+#include <stddef.h>     // NULL, size_t
 #include <stdio.h>      // FILE, stderr, stdout, fclose, fopen, fprintf,
                         // perror
 #include <stdlib.h>     // EXIT_*
@@ -50,7 +50,9 @@ main(int argc, char* argv[])
         } // if
     } // for
 
-    vrd_snv_tree_remove(tree, subset);
+    size_t const count = vrd_snv_tree_remove(tree, subset);
+
+    (void) fprintf(stderr, "Deleted: %zu\n", count);
 
     vrd_avl_tree_destroy(&subset);
     vrd_snv_tree_destroy(&tree);

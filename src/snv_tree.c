@@ -366,7 +366,7 @@ remove_node(vrd_SNV_Tree* const tree,
 } // remove_node
 
 
-static void
+static size_t
 traverse(vrd_SNV_Tree* const restrict tree,
          uint32_t const root,
          int const depth,
@@ -375,16 +375,20 @@ traverse(vrd_SNV_Tree* const restrict tree,
 {
     if (NULLPTR == root)
     {
-        return;
+        return 0;
     } // if
 
-    traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset);
-    traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset);
+    size_t count = 0;
 
-    if (vrd_avl_tree_is_element(subset, tree->nodes[root].position))
+    count += traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset);
+    count += traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset);
+
+    if (vrd_avl_tree_is_element(subset, tree->nodes[root].position)) // FIXME: should be sample_id
     {
         remove_node(tree, depth, path);
+        count += 1;
     } // if
+    return count;
 } // traverse
 
 
@@ -411,12 +415,11 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
 
     print(stderr, tree, tree->root, 0);
 
-    traverse(tree, tree->root, 0, 0, subset);
+    size_t const count = traverse(tree, tree->root, 0, 0, subset);
     balance(tree);
     update_avl(tree, tree->root);
 
-
     print(stderr, tree, tree->root, 0);
 
-    return 0;
+    return count;
 } // vrd_snv_tree_remove
