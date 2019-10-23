@@ -6,7 +6,7 @@
 
 #include "../include/varda.h"   // VRD_*, vrd_*
 
-#include "../include/snv_tree.h"
+#include "../include/itv_tree.h"
 
 int
 main(int argc, char* argv[])
@@ -14,13 +14,13 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_SNV_Tree* restrict tree = NULL;
+    vrd_Itv_Tree* restrict tree = NULL;
     vrd_AVL_Tree* restrict subset = NULL;
 
-    tree = vrd_snv_tree_init(1000);
+    tree = vrd_itv_tree_init(1000);
     if (NULL == tree)
     {
-        (void) fprintf(stderr, "vrd_snv_tree_init() failed\n");
+        (void) fprintf(stderr, "vrd_itv_tree_init() failed\n");
         goto error;
     } // if
 
@@ -33,35 +33,34 @@ main(int argc, char* argv[])
 
     for (int i = 0; i < 22; ++i)
     {
-        int position = rand() % 100;
+        int start = rand() % 50;
+        int end = start + rand() % 50;
 
-        (void) fprintf(stderr, "insert: %d\n", position);
+        (void) fprintf(stderr, "insert: %d--%d\n", start, end);
 
-        if (NULL == vrd_snv_tree_insert(tree, position, 0, 0, 0))
+        if (NULL == vrd_itv_tree_insert(tree, start, end, i))
         {
-            (void) fprintf(stderr, "vrd_snv_tree_insert() failed\n");
+            (void) fprintf(stderr, "vrd_itv_tree_insert() failed\n");
             goto error;
         } // if
 
-        if (NULL == vrd_avl_tree_insert(subset, position))
-        {
-            (void) fprintf(stderr, "vrd_avl_tree_insert() failed\n");
-            goto error;
-        } // if
     } // for
 
-    size_t const count = vrd_snv_tree_remove(tree, subset);
+
+    vrd_avl_tree_insert(subset, 4);
+
+    size_t const count = vrd_itv_tree_remove(tree, subset);
 
     (void) fprintf(stderr, "Deleted: %zu\n", count);
 
     vrd_avl_tree_destroy(&subset);
-    vrd_snv_tree_destroy(&tree);
+    vrd_itv_tree_destroy(&tree);
 
     return EXIT_SUCCESS;
 
 error:
     vrd_avl_tree_destroy(&subset);
-    vrd_snv_tree_destroy(&tree);
+    vrd_itv_tree_destroy(&tree);
 
     return EXIT_FAILURE;
 } // main

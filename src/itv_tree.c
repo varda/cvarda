@@ -163,3 +163,57 @@ vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
 
     return query_contains(tree, tree->root, start, end, subset);
 } // vrd_itv_tree_query
+
+
+
+
+
+#include <inttypes.h>   // PRId32, PRIu32
+#include <stdio.h>  // stderr, fprintf
+
+
+static void
+print(FILE* restrict stream,
+      vrd_Itv_Tree const* const restrict tree,
+      uint32_t const root,
+      int const indent)
+{
+    if (NULLPTR == root)
+    {
+        return;
+    } // if
+
+    enum
+    {
+        INDENT = 8
+    }; // constants
+
+    print(stream, tree, tree->nodes[root].child[RIGHT], indent + INDENT);
+    (void) fprintf(stream, "%*s%" PRIu32 "--%" PRIu32 " [%" PRIu32 "] (%2" PRId32 ")\n", indent, "", tree->nodes[root].start, tree->nodes[root].end, tree->nodes[root].max, tree->nodes[root].balance);
+    print(stream, tree, tree->nodes[root].child[LEFT], indent + INDENT);
+} // print
+
+
+#define TREE vrd_Itv_Tree
+#define ITV
+#include "tree_remove.inc"
+#undef ITV
+#undef TREE
+
+
+size_t
+vrd_itv_tree_remove(vrd_Itv_Tree* const restrict tree,
+                    vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != tree);
+
+    print(stderr, tree, tree->root, 0);
+    size_t const count = traverse(tree, tree->root, 0, 0, subset);
+    balance(tree);
+    uint32_t new_max = 0;
+    update_avl(tree, tree->root, &new_max);
+    (void) fprintf(stderr, "======\n\n");
+    print(stderr, tree, tree->root, 0);
+
+    return count;
+} // vrd_itv_tree_remove
