@@ -10,7 +10,7 @@ extern "C"
 
 #include <stddef.h>     // size_t
 
-#include "avl_tree.h"   // vrd_AVL_Tree
+#include "../include/avl_tree.h"   // vrd_AVL_Tree
 
 
 /**
