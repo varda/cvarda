@@ -143,6 +143,11 @@ vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+size_t
+vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
+                     vrd_AVL_Tree const* const restrict subset);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -5,8 +5,8 @@
 #include <stdlib.h>     // EXIT_*
 
 #include "../include/varda.h"   // VRD_*, vrd_*
-
 #include "../src/itv_tree.h"
+
 
 int
 main(int argc, char* argv[])
@@ -43,9 +43,7 @@ main(int argc, char* argv[])
             (void) fprintf(stderr, "vrd_itv_tree_insert() failed\n");
             goto error;
         } // if
-
     } // for
-
 
     vrd_avl_tree_insert(subset, 4);
 

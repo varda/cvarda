@@ -142,3 +142,28 @@ vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
 
     return vrd_snv_tree_query(tree, position, inserted, subset);
 } // vrd_snv_table_query
+
+
+size_t
+vrd_snv_table_remove(vrd_SNV_Table* const restrict table,
+                     vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != table);
+    assert(NULL != subset);
+
+    size_t total = 0;
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        size_t const count = vrd_snv_tree_remove(table->tree[i], subset);
+        if (SIZE_MAX - count < total)
+        {
+            total += count;
+        } // if
+        else
+        {
+            total = SIZE_MAX;
+        } // else
+    } // for
+
+    return total;
+} // vrd_snv_table_remove

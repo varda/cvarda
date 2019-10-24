@@ -98,6 +98,11 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+size_t
+vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
+                     vrd_AVL_Tree const* const restrict subset);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

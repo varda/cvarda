@@ -1,6 +1,6 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // UINT32_MAX
+#include <stdint.h>     // UINT32_MAX, SIZE_MAX
 #include <stdlib.h>     // malloc, free
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
@@ -146,3 +146,28 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
 
     return vrd_mnv_tree_query(tree, start, end, inserted, subset);
 } // vrd_mnv_table_query
+
+
+size_t
+vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
+                     vrd_AVL_Tree const* const restrict subset)
+{
+    assert(NULL != table);
+    assert(NULL != subset);
+
+    size_t total = 0;
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        size_t const count = vrd_mnv_tree_remove(table->tree[i], subset);
+        if (SIZE_MAX - count < total)
+        {
+            total += count;
+        } // if
+        else
+        {
+            total = SIZE_MAX;
+        } // else
+    } // for
+
+    return total;
+} // vrd_mnv_table_remove
