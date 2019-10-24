@@ -118,36 +118,6 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
 } // vrd_avl_tree_is_element
 
 
-
-
-
-#include <inttypes.h>   // PRId32, PRIu32
-#include <stdio.h>  // stderr, fprintf
-
-
-void
-print(FILE* restrict stream,
-      vrd_AVL_Tree const* const restrict tree,
-      uint32_t const root,
-      int const indent)
-{
-    if (NULLPTR == root)
-    {
-        return;
-    } // if
-
-    enum
-    {
-        INDENT = 8
-    }; // constants
-
-    print(stream, tree, tree->nodes[root].child[RIGHT], indent + INDENT);
-    (void) fprintf(stream, "%*s%" PRIu32 " (%2" PRId32 ") [%u]\n", indent, "", tree->nodes[root].value, tree->nodes[root].balance, root);
-    print(stream, tree, tree->nodes[root].child[LEFT], indent + INDENT);
-} // print
-
-
-
 #define TREE vrd_AVL_Tree
 #define NODE vrd_AVL_Node
 #include "tree_layout.inc"
@@ -160,7 +130,5 @@ vrd_avl_tree_reorder(vrd_AVL_Tree* const tree)
 {
     assert(NULL != tree);
 
-    print(stderr, tree, tree->root, 0);
     reorder(tree);
-    print(stderr, tree, tree->root, 0);
 } // vrd_avl_tree_reorder

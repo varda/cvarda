@@ -32,8 +32,6 @@ main(int argc, char* argv[])
 
     vrd_avl_tree_reorder(tree);
 
-
-
     vrd_avl_tree_destroy(&tree);
 
     return EXIT_SUCCESS;

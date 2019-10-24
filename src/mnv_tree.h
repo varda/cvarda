@@ -95,6 +95,10 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+void
+vrd_mnv_tree_reorder(vrd_MNV_Tree* const tree);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

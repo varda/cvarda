@@ -171,3 +171,19 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
 
     return count;
 } // vrd_snv_tree_remove
+
+
+#define TREE vrd_SNV_Tree
+#define NODE vrd_SNV_Node
+#include "tree_layout.inc"
+#undef NODE
+#undef TREE
+
+
+void
+vrd_snv_tree_reorder(vrd_SNV_Tree* const tree)
+{
+    assert(NULL != tree);
+
+    reorder(tree);
+} // vrd_snv_tree_reorder

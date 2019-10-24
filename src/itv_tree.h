@@ -137,6 +137,10 @@ vrd_itv_tree_remove(vrd_Itv_Tree* const restrict tree,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+void
+vrd_itv_tree_reorder(vrd_Itv_Tree* const tree);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

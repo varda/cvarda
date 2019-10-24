@@ -89,6 +89,10 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+void
+vrd_snv_tree_reorder(vrd_SNV_Tree* const tree);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
