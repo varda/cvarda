@@ -5,12 +5,11 @@
 #include <stdlib.h>     // malloc, free
 
 #include "ascii_trie.h"  // vrd_ASCII_Trie, vrd_ascii_trie_*
+#include "tree.h"   // NULLPTR
 
 
 enum
 {
-    NULLPTR = 0,
-
     ASCII_SIZE = 95
 }; // constants
 
