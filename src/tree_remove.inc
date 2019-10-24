@@ -1,7 +1,7 @@
 #include <stddef.h>     // size_t
-#include <stdint.h>     // UINT64_C, uint32_t
+#include <stdint.h>     // uint32_t
 
-#include "tree.h"   // NULLPTR, LEFT, RIGHT, umax
+#include "tree.h"   // NULLPTR, LEFT, RIGHT, umax, ilog2, ipow2
 
 
 static size_t
@@ -37,20 +37,6 @@ tree_to_vine(TREE* const tree)
     } // while
     return count;
 } // tree_to_vine
-
-
-static inline int
-ilog2(size_t const x)
-{
-    return 64 - __builtin_clzll(x);
-} // ilog2
-
-
-static inline size_t
-ipow2(int const x)
-{
-    return (UINT64_C(1) << x);
-} // ipow2
 
 
 static void
@@ -226,7 +212,7 @@ update_avl(TREE* const tree, uint32_t const root, uint32_t* const new_max)
     tree->nodes[root].max = umax(umax(max_left, max_right), tree->nodes[root].end);
     tree->nodes[root].balance = right - left;
     *new_max = tree->nodes[root].max;
-    return 1 + umax(left, right);
+    return umax(left, right) + 1;
 } // update_avl
 #else
 static int
@@ -240,6 +226,6 @@ update_avl(TREE* const tree, uint32_t const root)
     int const left = update_avl(tree, tree->nodes[root].child[LEFT]);
     int const right = update_avl(tree, tree->nodes[root].child[RIGHT]);
     tree->nodes[root].balance = right - left;
-    return 1 + umax(left, right);
+    return umax(left, right) + 1;
 } // update_avl
 #endif

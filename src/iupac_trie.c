@@ -34,8 +34,6 @@ struct vrd_IUPAC_Trie
 static uint32_t
 node_init(vrd_IUPAC_Trie* const trie)
 {
-    assert(NULL != trie);
-
     if (UINT32_MAX == trie->next || trie->capacity < trie->next)
     {
         return NULLPTR;

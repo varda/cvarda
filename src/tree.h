@@ -8,7 +8,8 @@ extern "C"
 #endif
 
 
-#include <stdint.h>     // uint32_t
+#include <stddef.h>     // size_t
+#include <stdint.h>     // UINT64_C
 
 
 enum
@@ -26,7 +27,21 @@ static inline size_t
 umax(size_t const a, size_t const b)
 {
     return a > b ? a : b;
-} // max
+} // umax
+
+
+static inline int
+ilog2(size_t const x)
+{
+    return 64 - __builtin_clzll(x);
+} // ilog2
+
+
+static inline size_t
+ipow2(int const x)
+{
+    return (UINT64_C(1) << x);
+} // ipow2
 
 
 #ifdef __cplusplus

@@ -98,6 +98,10 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
                         size_t const value);
 
 
+void
+vrd_avl_tree_reorder(vrd_AVL_Tree* const tree);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

@@ -35,8 +35,6 @@ struct vrd_ASCII_Trie
 static size_t
 node_init(vrd_ASCII_Trie* const trie)
 {
-    assert(NULL != trie);
-
     if (SIZE_MAX == trie->next || trie->capacity < trie->next)
     {
         return NULLPTR;
