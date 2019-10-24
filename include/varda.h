@@ -39,7 +39,7 @@ extern "C"
  * The default patch version number. This should be defined by the build
  * engine (`make`) on compile time, e.g., `-DVRD_VERSION_PATCH=2`.
  */
-#define VRD_VERSION_PATCH 6
+#define VRD_VERSION_PATCH 7
 #endif
 
 

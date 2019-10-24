@@ -3,6 +3,7 @@
 #include <stdio.h>      // FILE, fprintf, fscanf
 #include <string.h>     // strlen
 
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
 #include "../include/iupac.h"       // vrd_iupac_to_idx
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
@@ -26,7 +27,7 @@ vrd_coverage_from_file(FILE* restrict stream,
     int end = 0;
 
     size_t count = 0;
-    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end))
+    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end)) // UNSAFE
     {
         if (-1 == vrd_cov_table_insert(cov,
                                        strlen(reference),
@@ -35,9 +36,21 @@ vrd_coverage_from_file(FILE* restrict stream,
                                        end,
                                        sample_id))
         {
-            break;
+            vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
+            if (NULL == subset)
+            {
+                return count;
+            } // if
+            if (NULL == vrd_avl_tree_insert(subset, sample_id))
+            {
+                return count;
+            } // if
+
+            count -= vrd_cov_table_remove(cov, subset);
+            vrd_avl_tree_destroy(&subset);
+            return count;
         } // if
-        count += 1;
+        count += 1; // OVERFLOW
     } // while
 
     return count;
@@ -69,11 +82,11 @@ vrd_variants_from_file(FILE* restrict stream,
                                                            &end,
                                                            &phase,
                                                            &len,
-                                                           inserted))
+                                                           inserted)) // UNSAFE
     {
         if (1023 < len)
         {
-            break;
+            goto error;
         } // if
 
         if (-1 == phase)
@@ -91,7 +104,7 @@ vrd_variants_from_file(FILE* restrict stream,
                                            phase,
                                            vrd_iupac_to_idx(inserted[0])))
             {
-                break;
+                goto error;
             } // if
         } // if
         else
@@ -100,7 +113,7 @@ vrd_variants_from_file(FILE* restrict stream,
                 vrd_seq_table_insert(seq, len, inserted);
             if (0 != len && NULL == ins_ptr)
             {
-                break;
+                goto error;
             } // if
 
             if (-1 == vrd_mnv_table_insert(mnv,
@@ -112,13 +125,31 @@ vrd_variants_from_file(FILE* restrict stream,
                                            phase,
                                            ins_ptr))
             {
-                break;
+                goto error;
             } // if
 
         } // else
-        count += 1;
+        count += 1; // OVERFLOW
     } // while
 
+    return count;
+
+error:
+    {
+        vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
+        if (NULL == subset)
+        {
+            return count;
+        } // if
+        if (NULL == vrd_avl_tree_insert(subset, sample_id))
+        {
+            return count;
+        } // if
+
+        count -= vrd_snv_table_remove(snv, subset);
+        count -= vrd_mnv_table_remove(mnv, subset);
+        vrd_avl_tree_destroy(&subset);
+    }
     return count;
 } // vrd_variants_from_file
 
@@ -152,7 +183,7 @@ vrd_annotate_from_file(FILE* restrict ostream,
                                                             &end,
                                                             &phase,
                                                             &len,
-                                                            inserted))
+                                                            inserted)) // UNSAFE
     {
         if (1023 < len)
         {
@@ -200,7 +231,7 @@ vrd_annotate_from_file(FILE* restrict ostream,
                        num,
                        den);
 
-        count += 1;
+        count += 1; // OVERFLOW
     } // while
 
     return count;

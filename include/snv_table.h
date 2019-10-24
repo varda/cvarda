@@ -92,7 +92,7 @@ vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
 
 
 size_t
-vrd_cnv_table_remove(vrd_SNV_Table* const restrict table,
+vrd_snv_table_remove(vrd_SNV_Table* const restrict table,
                      vrd_AVL_Tree const* const restrict subset);
 
 
