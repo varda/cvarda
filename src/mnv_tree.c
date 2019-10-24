@@ -1,10 +1,10 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
+#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t
 #include <stdlib.h>     // malloc, free
 
 #include "mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS, max
+#include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
 
 
 struct vrd_MNV_Node
@@ -65,33 +65,15 @@ vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree)
 } // vrd_mnv_tree_destroy
 
 
-static inline uint32_t
-update_max(vrd_MNV_Tree const* const tree, uint32_t const root)
-{
-    uint32_t res = tree->nodes[root].max;
-    if (NULLPTR != tree->nodes[root].child[LEFT])
-    {
-        res = max(res, tree->nodes[tree->nodes[root].child[LEFT]].max);
-    } // if
-    if (NULLPTR != tree->nodes[root].child[RIGHT])
-    {
-        res = max(res, tree->nodes[tree->nodes[root].child[RIGHT]].max);
-    } // if
-    return res;
-} // update_max
-
-
-static vrd_MNV_Node*
-insert(vrd_MNV_Tree* tree, uint32_t const ptr)
-{
-    assert(NULL != tree);
-
+#define TREE vrd_MNV_Tree
+#define NODE vrd_MNV_Node
 #define KEY start
 #define ITV
 #include "tree_insert.inc"
 #undef ITV
 #undef KEY
-} // insert
+#undef NODE
+#undef TREE
 
 
 vrd_MNV_Node*

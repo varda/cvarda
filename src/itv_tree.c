@@ -1,12 +1,12 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
+#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t
 #include <stdlib.h>     // malloc, free
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree,
                                     // vrd_avl_tree_is_element
 #include "itv_tree.h"    // vrd_Itv_*, vrd_itv_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT, max
+#include "tree.h"   // NULLPTR, LEFT, RIGHT
 
 
 typedef struct
@@ -65,33 +65,15 @@ vrd_itv_tree_destroy(vrd_Itv_Tree* restrict* const tree)
 } // vrd_itv_tree_destroy
 
 
-static inline uint32_t
-update_max(vrd_Itv_Tree const* const tree, uint32_t const root)
-{
-    uint32_t res = tree->nodes[root].max;
-    if (NULLPTR != tree->nodes[root].child[LEFT])
-    {
-        res = max(res, tree->nodes[tree->nodes[root].child[LEFT]].max);
-    } // if
-    if (NULLPTR != tree->nodes[root].child[RIGHT])
-    {
-        res = max(res, tree->nodes[tree->nodes[root].child[RIGHT]].max);
-    } // if
-    return res;
-} // update_max
-
-
-static vrd_Itv_Node*
-insert(vrd_Itv_Tree* const tree, uint32_t const ptr)
-{
-    assert(NULL != tree);
-
+#define TREE vrd_Itv_Tree
+#define NODE vrd_Itv_Node
 #define KEY start
 #define ITV
 #include "tree_insert.inc"
 #undef ITV
 #undef KEY
-} // insert
+#undef NODE
+#undef TREE
 
 
 void*

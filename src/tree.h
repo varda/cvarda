@@ -22,8 +22,8 @@ enum
 }; // constants
 
 
-static inline uint32_t
-max(uint32_t const a, uint32_t const b)
+static inline size_t
+umax(size_t const a, size_t const b)
 {
     return a > b ? a : b;
 } // max

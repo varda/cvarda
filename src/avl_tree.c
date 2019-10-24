@@ -67,15 +67,13 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
 } // vrd_avl_tree_destroy
 
 
-static vrd_AVL_Node*
-insert(vrd_AVL_Tree* tree, uint32_t const ptr)
-{
-    assert(NULL != tree);
-
+#define TREE vrd_AVL_Tree
+#define NODE vrd_AVL_Node
 #define KEY value
 #include "tree_insert.inc"
 #undef KEY
-} // insert
+#undef NODE
+#undef TREE
 
 
 void*

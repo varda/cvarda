@@ -1,3 +1,9 @@
+#include <stddef.h>     // size_t
+#include <stdint.h>     // UINT64_C, uint32_t
+
+#include "tree.h"   // NULLPTR, LEFT, RIGHT, umax
+
+
 static size_t
 tree_to_vine(TREE* const tree)
 {
@@ -43,7 +49,7 @@ ilog2(size_t const x)
 static inline size_t
 ipow2(int const x)
 {
-    return (1ull << x);
+    return (UINT64_C(1) << x);
 } // ipow2
 
 
@@ -108,7 +114,6 @@ remove_node(TREE* const tree,
     } // for
 
     int len = depth;
-
     if (NULLPTR == tree->nodes[tmp].child[RIGHT])
     {
         if (0 == depth)
@@ -218,10 +223,10 @@ update_avl(TREE* const tree, uint32_t const root, uint32_t* const new_max)
     int const left = update_avl(tree, tree->nodes[root].child[LEFT], &max_left);
     uint32_t max_right = 0;
     int const right = update_avl(tree, tree->nodes[root].child[RIGHT], &max_right);
-    tree->nodes[root].max = max(max(max_left, max_right), tree->nodes[root].end);
+    tree->nodes[root].max = umax(umax(max_left, max_right), tree->nodes[root].end);
     tree->nodes[root].balance = right - left;
     *new_max = tree->nodes[root].max;
-    return 1 + max(left, right);
+    return 1 + umax(left, right);
 } // update_avl
 #else
 static int
@@ -235,6 +240,6 @@ update_avl(TREE* const tree, uint32_t const root)
     int const left = update_avl(tree, tree->nodes[root].child[LEFT]);
     int const right = update_avl(tree, tree->nodes[root].child[RIGHT]);
     tree->nodes[root].balance = right - left;
-    return 1 + max(left, right);
+    return 1 + umax(left, right);
 } // update_avl
 #endif

@@ -65,15 +65,13 @@ vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree)
 } // vrd_snv_tree_destroy
 
 
-static vrd_SNV_Node*
-insert(vrd_SNV_Tree* tree, uint32_t const ptr)
-{
-    assert(NULL != tree);
-
+#define TREE vrd_SNV_Tree
+#define NODE vrd_SNV_Node
 #define KEY position
 #include "tree_insert.inc"
 #undef KEY
-} // insert
+#undef NODE
+#undef TREE
 
 
 vrd_SNV_Node*
