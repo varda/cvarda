@@ -3,7 +3,7 @@ from setuptools import setup, Extension
 
 VERSION_MAJOR = 1
 VERSION_MINOR = 1
-VERSION_PATCH = 6
+VERSION_PATCH = 7
 VERSION = '.'.join(map(str, [VERSION_MAJOR,
                              VERSION_MINOR,
                              VERSION_PATCH]))

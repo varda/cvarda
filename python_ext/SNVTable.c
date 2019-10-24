@@ -130,12 +130,30 @@ SNVTable_query(SNVTableObject* const restrict self,
 
 
 static PyObject*
-SNVTable_address(SNVTableObject* const restrict self,
-                 PyObject* const restrict args)
+SNVTable_remove(SNVTableObject* const restrict self,
+                PyObject* const restrict args)
 {
-    (void) args;
-    return Py_BuildValue("i", self->table);
-} // SNVTable_address
+    PyObject* restrict list = NULL;
+
+    if (!PyArg_ParseTuple(args, "O!:SNVTable.remove", &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    vrd_AVL_Tree* restrict subset = sample_set(list);
+    if (NULL == subset)
+    {
+        return NULL;
+    } // if
+
+    size_t result = 0;
+    Py_BEGIN_ALLOW_THREADS
+    result = vrd_snv_table_remove(self->table, subset);
+    vrd_avl_tree_destroy(&subset);
+    Py_END_ALLOW_THREADS
+
+    return Py_BuildValue("i", result);
+} // SNVTable_remove
 
 
 static PyMethodDef SNVTable_methods[] =
@@ -161,10 +179,12 @@ static PyMethodDef SNVTable_methods[] =
      ":return: The number of contained SNVs\n"
      ":rtype: integer\n"},
 
-    {"get_address", (PyCFunction) SNVTable_address, METH_NOARGS,
-     "get_address()\n"
-     "Get the memory address of the :py:class:`SNVTable`\n\n"
-     ":return: The memory address\n"
+    {"remove", (PyCFunction) SNVTable_remove, METH_VARARGS,
+     "remove(subset)\n"
+     "Remove for SNVs in the :py:class:`SNVTable`\n\n"
+     ":param subset: A list of sample IDs (`integer`)\n"
+     ":type subset: list\n"
+     ":return: The number of removed SNVs\n"
      ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel

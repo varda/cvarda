@@ -134,12 +134,30 @@ MNVTable_query(MNVTableObject* const restrict self,
 
 
 static PyObject*
-MNVTable_address(MNVTableObject* const restrict self,
-                 PyObject* const restrict args)
+MNVTable_remove(MNVTableObject* const restrict self,
+                PyObject* const restrict args)
 {
-    (void) args;
-    return Py_BuildValue("i", self->table);
-} // MNVTable_address
+    PyObject* restrict list = NULL;
+
+    if (!PyArg_ParseTuple(args, "O!:MNVTable.remove", &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    vrd_AVL_Tree* restrict subset = sample_set(list);
+    if (NULL == subset)
+    {
+        return NULL;
+    } // if
+
+    size_t result = 0;
+    Py_BEGIN_ALLOW_THREADS
+    result = vrd_mnv_table_remove(self->table, subset);
+    vrd_avl_tree_destroy(&subset);
+    Py_END_ALLOW_THREADS
+
+    return Py_BuildValue("i", result);
+} // MNVTable_remove
 
 
 static PyMethodDef MNVTable_methods[] =
@@ -169,10 +187,12 @@ static PyMethodDef MNVTable_methods[] =
      ":return: The number of contained MNVs\n"
      ":rtype: integer\n"},
 
-    {"get_address", (PyCFunction) MNVTable_address, METH_NOARGS,
-     "get_address()\n"
-     "Get the memory address of the :py:class:`MNVTable`\n\n"
-     ":return: The memory address\n"
+    {"remove", (PyCFunction) MNVTable_remove, METH_VARARGS,
+     "remove(subset)\n"
+     "Remove for MNVs in the :py:class:`MNVTable`\n\n"
+     ":param subset: A list of sample IDs (`integer`)\n"
+     ":type subset: list\n"
+     ":return: The number of removed MNVs\n"
      ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
