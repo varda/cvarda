@@ -1,3 +1,21 @@
+/**
+ * @file mnv_table.h
+ *
+ * Defines a table to store multi nucleotide variants (MNV), possibly on
+ * multiple reference sequences. The supported operations are:
+ *   - create an empty table (vrd_mnv_table_init())
+ *   - destroy a table (vrd_mnv_table_destroy())
+ *   - insert a MNV (vrd_mnv_table_insert())
+ *   - count the number of times a MNV is contained within the MNVs in
+ *     the table (vrd_mnv_table_query())
+ *   - remove all MNVs belonging to a set of samples
+ *     (vrd_mnv_table_remove())
+ * @warning The number and length of the reference sequence identifiers
+ *          may be limited by the implementation. The number of MNVs per
+ *          reference sequence may by limited by the implementation.
+ */
+
+
 #ifndef MNV_TABLE_H
 #define MNV_TABLE_H
 
@@ -14,21 +32,28 @@ extern "C"
 
 
 /**
- * Opaque data structure for a multi nucleotide variant (MNV) table.
+ * Opaque data type for a MNV table.
+ *
+ * Provides an opaque reference to a MNV table. See also:
+ * https://en.wikipedia.org/wiki/Opaque_data_type
  */
 typedef struct vrd_MNV_Table vrd_MNV_Table;
 
 
 /**
- * Create and initialize a MNV table.
+ * Create an empty MNV table.
  *
- * @param ref_capacity limits the number of reference sequences in the
- *                     table.
- * @param ref_size_capacity limits the combined length of the reference
- *                          sequences in the table.
- * @param tree_capacity limits the number of entries per reference
- *                      sequence in the table.
- * @return A pointer to the table on success, otherwise NULL.
+ * @param ref_capacity limits the number of distinct reference sequence
+ *                     identifiers in the table. This number may be
+ *                     further limited by the implementation.
+ * @param ref_size_capacity limits the number of distinct reference
+ *                          sequence identifiers prefices in the table.
+ *                          This number may be further limited by the
+ *                          implementation.
+ * @param tree_capacity limits the number of covered regions per
+ *                      reference sequence in the table. This number may
+ *                      be further limited by the implementation.
+ * @return An opaque pointer to the table on success, otherwise `NULL`.
  */
 vrd_MNV_Table*
 vrd_mnv_table_init(size_t const ref_capacity,
@@ -41,27 +66,44 @@ vrd_mnv_table_init(size_t const ref_capacity,
  *
  * All associated data is deallocated and the reference is set to NULL.
  *
- * @param table is the reference to the table.
+ * @param table is a reference to a table. The reference may be `NULL`.
+ *              Calling this function multiple times is safe.
  */
 void
 vrd_mnv_table_destroy(vrd_MNV_Table* restrict* const table);
 
 
 /**
- * Insert a MNV in the table.
+ * Insert a MNV to a MNV table.
  *
- * @param table is the table.
- * @param len the length of the reference ID (excluding the '\0').
- * @param reference the reference ID.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param len is the length of the reference sequence identifier
+ *            (`reference`). `strlen()` may be used to calculate the
+ *            length of a `\0`-terminated string.
+ * @param reference is the reference sequence identifier in printable
+ *                  ASCII.
  * @param start is the start position of the deleted part of the MNV
- *              (included).
+ *              (included). This value is not bound checked. It is the
+ *              resposibility of the caller to make sure that the table
+ *              can actually store the value.
  * @param end is the end position of the deleted part of the MNV
- *            (excluded).
- * @param sample_id is the ID of the sample that contains the MNV.
- * @param phase is the phase group (position based) to which the MNV
- *              belongs.
- * @param inserted is the inserted sequence.
- * @return 0 on success; otherwise -1.
+ *            (excluded). This value is not bound checked. It is the
+ *            resposibility of the caller to make sure that the table can
+ *            actually store the value.
+ * @param sample_id is an sample identifier indicating to which sample
+ *                  the MNV belongs. This value is not bound checked. It
+ *                  is the resposibility of the caller to make sure that
+ *                  the table can actually store the value.
+ * @param phase is the phase set identifier for the MNV. This value is
+ *              not bound checked. It is the resposibility of the caller
+ *              to make sure that the table can actually store the value.
+ * @param inserted is the inserted sequence of the MNV as a string of
+ *                 IUPAC nucleotides (ASCII encoded). May be `NULL`. The
+ *                 string must be accessible in the future. It should
+ *                 therefore be stored. Perhaps using a vrd_Seq_Table().
+ * @return `0` on success, otherwise `-1`.
  */
 int
 vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
@@ -75,18 +117,34 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
 
 
 /**
- * Query for MNVs in the table.
+ * Count the number of times a MNV is contained within the MNVs in the
+ * table.
  *
- * @param table is the table.
- * @param len the length of the reference ID (excluding the '\0').
- * @param reference the reference ID.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param len is the length of the reference sequence identifier
+ *            (`reference`). `strlen()` may be used to
+ *            calculate the length of a `\0`-terminated string.
+ * @param reference is the reference sequence identifier in printable
+ *                  ASCII.
  * @param start is the start position of the deleted part of the MNV
- *              (included).
+ *              (included). This value is not bound checked. It is the
+ *              resposibility of the caller to make sure that the table
+ *              can actually store the value.
  * @param end is the end position of the deleted part of the MNV
- *            (excluded).
- * @param inserted is the inserted sequence of the MNV.
- * @param subset is the subset of sample IDs.
- * @return The count of reported regions.
+ *            (excluded). This value is not bound checked. It is the
+ *            resposibility of the caller to make sure that the table can
+ *            actually store the value.
+ * @param inserted is the inserted sequence of the MNV as a string of
+ *                 IUPAC nucleotides (ASCII encoded). May be `NULL`.
+ * @param subset is an AVL tree holding sample identifiers that define a
+ *               subset of the samples in the table. Only MNVs that
+ *               belong to a sample in this tree are considered. If the
+ *               subset is `NULL`, all MNVs in the table are
+ *               considered.
+ * @return The number of MNVs (for the subset) that are included in the
+ *         table.
  */
 size_t
 vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
@@ -98,6 +156,17 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+/**
+ * Remove all MNVs belonging to a set of samples from the table.
+ *
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param subset is an AVL tree holding sample identifiers that define a
+ *               subset of the samples in the table. Only MNVs that
+ *               belong to a sample in this tree are removed.
+ * @return The number of MNVs that where removed.
+ */
 size_t
 vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
                      vrd_AVL_Tree const* const restrict subset);

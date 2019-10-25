@@ -8,6 +8,8 @@
  *   - insert a covered region (vrd_cov_table_insert())
  *   - count the number of times a region is contained within the regions
  *     in the table (vrd_cov_table_query())
+ *   - remove all regions belonging to a set of samples
+ *     (vrd_cov_table_remove())
  * @warning The number and length of the reference sequence identifiers
  *          may be limited by the implementation. The number of regions
  *          per reference sequence may by limited by the implementation.
@@ -78,8 +80,8 @@ vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table);
  *              table must be valid, otherwise this function results in
  *              undefined behavior.
  * @param len is the length of the reference sequence identifier
-              (`reference`).  `strlen()` may be used to
- *            calculate the length of a `\0`-terminated string.
+ *            (`reference`). `strlen()` may be used to calculate the
+ *            length of a `\0`-terminated string.
  * @param reference is the reference sequence identifier in printable
  *                  ASCII.
  * @param start is the start position of the covered region (included).
@@ -114,8 +116,8 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
  *              table must be valid, otherwise this function results in
  *              undefined behavior.
  * @param len is the length of the reference sequence identifier
-              (`reference`).  `strlen()` may be used to
- *            calculate the length of a `\0`-terminated string.
+ *            (`reference`). `strlen()` may be used to calculate the
+ *            length of a `\0`-terminated string.
  * @param reference is the reference sequence identifier in printable
  *                  ASCII.
  * @param start is the start position of the covered region (included).
@@ -143,6 +145,17 @@ vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
                     vrd_AVL_Tree const* const restrict subset);
 
 
+/**
+ * Remove all regions belonging to a set of samples from the table.
+ *
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param subset is an AVL tree holding sample identifiers that define a
+ *               subset of the samples in the table. Only regions that
+ *               belong to a sample in this tree are removed.
+ * @return The number of covered regions that where removed.
+ */
 size_t
 vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
                      vrd_AVL_Tree const* const restrict subset);

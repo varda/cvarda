@@ -1,3 +1,17 @@
+/**
+ * @file seq_table.h
+ *
+ * Defines a table to store (inserted) IUPAC nucleotide sequences. The
+ * supported operations are:
+ *   - create an empty table (vrd_seq_table_init())
+ *   - destroy a table (vrd_seq_table_destroy())
+ *   - insert a sequence (vrd_seq_table_insert())
+ *   - retrieve a sequence (vrd_seq_table_query())
+ * @warning The number of sequences per and the total length of the
+ *          unique sequences may by limited by the implementation.
+ */
+
+
 #ifndef SEQ_TABLE_H
 #define SEQ_TABLE_H
 
@@ -12,18 +26,24 @@ extern "C"
 
 
 /**
- * Opaque data structure for an IUPAC sequences table.
+ * Opaque data type for a sequence table.
+ *
+ * Provides an opaque reference to a sequence table. See also:
+ * https://en.wikipedia.org/wiki/Opaque_data_type
  */
 typedef struct vrd_Seq_Table vrd_Seq_Table;
 
 
 /**
- * Create and initialize a table.
+ * Create an empty sequence table.
  *
- * @param capacity limits the number of sequences in the table.
- * @param size_capacity limits the combined length of the sequences in
- *                      the table.
- * @return A pointer to the table on success, otherwise NULL.
+ * @param capacity limits the number of distinct sequences in the table.
+ *                 This number may be further limited by the
+ *                 implementation.
+ * @param size_capacity limits the total length of the unique sequences.
+ *                          This number may be further limited by the
+ *                          implementation.
+ * @return An opaque pointer to the table on success, otherwise `NULL`.
  */
 vrd_Seq_Table*
 vrd_seq_table_init(size_t const capacity,
@@ -31,23 +51,28 @@ vrd_seq_table_init(size_t const capacity,
 
 
 /**
- * Destroy a table.
+ * Destroy a sequence table.
  *
  * All associated data is deallocated and the reference is set to NULL.
  *
- * @param table is the reference to the table.
+ * @param table is a reference to a table. The reference may be `NULL`.
+ *              Calling this function multiple times is safe.
  */
 void
 vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table);
 
 
 /**
- * Insert a sequence to the table.
+ * Insert a sequnece to a sequence table.
  *
- * @param table is the table.
- * @param len the length of the string (excluding the '\0').
- * @param str the string.
- * @return A pointer to the inserted sequence on success, otherwise NULL.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param len is the length of the reference sequence identifier
+ *            (`reference`). `strlen()` may be used to calculate the
+ *            length of a `\0`-terminated string.
+ * @param str is the sequence in IUPAC nucleotides (ASCII encoded).
+ * @return A pointer to the copy of the stored sequence. May be `NULL`.
  */
 char const*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
@@ -56,12 +81,19 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
 
 
 /**
- * Query for a sequence in the table.
+ * Retrieve a sequence from the table.
  *
- * @param table is the table.
- * @param len the length of the string (excluding the '\0').
- * @param str the string.
- * @return A pointer to the sequence on success, otherwise NULL.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param table is a valid reference to a table. The reference to the
+ *              table must be valid, otherwise this function results in
+ *              undefined behavior.
+ * @param len is the length of the reference sequence identifier
+ *            (`reference`). `strlen()` may be used to calculate the
+ *            length of a `\0`-terminated string.
+ * @param str is the sequence in IUPAC nucleotides (ASCII encoded).
+ * @return A pointer to the copy of the stored sequence. May be `NULL`.
  */
 char const*
 vrd_seq_table_query(vrd_Seq_Table const* const table,

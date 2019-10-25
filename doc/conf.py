@@ -22,7 +22,7 @@ copyright = '2019, LUMC'
 author = 'LUMC'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.6'
+release = '1.1.8'
 
 
 # -- General configuration ---------------------------------------------------
@@ -57,4 +57,4 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = []
 
 
-breathe_domain_by_extension = { "h" : "c" , "c" : "c"}
+breathe_domain_by_extension = { "h" : "c", "c" : "c", "inc" : "c" }
