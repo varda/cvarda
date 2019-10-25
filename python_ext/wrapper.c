@@ -139,7 +139,7 @@ annotate_from_file(PyObject* const restrict self,
 
     size_t count = 0;
     Py_BEGIN_ALLOW_THREADS
-    count = vrd_annotate_from_file(istream, ostream, cov->table, snv->table, mnv->table, seq->table, subset);
+    count = vrd_annotate_from_file(ostream, istream, cov->table, snv->table, mnv->table, seq->table, subset);
     Py_END_ALLOW_THREADS
 
     errno = 0;
