@@ -105,7 +105,7 @@ annotate_from_file(PyObject* const restrict self,
     SequenceTableObject* restrict seq = NULL;
     PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "ssO!O!O!O!|O!:annotate_from_file", &in_path, &out_path, &CoverageTable, &cov, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "ssO!O!O!O!|O!:annotate_from_file", &out_path, &in_path, &CoverageTable, &cov, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -168,7 +168,7 @@ static PyMethodDef methods[] =
      "variants_from_file(path, sample_id, snv_table, mnv_table, seq_table)\n"},
 
     {"annotate_from_file", (PyCFunction) annotate_from_file, METH_VARARGS,
-     "annotate_from_file(in_path, out_path, cov_table, snv_table, mnv_table, seq_table[, subset])\n"},
+     "annotate_from_file(out_path, in_path, cov_table, snv_table, mnv_table, seq_table[, subset])\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // methods
