@@ -12,6 +12,7 @@
 #include "MNVTable.c"       // MNVTable, MNVTableObject
 #include "SequenceTable.c"  // SequenceTable, SequenceTableObject
 #include "SNVTable.c"       // SNVTable, SNVTableObject
+#include "helpers.h"    // sample_set
 
 
 static PyObject*
@@ -90,6 +91,74 @@ variants_from_file(PyObject* const restrict self,
 } // variants_from_file
 
 
+static PyObject*
+annotate_from_file(PyObject* const restrict self,
+                   PyObject* const restrict args)
+{
+    (void) self;
+
+    char const* restrict in_path = NULL;
+    char const* restrict out_path = NULL;
+    CoverageTableObject* restrict cov = NULL;
+    SNVTableObject* restrict snv = NULL;
+    MNVTableObject* restrict mnv = NULL;
+    SequenceTableObject* restrict seq = NULL;
+    PyObject* restrict list = NULL;
+
+    if (!PyArg_ParseTuple(args, "ssO!O!O!O!O!:annotate_from_file", &in_path, &out_path, &CoverageTable, &cov, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq, &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    errno = 0;
+    FILE* restrict istream = fopen(in_path, "r");
+    if (NULL == istream)
+    {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    errno = 0;
+    FILE* restrict ostream = fopen(out_path, "w");
+    if (NULL == ostream)
+    {
+        fclose(istream);
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    vrd_AVL_Tree* restrict subset = NULL;
+    if (NULL != list)
+    {
+        subset = sample_set(list);
+        if (NULL == subset)
+        {
+            fclose(istream);
+            fclose(ostream);
+            return NULL;
+        } // if
+    } // if
+
+    size_t count = 0;
+    Py_BEGIN_ALLOW_THREADS
+    count = vrd_annotate_from_file(istream, ostream, cov->table, snv->table, mnv->table, seq->table, subset);
+    Py_END_ALLOW_THREADS
+
+    errno = 0;
+    if (0 != fclose(istream))
+    {
+        fclose(ostream);
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    errno = 0;
+    if (0 != fclose(ostream))
+    {
+        return PyErr_SetFromErrno(PyExc_OSError);
+    } // if
+
+    return Py_BuildValue("i", count);
+} // annotate_from_file
+
+
 static PyMethodDef methods[] =
 {
     {"coverage_from_file", (PyCFunction) coverage_from_file, METH_VARARGS,
@@ -97,6 +166,9 @@ static PyMethodDef methods[] =
 
     {"variants_from_file", (PyCFunction) variants_from_file, METH_VARARGS,
      "variants_from_file(path, sample_id, snv_table, mnv_table, seq_table)\n"},
+
+    {"annotate_from_file", (PyCFunction) annotate_from_file, METH_VARARGS,
+     "annotate_from_file(in_path, out_path, cov_table, snv_table, mnv_table, seq_table, subset)\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // methods
