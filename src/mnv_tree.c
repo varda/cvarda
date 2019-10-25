@@ -69,7 +69,7 @@ vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree)
 #define NODE vrd_MNV_Node
 #define KEY start
 #define ITV
-#include "tree_insert.inc"
+#include "tree_insert.inc"  // insert
 #undef ITV
 #undef KEY
 #undef NODE
@@ -161,7 +161,7 @@ vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
 
 #define TREE vrd_MNV_Tree
 #define ITV
-#include "tree_remove.inc"
+#include "tree_remove.inc"  // traverse, balance, update_avl
 #undef ITV
 #undef TREE
 
@@ -183,7 +183,7 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
 
 #define TREE vrd_MNV_Tree
 #define NODE vrd_MNV_Node
-#include "tree_layout.inc"
+#include "tree_layout.inc"  // reorder
 #undef NODE
 #undef TREE
 

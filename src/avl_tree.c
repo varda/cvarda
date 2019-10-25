@@ -70,7 +70,7 @@ vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
 #define TREE vrd_AVL_Tree
 #define NODE vrd_AVL_Node
 #define KEY value
-#include "tree_insert.inc"
+#include "tree_insert.inc"  // insert
 #undef KEY
 #undef NODE
 #undef TREE
@@ -116,19 +116,3 @@ vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
 
     return false;
 } // vrd_avl_tree_is_element
-
-
-#define TREE vrd_AVL_Tree
-#define NODE vrd_AVL_Node
-#include "tree_layout.inc"
-#undef NODE
-#undef TREE
-
-
-void
-vrd_avl_tree_reorder(vrd_AVL_Tree* const tree)
-{
-    assert(NULL != tree);
-
-    reorder(tree);
-} // vrd_avl_tree_reorder
