@@ -19,7 +19,7 @@ extern "C"
 enum
 {
     CFG_REF_CAPACITY = 1000,
-    CFG_REF_SIZE_CAPACITY = 10000,
+    CFG_SEQ_CAPACITY = 1000000,
     CFG_TREE_CAPACITY = 1 << 24
 }; // constants
 

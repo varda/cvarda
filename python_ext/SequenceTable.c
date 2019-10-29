@@ -21,7 +21,7 @@ SequenceTable_new(PyTypeObject* const restrict type,
 {
     (void) kwds;
 
-    size_t ref_capacity = CFG_REF_CAPACITY;
+    size_t ref_capacity = CFG_SEQ_CAPACITY;
 
     if (!PyArg_ParseTuple(args, "|n:SequenceTable", &ref_capacity))
     {
@@ -145,10 +145,8 @@ static PyTypeObject SequenceTable =
     .tp_doc = "SequenceTable([ref_capacity[, ref_size_capacity]])\n"
               "This class is a conceptual representation of a database"
               "table containing (inserted) sequences.\n\n"
-              ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
-              ":type ref_capacity: integer, optional\n"
-              ":param ref_size_capacity:  defaults to :c:data:`CFG_REF_SIZE_CAPACITY`\n"
-              ":type ref_size_capacity: integer, optional\n",
+              ":param ref_capacity:  defaults to :c:data:`CFG_SEQ_CAPACITY`\n"
+              ":type ref_capacity: integer, optional\n",
     .tp_basicsize = sizeof(SequenceTableObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
