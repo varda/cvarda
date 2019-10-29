@@ -81,10 +81,9 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
 {
     assert(NULL != table);
 
-    vrd_SNV_Tree* restrict tree = vrd_trie_find(table->trie,
-                                                len,
-                                                reference);
-    if (NULL == tree)
+    vrd_SNV_Tree* restrict tree = NULL;
+    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    if (NULL == elem)
     {
         if (table->ref_capacity <= table->next)
         {
@@ -109,12 +108,12 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
             return -1;
         } // if
     } // if
+    else
+    {
+        tree = *(vrd_SNV_Tree**) elem;
+    } // else
 
-    if (NULL == vrd_snv_tree_insert(tree,
-                                    position,
-                                    sample_id,
-                                    phase,
-                                    inserted))
+    if (NULL == vrd_snv_tree_insert(tree, position, sample_id, phase, inserted))
     {
         return -1;
     } // if
@@ -133,14 +132,13 @@ vrd_snv_table_query(vrd_SNV_Table const* const restrict table,
 {
     assert(NULL != table);
 
-    vrd_SNV_Tree const* const restrict tree =
-        vrd_trie_find(table->trie, len, reference);
-    if (NULL == tree)
+    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    if (NULL == elem)
     {
         return 0;
     } // if
 
-    return vrd_snv_tree_query(tree, position, inserted, subset);
+    return vrd_snv_tree_query(*(vrd_SNV_Tree**) elem, position, inserted, subset);
 } // vrd_snv_table_query
 
 

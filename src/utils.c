@@ -109,8 +109,7 @@ vrd_variants_from_file(FILE* restrict stream,
         } // if
         else
         {
-            void* const restrict elem =
-                vrd_seq_table_insert(seq, len, inserted);
+            void* const restrict elem = vrd_seq_table_insert(seq, len + 1, inserted);
             if (0 != len && NULL == elem)
             {
                 goto error;
@@ -202,9 +201,7 @@ vrd_annotate_from_file(FILE* restrict ostream,
         } // if
         else
         {
-            void* const restrict elem =
-                vrd_seq_table_query(seq, len, inserted);
-
+            void* const restrict elem = vrd_seq_table_query(seq, len + 1, inserted);
             if (NULL == elem)
             {
                 continue; // skip (only exact matches)

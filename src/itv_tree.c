@@ -58,11 +58,13 @@ vrd_itv_tree_init(size_t const capacity)
 void
 vrd_itv_tree_destroy(vrd_Itv_Tree* restrict* const tree)
 {
-    if (NULL != tree)
+    if (NULL == tree)
     {
-        free(*tree);
-        *tree = NULL;
+        return;
     } // if
+
+    free(*tree);
+    *tree = NULL;
 } // vrd_itv_tree_destroy
 
 

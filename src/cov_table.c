@@ -81,18 +81,16 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
 {
     assert(NULL != table);
 
-    vrd_Itv_Tree* restrict tree = vrd_trie_find(table->trie,
-                                                len,
-                                                reference);
-    if (NULL == tree)
+    vrd_Itv_Tree* restrict tree = NULL;
+    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    if (NULL == elem)
     {
         if (table->ref_capacity <= table->next)
         {
             return -1;
         } // if
 
-        table->tree[table->next] =
-            vrd_itv_tree_init(table->tree_capacity);
+        table->tree[table->next] = vrd_itv_tree_init(table->tree_capacity);
         if (NULL == table->tree[table->next])
         {
             return -1;
@@ -101,14 +99,15 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
         tree = table->tree[table->next];
         table->next += 1;
 
-        if (NULL == vrd_trie_insert(table->trie,
-                                    len,
-                                    reference,
-                                    tree))
+        if (NULL == vrd_trie_insert(table->trie, len, reference, tree))
         {
             return -1;
         } // if
     } // if
+    else
+    {
+        tree = *(vrd_Itv_Tree**) elem;
+    } // else
 
     if (NULL == vrd_itv_tree_insert(tree, start, end, sample_id))
     {
@@ -129,14 +128,13 @@ vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
 {
     assert(NULL != table);
 
-    vrd_Itv_Tree const* const restrict tree =
-        vrd_trie_find(table->trie, len, reference);
-    if (NULL == tree)
+    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    if (NULL == elem)
     {
         return 0;
     } // if
 
-    return vrd_itv_tree_query(tree, start, end, subset);
+    return vrd_itv_tree_query(*(vrd_Itv_Tree**) elem, start, end, subset);
 } // vrd_cov_table_query
 
 

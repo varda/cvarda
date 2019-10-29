@@ -58,11 +58,13 @@ vrd_snv_tree_init(size_t const capacity)
 void
 vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree)
 {
-    if (NULL != tree)
+    if (NULL == tree)
     {
-        free(*tree);
-        *tree = NULL;
+        return;
     } // if
+
+    free(*tree);
+    *tree = NULL;
 } // vrd_snv_tree_destroy
 
 

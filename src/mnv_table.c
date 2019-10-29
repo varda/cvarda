@@ -83,18 +83,16 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
 {
     assert(NULL != table);
 
-    vrd_MNV_Tree* restrict tree = vrd_trie_find(table->trie,
-                                                len,
-                                                reference);
-    if (NULL == tree)
+    vrd_MNV_Tree* restrict tree = NULL;
+    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    if (NULL == elem)
     {
         if (table->ref_capacity <= table->next)
         {
             return -1;
         } // if
 
-        table->tree[table->next] =
-            vrd_mnv_tree_init(table->tree_capacity);
+        table->tree[table->next] = vrd_mnv_tree_init(table->tree_capacity);
         if (NULL == table->tree[table->next])
         {
             return -1;
@@ -103,21 +101,17 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
         tree = table->tree[table->next];
         table->next += 1;
 
-        if (NULL == vrd_trie_insert(table->trie,
-                                    len,
-                                    reference,
-                                    tree))
+        if (NULL == vrd_trie_insert(table->trie, len, reference, tree))
         {
             return -1;
         } // if
     } // if
+    else
+    {
+        tree = *(vrd_MNV_Tree**) elem;
+    } // else
 
-    if (NULL == vrd_mnv_tree_insert(tree,
-                                    start,
-                                    end,
-                                    sample_id,
-                                    phase,
-                                    inserted))
+    if (NULL == vrd_mnv_tree_insert(tree, start, end, sample_id, phase, inserted))
     {
         return -1;
     } // if
@@ -137,14 +131,13 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
 {
     assert(NULL != table);
 
-    vrd_MNV_Tree const* const restrict tree =
-        vrd_trie_find(table->trie, len, reference);
-    if (NULL == tree)
+    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    if (NULL == elem)
     {
         return 0;
     } // if
 
-    return vrd_mnv_tree_query(tree, start, end, inserted, subset);
+    return vrd_mnv_tree_query(*(vrd_MNV_Tree**) elem, start, end, inserted, subset);
 } // vrd_mnv_table_query
 
 
