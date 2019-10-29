@@ -321,11 +321,11 @@ vrd_trie_insert(vrd_Trie* const restrict trie,
     assert(NULL != trie);
 
     trie->root = trie_insert(trie->root, len, key, data);
-    return trie->root;
+    return trie_find(trie->root, len, key);
 } // vrd_trie_insert
 
 
-void*
+void
 vrd_trie_remove(vrd_Trie* const restrict trie,
                 size_t const len,
                 char const key[len])
@@ -333,7 +333,6 @@ vrd_trie_remove(vrd_Trie* const restrict trie,
     assert(NULL != trie);
 
     trie->root = trie_remove(trie->root, len, key);
-    return trie->root;
 } // vrd_trie_remove
 
 
@@ -349,8 +348,7 @@ vrd_trie_find(vrd_Trie const* const trie,
 
 
 static size_t
-trie_key(struct Node const* const restrict node,
-         char** restrict key)
+trie_key(struct Node const* const restrict node, char** restrict key)
 {
     if (NULL == node)
     {
@@ -369,10 +367,8 @@ trie_key(struct Node const* const restrict node,
 } // trie_key
 
 
-char*
-vrd_trie_key(void* const restrict ptr)
+size_t
+vrd_trie_key(void* const restrict ptr, char** restrict key)
 {
-    char* key = NULL;
-    (void) trie_key(ptr, &key);
-    return key;
+    return trie_key(ptr, key);
 } // vrd_trie_key

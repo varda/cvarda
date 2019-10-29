@@ -90,12 +90,6 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
         return NULL;
     } // if
 
-    elem = vrd_trie_find(table->trie, len, seq);
-    if (NULL == elem)
-    {
-        return NULL;
-    } // if
-
     table->sequences[table->next] = elem;
     table->next += 1;
 

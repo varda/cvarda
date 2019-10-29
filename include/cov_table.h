@@ -27,6 +27,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 
@@ -154,6 +155,11 @@ vrd_cov_table_query(vrd_Cov_Table const* const restrict table,
 size_t
 vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
                      vrd_AVL_Tree const* const restrict subset);
+
+
+void
+vrd_cov_table_write(vrd_Cov_Table const* const restrict table,
+                    FILE* restrict stream);
 
 
 #ifdef __cplusplus

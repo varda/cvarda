@@ -29,7 +29,7 @@ vrd_trie_insert(vrd_Trie* const restrict trie,
                 void* const restrict data);
 
 
-void*
+void
 vrd_trie_remove(vrd_Trie* const restrict trie,
                 size_t const len,
                 char const key[len]);
@@ -41,8 +41,8 @@ vrd_trie_find(vrd_Trie const* const trie,
               char const key[len]);
 
 
-char*
-vrd_trie_key(void* const restrict ptr);
+size_t
+vrd_trie_key(void* const restrict ptr, char** restrict key);
 
 
 #ifdef __cplusplus

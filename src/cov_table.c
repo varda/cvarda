@@ -1,6 +1,7 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX
+#include <stdio.h>      // FILE, fprintf
 #include <stdlib.h>     // malloc, free
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
@@ -16,7 +17,7 @@ struct vrd_Cov_Table
     size_t ref_capacity;
     size_t tree_capacity;
     size_t next;
-    vrd_Itv_Tree* restrict tree[];
+    void* restrict tree[];
 }; // vrd_Cov_Table
 
 
@@ -63,7 +64,7 @@ vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table)
 
     for (size_t i = 0; i < (*table)->next; ++i)
     {
-        vrd_itv_tree_destroy(&(*table)->tree[i]);
+        vrd_itv_tree_destroy((vrd_Itv_Tree**) (*table)->tree[i]);
     } // for
     vrd_trie_destroy(&(*table)->trie);
     free(*table);
@@ -82,7 +83,7 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
     assert(NULL != table);
 
     vrd_Itv_Tree* restrict tree = NULL;
-    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    void* restrict elem = vrd_trie_find(table->trie, len, reference);
     if (NULL == elem)
     {
         if (table->ref_capacity <= table->next)
@@ -90,19 +91,20 @@ vrd_cov_table_insert(vrd_Cov_Table* const table,
             return -1;
         } // if
 
-        table->tree[table->next] = vrd_itv_tree_init(table->tree_capacity);
-        if (NULL == table->tree[table->next])
+        tree = vrd_itv_tree_init(table->tree_capacity);
+        if (NULL == tree)
         {
             return -1;
         } // if
 
-        tree = table->tree[table->next];
+        elem = vrd_trie_insert(table->trie, len, reference, tree);
+        if (NULL == elem)
+        {
+            return -1;
+        } // if
+
+        table->tree[table->next] = elem;
         table->next += 1;
-
-        if (NULL == vrd_trie_insert(table->trie, len, reference, tree))
-        {
-            return -1;
-        } // if
     } // if
     else
     {
@@ -148,8 +150,25 @@ vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
     size_t count = 0;
     for (size_t i = 0; i < table->next; ++i)
     {
-        count += vrd_itv_tree_remove(table->tree[i], subset); // OVERFLOW
+        count += vrd_itv_tree_remove((vrd_Itv_Tree*) table->tree[i], subset); // OVERFLOW
     } // for
 
     return count;
 } // vrd_cov_table_remove
+
+
+void
+vrd_cov_table_write(vrd_Cov_Table const* const restrict table,
+                    FILE* restrict stream)
+{
+    assert(NULL != table);
+    assert(NULL != stream);
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        char* reference = NULL;
+        size_t const len = vrd_trie_key(table->tree[i], &reference);
+        (void) fprintf(stream, "%zu\t%.*s\n", len, (int) len, reference);
+        free(reference);
+    } // for
+} // vrd_cov_table_write

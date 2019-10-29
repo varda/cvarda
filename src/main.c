@@ -9,8 +9,8 @@
 
 enum
 {
-    SEQ_CAPACITY = 100000,
     REF_CAPACITY = 1000,
+    SEQ_CAPACITY = 100000,
     TREE_CAPACITY = 1 << 24
 }; // constants
 
@@ -81,6 +81,9 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Covered regions: %zu\n", cov_count);
 
+    vrd_cov_table_write(cov, stderr);
+
+/*
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
     if (NULL == stream)
@@ -118,7 +121,7 @@ main(int argc, char* argv[])
     } // if
 
     (void) fprintf(stderr, "Annotated: %zu\n", ann_count);
-
+*/
     vrd_cov_table_destroy(&cov);
     vrd_snv_table_destroy(&snv);
     vrd_mnv_table_destroy(&mnv);
