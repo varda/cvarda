@@ -1,5 +1,6 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
+#include <stdio.h>      // FILE, fread, fwrite
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
 #include <stdlib.h>     // malloc, free
 
@@ -187,3 +188,53 @@ vrd_snv_tree_reorder(vrd_SNV_Tree* const tree)
 
     reorder(tree);
 } // vrd_snv_tree_reorder
+
+
+int
+vrd_snv_tree_read(vrd_SNV_Tree* const restrict tree,
+                  FILE* restrict stream)
+{
+    assert(NULL != tree);
+
+    size_t count = fread(&tree->root, sizeof(tree->root), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fread(&tree->next, sizeof(tree->next), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fread(&tree->nodes, sizeof(tree->nodes[0]), tree->next, stream);
+    if (tree->next != count)
+    {
+        return -1;
+    } // if
+    return 0;
+} // vrd_snv_tree_read
+
+
+int
+vrd_snv_tree_write(vrd_SNV_Tree const* const restrict tree,
+                   FILE* restrict stream)
+{
+    assert(NULL != tree);
+
+    size_t count = fwrite(&tree->root, sizeof(tree->root), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fwrite(&tree->next, sizeof(tree->next), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fwrite(&tree->nodes, sizeof(tree->nodes[0]), tree->next, stream);
+    if (tree->next != count)
+    {
+        return -1;
+    } // if
+    return 0;
+} // vrd_snv_tree_write

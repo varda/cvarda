@@ -9,6 +9,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "../include/avl_tree.h"   // vrd_AVL_Tree
 
@@ -91,6 +92,16 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
 
 void
 vrd_snv_tree_reorder(vrd_SNV_Tree* const tree);
+
+
+int
+vrd_snv_tree_read(vrd_SNV_Tree* const restrict tree,
+                  FILE* restrict stream);
+
+
+int
+vrd_snv_tree_write(vrd_SNV_Tree const* const restrict tree,
+                   FILE* restrict stream);
 
 
 #ifdef __cplusplus

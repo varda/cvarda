@@ -10,7 +10,6 @@
 enum
 {
     SEQ_CAPACITY = 100000,
-    SEQ_SIZE_CAPACITY = 1000000,
     REF_CAPACITY = 1000,
     REF_SIZE_CAPACITY = 10000,
     TREE_CAPACITY = 1 << 24
@@ -50,7 +49,7 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    seq = vrd_seq_table_init(SEQ_CAPACITY, SEQ_SIZE_CAPACITY);
+    seq = vrd_seq_table_init(SEQ_CAPACITY);
     if (NULL == seq)
     {
         (void) fprintf(stderr, "vrd_seq_table_init() failed\n");
@@ -75,6 +74,9 @@ main(int argc, char* argv[])
     } // if
 
     (void) fprintf(stderr, "Covered regions: %zu\n", cov_count);
+
+
+/*
 
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
@@ -113,6 +115,8 @@ main(int argc, char* argv[])
     } // if
 
     (void) fprintf(stderr, "Annotated: %zu\n", ann_count);
+
+*/
 
     vrd_cov_table_destroy(&cov);
     vrd_snv_table_destroy(&snv);
