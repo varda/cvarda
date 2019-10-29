@@ -10,9 +10,9 @@
  *     in the table (vrd_cov_table_query())
  *   - remove all regions belonging to a set of samples
  *     (vrd_cov_table_remove())
- * @warning The number and length of the reference sequence identifiers
- *          may be limited by the implementation. The number of regions
- *          per reference sequence may by limited by the implementation.
+ * @warning The number of the reference sequence identifiers may be
+ *          limited by the implementation. The number of regions per
+ *          reference sequence may by limited by the implementation.
  */
 
 
@@ -46,10 +46,6 @@ typedef struct vrd_Cov_Table vrd_Cov_Table;
  * @param ref_capacity limits the number of distinct reference sequence
  *                     identifiers in the table. This number may be
  *                     further limited by the implementation.
- * @param ref_size_capacity limits the number of distinct reference
- *                          sequence identifiers prefices in the table.
- *                          This number may be further limited by the
- *                          implementation.
  * @param tree_capacity limits the number of covered regions per
  *                      reference sequence in the table. This number may
  *                      be further limited by the implementation.
@@ -57,7 +53,6 @@ typedef struct vrd_Cov_Table vrd_Cov_Table;
  */
 vrd_Cov_Table*
 vrd_cov_table_init(size_t const ref_capacity,
-                   size_t const ref_size_capacity,
                    size_t const tree_capacity);
 
 

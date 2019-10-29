@@ -31,7 +31,7 @@ extern "C"
  * The default minor version number. This should be defined by the build
  * engine (`make`) on compile time, e.g., `-DVRD_VERSION_MINOR=2`.
  */
-#define VRD_VERSION_MINOR 1
+#define VRD_VERSION_MINOR 2
 #endif
 
 #ifndef VRD_VERSION_PATCH
@@ -39,7 +39,7 @@ extern "C"
  * The default patch version number. This should be defined by the build
  * engine (`make`) on compile time, e.g., `-DVRD_VERSION_PATCH=2`.
  */
-#define VRD_VERSION_PATCH 10
+#define VRD_VERSION_PATCH 0
 #endif
 
 

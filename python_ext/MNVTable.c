@@ -22,17 +22,16 @@ MNVTable_new(PyTypeObject* const restrict type,
     (void) kwds;
 
     size_t ref_capacity = CFG_REF_CAPACITY;
-    size_t ref_size_capacity = CFG_REF_SIZE_CAPACITY;
     size_t tree_capacity = CFG_TREE_CAPACITY;
 
-    if (!PyArg_ParseTuple(args, "|nnn:MNVTable", &ref_capacity, &ref_size_capacity, &tree_capacity))
+    if (!PyArg_ParseTuple(args, "|nn:MNVTable", &ref_capacity, &tree_capacity))
     {
         return NULL;
     } // if
 
     MNVTableObject* const restrict self = (MNVTableObject*) type->tp_alloc(type, 0);
 
-    self->table = vrd_mnv_table_init(ref_capacity, ref_size_capacity, tree_capacity);
+    self->table = vrd_mnv_table_init(ref_capacity, tree_capacity);
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
@@ -188,8 +187,6 @@ static PyTypeObject MNVTable =
               "table containing multi nucleotide variants (MNV).\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
               ":type ref_capacity: integer, optional\n"
-              ":param ref_size_capacity:  defaults to :c:data:`CFG_REF_SIZE_CAPACITY`\n"
-              ":type ref_size_capacity: integer, optional\n"
               ":param tree_capacity:  defaults to :c:data:`CFG_REF_TREE_CAPACITY`\n"
               ":type tree_capacity: integer, optional\n",
     .tp_basicsize = sizeof(MNVTableObject),

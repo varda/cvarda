@@ -2,8 +2,8 @@ from setuptools import setup, Extension
 
 
 VERSION_MAJOR = 1
-VERSION_MINOR = 1
-VERSION_PATCH = 10
+VERSION_MINOR = 2
+VERSION_PATCH = 0
 VERSION = '.'.join(map(str, [VERSION_MAJOR,
                              VERSION_MINOR,
                              VERSION_PATCH]))
@@ -12,7 +12,6 @@ VERSION = '.'.join(map(str, [VERSION_MAJOR,
 cvarda = Extension('cvarda',
                    sources = ['python_ext/wrapper.c',
                               'python_ext/helpers.c',
-                              'src/ascii_trie.c',
                               'src/avl_tree.c',
                               'src/cov_table.c',
                               'src/itv_tree.c',
