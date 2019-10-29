@@ -113,7 +113,7 @@ vrd_mnv_table_insert(vrd_MNV_Table* const restrict table,
                      size_t const end,
                      size_t const sample_id,
                      size_t const phase,
-                     char const* const restrict inserted);
+                     size_t const inserted);
 
 
 /**
@@ -152,7 +152,7 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
                     char const reference[len],
                     size_t const start,
                     size_t const end,
-                    char const* const restrict inserted,
+                    size_t const inserted,
                     vrd_AVL_Tree const* const restrict subset);
 
 

@@ -61,18 +61,11 @@ MNVTable_insert(MNVTableObject* const restrict self,
     int start = 0;
     int end = 0;
     int sample_id = 0;
-    PyObject* restrict sequence = NULL;
+    int inserted = 0;
     int phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iii|Oi:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &sequence, &phase))
+    if (!PyArg_ParseTuple(args, "s#iii|ii:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &inserted, &phase))
     {
-        return NULL;
-    } // if
-
-    char const* const restrict inserted = PyCapsule_GetPointer(sequence, "sequence");
-    if (NULL == inserted)
-    {
-        PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
         return NULL;
     } // if
 
@@ -94,23 +87,12 @@ MNVTable_query(MNVTableObject* const restrict self,
     size_t len = 0;
     int start = 0;
     int end = 0;
-    PyObject* restrict sequence = NULL;
+    int inserted = 0;
     PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ii|OO!:MNVTable.insert", &reference, &len, &start, &end, &sequence, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ii|iO!:MNVTable.insert", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
     {
         return NULL;
-    } // if
-
-    char const* restrict inserted = NULL;
-    if (Py_None != sequence)
-    {
-        inserted = PyCapsule_GetPointer(sequence, "sequence");
-        if (NULL == inserted)
-        {
-            PyErr_SetString(PyExc_TypeError, "MNVTable.insert: PyCapsule_GetPointer() failed");
-            return NULL;
-        } // if
     } // if
 
     vrd_AVL_Tree* restrict subset = NULL;
@@ -169,8 +151,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param integer sample_id: The sample ID\n"
-     ":param sequence: A reference to an object stored in :py:class:`SequenceTable`\n"
-     ":type sequence: PyCapsule object\n"
+     ":param integer inserted: A reference to an object stored in :py:class:`SequenceTable`\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
@@ -180,8 +161,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
-     ":param sequence: A reference to an object stored in :py:class:`SequenceTable`\n"
-     ":type sequence: PyCapsule object\n"
+     ":param integer inserted: A reference to an object stored in :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained MNVs\n"

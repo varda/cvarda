@@ -58,7 +58,7 @@ vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree);
  * @param sample_id is the ID of the sample that contains the MNV.
  * @param phase is the phase group (position based) to which the MNV
  *              belongs.
- * @param inserted is the inserted sequence.
+ * @param inserted is a reference to the inserted sequence.
  * @return A pointer to the item in the tree on success, otherwise NULL.
  */
 vrd_MNV_Node*
@@ -67,7 +67,7 @@ vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
                     size_t const end,
                     size_t const sample_id,
                     size_t const phase,
-                    char const* const restrict inserted);
+                    size_t const inserted);
 
 
 /**
@@ -78,7 +78,7 @@ vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
  *              (included).
  * @param end is the end position of the deleted part of the MNV
  *            (excluded).
- * @param inserted is the inserted sequence.
+ * @param inserted is a reference to the inserted sequence.
  * @param subset is the subset of sample IDs.
  * @return The count of reported MNVs.
  */
@@ -86,7 +86,7 @@ size_t
 vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
                    size_t const start,
                    size_t const end,
-                   char const* const restrict inserted,
+                   size_t const inserted,
                    vrd_AVL_Tree const* const restrict subset);
 
 

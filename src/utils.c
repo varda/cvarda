@@ -109,9 +109,9 @@ vrd_variants_from_file(FILE* restrict stream,
         } // if
         else
         {
-            char const* const restrict ins_ptr =
+            void* const restrict elem =
                 vrd_seq_table_insert(seq, len, inserted);
-            if (0 != len && NULL == ins_ptr)
+            if (0 != len && NULL == elem)
             {
                 goto error;
             } // if
@@ -123,7 +123,7 @@ vrd_variants_from_file(FILE* restrict stream,
                                            end,
                                            sample_id,
                                            phase,
-                                           ins_ptr))
+                                           *(size_t*) elem))
             {
                 goto error;
             } // if
@@ -202,15 +202,20 @@ vrd_annotate_from_file(FILE* restrict ostream,
         } // if
         else
         {
-            char const* const restrict ins_ptr =
+            void* const restrict elem =
                 vrd_seq_table_query(seq, len, inserted);
+
+            if (NULL == elem)
+            {
+                continue; // skip (only exact matches)
+            } // if
 
             num = vrd_mnv_table_query(mnv,
                                       strlen(reference),
                                       reference,
                                       start,
                                       end,
-                                      ins_ptr,
+                                      *(size_t*) elem,
                                       subset);
         } // else
 
