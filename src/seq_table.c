@@ -62,6 +62,9 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table)
 } // vrd_seq_table_destroy
 
 
+#include <stdio.h>
+
+
 void*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
@@ -86,6 +89,12 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
         return NULL;
     } // if
 
+    elem = vrd_trie_find(table->trie, len, seq);
+    if (NULL == elem)
+    {
+        return NULL;
+    } // if
+
     table->sequences[table->next] = elem;
     table->next += 1;
 
@@ -102,3 +111,14 @@ vrd_seq_table_query(vrd_Seq_Table const* const table,
 
     return vrd_trie_find(table->trie, len, seq);
 } // vrd_seq_table_query
+
+
+void
+vrd_seq_table_remove(vrd_Seq_Table* const table,
+                     size_t const len,
+                     char const seq[len])
+{
+    assert(NULL != table);
+
+    (void) vrd_trie_remove(table->trie, len, seq);
+} // vrd_seq_table_remove

@@ -22,16 +22,15 @@ SequenceTable_new(PyTypeObject* const restrict type,
     (void) kwds;
 
     size_t ref_capacity = CFG_REF_CAPACITY;
-    size_t ref_size_capacity = CFG_REF_SIZE_CAPACITY;
 
-    if (!PyArg_ParseTuple(args, "|nn:SequenceTable", &ref_capacity, &ref_size_capacity))
+    if (!PyArg_ParseTuple(args, "|n:SequenceTable", &ref_capacity))
     {
         return NULL;
     } // if
 
     SequenceTableObject* const restrict self = (SequenceTableObject*) type->tp_alloc(type, 0);
 
-    self->table = vrd_seq_table_init(ref_capacity, ref_size_capacity);
+    self->table = vrd_seq_table_init(ref_capacity);
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
@@ -63,14 +62,14 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    char const* const restrict result = vrd_seq_table_insert(self->table, len, sequence);
+    char const* const restrict result = vrd_seq_table_insert(self->table, len + 1, sequence);
     if (NULL == result)
     {
         PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_seq_table_insert() failed");
         return NULL;
     } // if
 
-    return PyCapsule_New((void*) result, "sequence", NULL);
+    return Py_BuildValue("i", *(size_t*) result);
 } // SequenceTable_insert
 
 
@@ -86,31 +85,54 @@ SequenceTable_query(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    char const* const restrict result = vrd_seq_table_query(self->table, len, sequence);
+    char const* const restrict result = vrd_seq_table_query(self->table, len + 1, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
     } // if
 
-    return PyCapsule_New((void*) result, "sequence", NULL);
+    return Py_BuildValue("i", *(size_t*) result);
 } // SequenceTable_query
+
+
+static PyObject*
+SequenceTable_remove(SequenceTableObject* const restrict self,
+                     PyObject* const restrict args)
+{
+    char const* restrict sequence = NULL;
+    size_t len = 0;
+
+    if (!PyArg_ParseTuple(args, "s#:SequenceTable.remove", &sequence, &len))
+    {
+        return NULL;
+    } // if
+
+    vrd_seq_table_remove(self->table, len + 1, sequence);
+
+    Py_RETURN_NONE;
+} // SequenceTable_remove
 
 
 static PyMethodDef SequenceTable_methods[] =
 {
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
      "insert(sequence)\n"
-     "Insert a region in the :py:class:`SequenceTable`\n\n"
+     "Insert a sequence in the :py:class:`SequenceTable`\n\n"
      ":param string sequence: The sequence.\n"
      ":return: A reference to the inserted sequence\n"
-     ":rtype: PyCapsule object\n"},
+     ":rtype: integer\n"},
 
     {"query", (PyCFunction) SequenceTable_query, METH_VARARGS,
      "query(sequence)\n"
-     "Query for a region in the :py:class:`SequenceTable`\n\n"
+     "Query for a sequence in the :py:class:`SequenceTable`\n\n"
      ":param string sequence: The sequence.\n"
      ":return: A reference to the found sequence\n"
-     ":rtype: PyCapsule object\n"},
+     ":rtype: integer\n"},
+
+    {"remove", (PyCFunction) SequenceTable_remove, METH_VARARGS,
+     "remove(sequence)\n"
+     "Remove a sequence from the :py:class:`SequenceTable`\n\n"
+     ":param string sequence: The sequence.\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SequenceTable_methods

@@ -3,7 +3,7 @@ from setuptools import setup, Extension
 
 VERSION_MAJOR = 1
 VERSION_MINOR = 1
-VERSION_PATCH = 9
+VERSION_PATCH = 10
 VERSION = '.'.join(map(str, [VERSION_MAJOR,
                              VERSION_MINOR,
                              VERSION_PATCH]))
@@ -16,12 +16,12 @@ cvarda = Extension('cvarda',
                               'src/avl_tree.c',
                               'src/cov_table.c',
                               'src/itv_tree.c',
-                              'src/iupac_trie.c',
                               'src/mnv_table.c',
                               'src/mnv_tree.c',
                               'src/seq_table.c',
                               'src/snv_table.c',
                               'src/snv_tree.c',
+                              'src/trie.c',
                               'src/utils.c'],
                    define_macros = [('VRD_VERSION_MAJOR', VERSION_MAJOR),
                                     ('VRD_VERSION_MINOR', VERSION_MINOR),

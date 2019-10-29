@@ -97,6 +97,12 @@ vrd_seq_table_query(vrd_Seq_Table const* const table,
                     char const seq[len]);
 
 
+void
+vrd_seq_table_remove(vrd_Seq_Table* const table,
+                     size_t const len,
+                     char const seq[len]);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
