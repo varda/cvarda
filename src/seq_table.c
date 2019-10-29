@@ -75,6 +75,10 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
     void* restrict elem = vrd_trie_find(table->trie, len, seq);
     if (NULL != elem)
     {
+        if (NULL == vrd_trie_insert(table->trie, len, seq, elem))
+        {
+            return NULL;
+        } // if
         return elem;
     } // if
 
