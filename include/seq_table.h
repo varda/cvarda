@@ -7,8 +7,8 @@
  *   - destroy a table (vrd_seq_table_destroy())
  *   - insert a sequence (vrd_seq_table_insert())
  *   - retrieve a sequence (vrd_seq_table_query())
- * @warning The number of sequences per and the total length of the
- *          unique sequences may by limited by the implementation.
+ * @warning The number of unique sequences may by limited by the
+ *          implementation.
  */
 
 
@@ -40,14 +40,10 @@ typedef struct vrd_Seq_Table vrd_Seq_Table;
  * @param capacity limits the number of distinct sequences in the table.
  *                 This number may be further limited by the
  *                 implementation.
- * @param size_capacity limits the total length of the unique sequences.
- *                          This number may be further limited by the
- *                          implementation.
  * @return An opaque pointer to the table on success, otherwise `NULL`.
  */
 vrd_Seq_Table*
-vrd_seq_table_init(size_t const capacity,
-                   size_t const size_capacity);
+vrd_seq_table_init(size_t const capacity);
 
 
 /**
@@ -71,13 +67,13 @@ vrd_seq_table_destroy(vrd_Seq_Table* restrict* const table);
  * @param len is the length of the reference sequence identifier
  *            (`reference`). `strlen()` may be used to calculate the
  *            length of a `\0`-terminated string.
- * @param str is the sequence in IUPAC nucleotides (ASCII encoded).
+ * @param seq is the sequence in IUPAC nucleotides (ASCII encoded).
  * @return A pointer to the copy of the stored sequence. May be `NULL`.
  */
-char const*
+void*
 vrd_seq_table_insert(vrd_Seq_Table* const table,
                      size_t const len,
-                     char const str[len]);
+                     char const seq[len]);
 
 
 /**
@@ -92,13 +88,13 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
  * @param len is the length of the reference sequence identifier
  *            (`reference`). `strlen()` may be used to calculate the
  *            length of a `\0`-terminated string.
- * @param str is the sequence in IUPAC nucleotides (ASCII encoded).
+ * @param seq is the sequence in IUPAC nucleotides (ASCII encoded).
  * @return A pointer to the copy of the stored sequence. May be `NULL`.
  */
-char const*
+void*
 vrd_seq_table_query(vrd_Seq_Table const* const table,
                     size_t const len,
-                    char const str[len]);
+                    char const seq[len]);
 
 
 #ifdef __cplusplus
