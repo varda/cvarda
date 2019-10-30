@@ -90,9 +90,6 @@ height(TREE* const tree, uint32_t const root)
 } // height
 
 
-#include <stdio.h>
-
-
 static void
 reorder(TREE* const tree)
 {
