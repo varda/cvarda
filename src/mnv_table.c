@@ -143,7 +143,8 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
 
 size_t
 vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
-                     vrd_AVL_Tree const* const restrict subset)
+                     vrd_AVL_Tree const* const restrict subset,
+                     vrd_Seq_Table* const restrict seq_table)
 {
     assert(NULL != table);
     assert(NULL != subset);
@@ -151,7 +152,7 @@ vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
     size_t count = 0;
     for (size_t i = 0; i < table->next; ++i)
     {
-        count += vrd_mnv_tree_remove(table->tree[i], subset); // OVERFLOW
+        count += vrd_mnv_tree_remove(table->tree[i], subset, seq_table); // OVERFLOW
     } // for
 
     return count;

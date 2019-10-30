@@ -29,6 +29,7 @@ extern "C"
 #include <stddef.h>     // size_t
 
 #include "avl_tree.h"   // vrd_AVL_Tree
+#include "seq_table.h"  // vrd_Seq_Table
 
 
 /**
@@ -164,7 +165,8 @@ vrd_mnv_table_query(vrd_MNV_Table const* const restrict table,
  */
 size_t
 vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
-                     vrd_AVL_Tree const* const restrict subset);
+                     vrd_AVL_Tree const* const restrict subset,
+                     vrd_Seq_Table* const restrict seq_table);
 
 
 #ifdef __cplusplus

@@ -6,6 +6,8 @@
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
 #include "helpers.h"    // CFG_*
 
+#include "SequenceTable.c"  // SequenceTable, SequenceTableObject
+
 
 typedef struct
 {
@@ -118,9 +120,10 @@ static PyObject*
 MNVTable_remove(MNVTableObject* const restrict self,
                 PyObject* const restrict args)
 {
+    SequenceTableObject* restrict seq = NULL;
     PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "O!:MNVTable.remove", &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "O!O!:MNVTable.remove", &SequenceTable, &seq, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -133,7 +136,7 @@ MNVTable_remove(MNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_mnv_table_remove(self->table, subset);
+    result = vrd_mnv_table_remove(self->table, subset, seq->table);
     vrd_avl_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 

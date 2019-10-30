@@ -109,11 +109,18 @@ vrd_seq_table_query(vrd_Seq_Table const* const table,
 
 
 void
-vrd_seq_table_remove(vrd_Seq_Table* const table,
-                     size_t const len,
-                     char const seq[len])
+vrd_seq_table_remove(vrd_Seq_Table* const restrict table,
+                     size_t const elem)
 {
     assert(NULL != table);
 
+    if (table->next < elem)
+    {
+        return;
+    } // if
+
+    char* seq = NULL;
+    size_t const len = vrd_trie_key(table->sequences[elem], &seq);
     (void) vrd_trie_remove(table->trie, len, seq);
+    free(seq);
 } // vrd_seq_table_remove

@@ -157,6 +157,13 @@ vrd_itv_tree_query(vrd_Itv_Tree const* const restrict tree,
 #undef TREE
 
 
+#define TREE vrd_Itv_Tree
+#define NODE vrd_Itv_Node
+#include "tree_layout.inc"  // reorder
+#undef NODE
+#undef TREE
+
+
 size_t
 vrd_itv_tree_remove(vrd_Itv_Tree* const restrict tree,
                     vrd_AVL_Tree const* const restrict subset)
@@ -168,15 +175,10 @@ vrd_itv_tree_remove(vrd_Itv_Tree* const restrict tree,
     uint32_t new_max = 0;
     update_avl(tree, tree->root, &new_max);
 
+    reorder(tree);
+
     return count;
 } // vrd_itv_tree_remove
-
-
-#define TREE vrd_Itv_Tree
-#define NODE vrd_Itv_Node
-#include "tree_layout.inc"  // reorder
-#undef NODE
-#undef TREE
 
 
 void

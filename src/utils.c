@@ -146,7 +146,7 @@ error:
         } // if
 
         count -= vrd_snv_table_remove(snv, subset);
-        count -= vrd_mnv_table_remove(mnv, subset);
+        count -= vrd_mnv_table_remove(mnv, subset, seq);
         vrd_avl_tree_destroy(&subset);
     }
     return count;

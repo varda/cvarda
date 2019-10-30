@@ -1,6 +1,8 @@
 #include <stddef.h>     // size_t
 #include <stdint.h>     // uint32_t
 
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_is_element
+#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_remove
 #include "tree.h"   // NULLPTR, LEFT, RIGHT, umax, ilog2, ipow2
 
 
@@ -170,12 +172,22 @@ remove_node(TREE* const tree,
 } // remove_node
 
 
+#ifdef SEQ
+static size_t
+traverse(TREE* const restrict tree,
+         uint32_t const root,
+         int const depth,
+         uint64_t const path,
+         vrd_AVL_Tree const* const restrict subset,
+         vrd_Seq_Table* const restrict seq_table)
+#else
 static size_t
 traverse(TREE* const restrict tree,
          uint32_t const root,
          int const depth,
          uint64_t const path,
          vrd_AVL_Tree const* const restrict subset)
+#endif
 {
     if (NULLPTR == root)
     {
@@ -184,13 +196,21 @@ traverse(TREE* const restrict tree,
 
     size_t count = 0;
 
+#ifdef SEQ
+    count += traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset, seq_table);
+    count += traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset, seq_table);
+#else
     count += traverse(tree, tree->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset);
     count += traverse(tree, tree->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset);
+#endif
 
     if (vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id))
     {
         remove_node(tree, depth, path);
-        count += 1;
+#ifdef SEQ
+        vrd_seq_table_remove(seq_table, tree->nodes[root].inserted);
+#endif
+        count += 1;  // OVERFLOW
     } // if
     return count;
 } // traverse

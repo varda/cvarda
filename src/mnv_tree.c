@@ -3,8 +3,9 @@
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t
 #include <stdlib.h>     // malloc, free
 
-#include "mnv_tree.h"    // vrd_MNV_*, vrd_mnv_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
+#include "../include/seq_table.h"   // Seq_Table
+#include "mnv_tree.h"   // vrd_MNV_*, vrd_mnv_tree_*
+#include "tree.h"       // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
 
 
 struct vrd_MNV_Node
@@ -163,24 +164,11 @@ vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
 
 #define TREE vrd_MNV_Tree
 #define ITV
+#define SEQ
 #include "tree_remove.inc"  // traverse, balance, update_avl
+#undef SEQ
 #undef ITV
 #undef TREE
-
-
-size_t
-vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
-                    vrd_AVL_Tree const* const restrict subset)
-{
-    assert(NULL != tree);
-
-    size_t const count = traverse(tree, tree->root, 0, 0, subset);
-    balance(tree);
-    uint32_t new_max = 0;
-    update_avl(tree, tree->root, &new_max);
-
-    return count;
-} // vrd_mnv_tree_remove
 
 
 #define TREE vrd_MNV_Tree
@@ -188,6 +176,24 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
 #include "tree_layout.inc"  // reorder
 #undef NODE
 #undef TREE
+
+
+size_t
+vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
+                    vrd_AVL_Tree const* const restrict subset,
+                    vrd_Seq_Table* const restrict seq_table)
+{
+    assert(NULL != tree);
+
+    size_t const count = traverse(tree, tree->root, 0, 0, subset, seq_table);
+    balance(tree);
+    uint32_t new_max = 0;
+    update_avl(tree, tree->root, &new_max);
+
+    reorder(tree);
+
+    return count;
+} // vrd_mnv_tree_remove
 
 
 void

@@ -1,3 +1,7 @@
+#ifndef SEQUENCE_TABLE_C
+#define SEQUENCE_TABLE_C
+
+
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
@@ -99,15 +103,14 @@ static PyObject*
 SequenceTable_remove(SequenceTableObject* const restrict self,
                      PyObject* const restrict args)
 {
-    char const* restrict sequence = NULL;
-    size_t len = 0;
+    int elem = 0;
 
-    if (!PyArg_ParseTuple(args, "s#:SequenceTable.remove", &sequence, &len))
+    if (!PyArg_ParseTuple(args, "i:SequenceTable.remove", &elem))
     {
         return NULL;
     } // if
 
-    vrd_seq_table_remove(self->table, len + 1, sequence);
+    vrd_seq_table_remove(self->table, elem);
 
     Py_RETURN_NONE;
 } // SequenceTable_remove
@@ -154,3 +157,6 @@ static PyTypeObject SequenceTable =
     .tp_dealloc = (destructor) SequenceTable_dealloc,
     .tp_methods = SequenceTable_methods
 }; // SequenceTable
+
+
+#endif
