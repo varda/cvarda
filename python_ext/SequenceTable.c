@@ -66,7 +66,7 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    char const* const restrict result = vrd_seq_table_insert(self->table, len + 1, sequence);
+    void* const restrict result = vrd_seq_table_insert(self->table, len + 1, sequence);
     if (NULL == result)
     {
         PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_seq_table_insert() failed");
@@ -89,7 +89,7 @@ SequenceTable_query(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    char const* const restrict result = vrd_seq_table_query(self->table, len + 1, sequence);
+    void* const restrict result = vrd_seq_table_query(self->table, len + 1, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
