@@ -81,6 +81,22 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Covered regions: %zu\n", cov_count);
 
+    int err = vrd_cov_table_write(cov, "store/my_coverage");
+    (void) fprintf(stderr, "WRITE: %d\n", err);
+
+    vrd_Cov_Table* restrict test = vrd_cov_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == test)
+    {
+        (void) fprintf(stderr, "vrd_cov_table_init() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_cov_table_read(test, "store/my_coverage");
+    (void) fprintf(stderr, "READ: %d\n", err);
+
+    vrd_cov_table_destroy(&cov);
+
+
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
     if (NULL == stream)
@@ -100,21 +116,6 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Variants: %zu\n", var_count);
 
-
-    vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
-    if (NULL == subset)
-    {
-        (void) fprintf(stderr, "vrd_avl_tree_init() failed\n");
-        goto error;
-    } // if
-    vrd_avl_tree_insert(subset, 0);
-
-    vrd_cov_table_remove(cov, subset);
-    vrd_snv_table_remove(snv, subset);
-    vrd_mnv_table_remove(mnv, subset, seq);
-
-    vrd_avl_tree_destroy(&subset);
-
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
     if (NULL == stream)
@@ -123,7 +124,7 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    size_t const ann_count = vrd_annotate_from_file(stdout, stream, cov, snv, mnv, seq, NULL);
+    size_t const ann_count = vrd_annotate_from_file(stdout, stream, test, snv, mnv, seq, NULL);
 
     errno = 0;
     if (0 != fclose(stream))
@@ -134,7 +135,10 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Annotated: %zu\n", ann_count);
 
-    vrd_cov_table_destroy(&cov);
+    vrd_cov_table_destroy(&test);
+
+
+    //vrd_cov_table_destroy(&cov);
     vrd_snv_table_destroy(&snv);
     vrd_mnv_table_destroy(&mnv);
     vrd_seq_table_destroy(&seq);

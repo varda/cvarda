@@ -135,7 +135,7 @@ static PyMethodDef SequenceTable_methods[] =
     {"remove", (PyCFunction) SequenceTable_remove, METH_VARARGS,
      "remove(sequence)\n"
      "Remove a sequence from the :py:class:`SequenceTable`\n\n"
-     ":param string sequence: The sequence.\n"},
+     ":param integer index: The index in the table.\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SequenceTable_methods
