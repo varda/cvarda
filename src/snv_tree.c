@@ -179,7 +179,7 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
     balance(tree);
     update_avl(tree, tree->root);
 
-    reorder(tree);
+    //reorder(tree);
 
     return count;
 } // vrd_snv_tree_remove

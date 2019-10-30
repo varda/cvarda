@@ -190,7 +190,7 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
     uint32_t new_max = 0;
     update_avl(tree, tree->root, &new_max);
 
-    reorder(tree);
+    // reorder(tree);
 
     return count;
 } // vrd_mnv_tree_remove
