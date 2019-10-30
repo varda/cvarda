@@ -55,13 +55,6 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    void* const restrict elem = vrd_seq_table_insert(seq, 5, "ATAC");
-    if (NULL == elem)
-    {
-        (void) fprintf(stderr, "vrd_seq_table_insert() failed\n");
-        goto error;
-    } // if
-
     errno = 0;
     stream = fopen("../data/depth10.bed", "r");
     if (NULL == stream)
@@ -95,7 +88,6 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "READ: %d\n", err);
 
     vrd_cov_table_destroy(&cov);
-
 
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");

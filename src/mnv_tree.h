@@ -9,6 +9,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/seq_table.h"   // vrd_Seq_Table
@@ -99,6 +100,16 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
 
 void
 vrd_mnv_tree_reorder(vrd_MNV_Tree* const tree);
+
+
+int
+vrd_mnv_tree_read(vrd_MNV_Tree* const restrict tree,
+                  FILE* restrict stream);
+
+
+int
+vrd_mnv_tree_write(vrd_MNV_Tree const* const restrict tree,
+                   FILE* restrict stream);
 
 
 #ifdef __cplusplus

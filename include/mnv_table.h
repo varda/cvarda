@@ -169,6 +169,16 @@ vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
                      vrd_Seq_Table* const restrict seq_table);
 
 
+int
+vrd_mnv_table_read(vrd_MNV_Table* const restrict table,
+                   char const* const restrict path);
+
+
+int
+vrd_mnv_table_write(vrd_MNV_Table const* const restrict table,
+                    char const* const restrict path);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

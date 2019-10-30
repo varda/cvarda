@@ -1,6 +1,7 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX, uint32_t, int32_t
+#include <stdio.h>      // FILE, fread, fwrite
 #include <stdlib.h>     // malloc, free
 
 #include "../include/seq_table.h"   // Seq_Table
@@ -203,3 +204,53 @@ vrd_mnv_tree_reorder(vrd_MNV_Tree* const tree)
 
     reorder(tree);
 } // vrd_mnv_tree_reorder
+
+
+int
+vrd_mnv_tree_read(vrd_MNV_Tree* const restrict tree,
+                  FILE* restrict stream)
+{
+    assert(NULL != tree);
+
+    size_t count = fread(&tree->root, sizeof(tree->root), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fread(&tree->next, sizeof(tree->next), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fread(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
+    if (tree->next - 1 != count)
+    {
+        return -1;
+    } // if
+    return 0;
+} // vrd_mnv_tree_read
+
+
+int
+vrd_mnv_tree_write(vrd_MNV_Tree const* const restrict tree,
+                   FILE* restrict stream)
+{
+    assert(NULL != tree);
+
+    size_t count = fwrite(&tree->root, sizeof(tree->root), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fwrite(&tree->next, sizeof(tree->next), 1, stream);
+    if (1 != count)
+    {
+        return -1;
+    } // if
+    count = fwrite(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
+    if (tree->next - 1 != count)
+    {
+        return -1;
+    } // if
+    return 0;
+} // vrd_mnv_tree_write

@@ -2,19 +2,14 @@
 #include <errno.h>      // errno
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX
-#include <stdio.h>      // FILE, fopen, fread, fwrite
+#include <stdio.h>      // FILE, FILENAME_MAX, fopen, fread, fwrite,
+                        // snprintf
 #include <stdlib.h>     // malloc, free
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
 #include "itv_tree.h"   // vrd_Itv_Tree, vrd_itv_tree_*
 #include "trie.h"       // vrd_Trie, vrd_trie_*
-
-
-enum
-{
-    BUF_SIZE = 1024
-}; // constants
 
 
 struct vrd_Cov_Table
@@ -169,9 +164,9 @@ read_tree(char const* const restrict path,
           size_t const idx,
           size_t const capacity)
 {
-    char filename[BUF_SIZE] = {'\0'};
+    char filename[FILENAME_MAX] = {'\0'};
 
-    if (0 >= snprintf(filename, BUF_SIZE, "%s_tree_%zu.bin", path, idx))
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s_tree_%zu.bin", path, idx))
     {
         return NULL;
     } // if
@@ -219,8 +214,8 @@ vrd_cov_table_read(vrd_Cov_Table* const restrict table,
 {
     assert(NULL != table);
 
-    char filename[BUF_SIZE] = {'\0'};
-    if (0 >= snprintf(filename, BUF_SIZE, "%s.idx", path))
+    char filename[FILENAME_MAX] = {'\0'};
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
     {
         return -1;
     } // if
@@ -331,8 +326,8 @@ vrd_cov_table_write(vrd_Cov_Table const* const restrict table,
 {
     assert(NULL != table);
 
-    char filename[BUF_SIZE] = {'\0'};
-    if (0 >= snprintf(filename, BUF_SIZE, "%s.idx", path))
+    char filename[FILENAME_MAX] = {'\0'};
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
     {
         return -1;
     } // if
@@ -390,7 +385,7 @@ vrd_cov_table_write(vrd_Cov_Table const* const restrict table,
 
     for (size_t i = 0; i < table->next; ++i)
     {
-        if (0 >= snprintf(filename, BUF_SIZE, "%s_tree_%zu.bin", path, i))
+        if (0 >= snprintf(filename, FILENAME_MAX, "%s_tree_%zu.bin", path, i))
         {
             return -1;
         } // if

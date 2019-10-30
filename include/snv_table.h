@@ -153,6 +153,16 @@ vrd_snv_table_remove(vrd_SNV_Table* const restrict table,
                      vrd_AVL_Tree const* const restrict subset);
 
 
+int
+vrd_snv_table_read(vrd_SNV_Table* const restrict table,
+                   char const* const restrict path);
+
+
+int
+vrd_snv_table_write(vrd_SNV_Table const* const restrict table,
+                    char const* const restrict path);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

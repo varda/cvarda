@@ -1,6 +1,9 @@
 #include <assert.h>     // assert
+#include <errno.h>      // errno
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX
+#include <stdio.h>      // FILE, FILENAME_MAX, fopen, fread, fwrite,
+                        // snprintf
 #include <stdlib.h>     // malloc, free
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
@@ -158,3 +161,270 @@ vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
 
     return count;
 } // vrd_mnv_table_remove
+
+
+static vrd_MNV_Tree*
+read_tree(char const* const restrict path,
+          size_t const idx,
+          size_t const capacity)
+{
+    char filename[FILENAME_MAX] = {'\0'};
+
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s_tree_%zu.bin", path, idx))
+    {
+        return NULL;
+    } // if
+
+    vrd_MNV_Tree* restrict tree = NULL;
+
+    errno = 0;
+    FILE* restrict stream = fopen(filename, "rb");
+    if (NULL == stream)
+    {
+        goto error;
+    } // if
+
+    tree = vrd_mnv_tree_init(capacity);
+    if (NULL == tree)
+    {
+        goto error;
+    } // if
+
+    int const ret = vrd_mnv_tree_read(tree, stream);
+    if (0 != ret)
+    {
+        goto error;
+    } // if
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        goto error;
+    } // if
+
+    return tree;
+
+error:
+    (void) fclose(stream);
+    vrd_mnv_tree_destroy(&tree);
+
+    return NULL;
+} // read_tree
+
+
+int
+vrd_mnv_table_read(vrd_MNV_Table* const restrict table,
+                   char const* const restrict path)
+{
+    assert(NULL != table);
+
+    char filename[FILENAME_MAX] = {'\0'};
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
+    {
+        return -1;
+    } // if
+
+    char* reference = NULL;
+
+    errno = 0;
+    FILE* restrict stream = fopen(filename, "rb");
+    if (NULL == stream)
+    {
+        goto error;
+    } // if
+
+    size_t size = 0;
+
+    errno = 0;
+    size_t count = fread(&size, sizeof(size), 1, stream);
+    if (1 != count)
+    {
+        goto error;
+    } // if
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        size_t len = 0;
+
+        errno = 0;
+        count = fread(&len, sizeof(len), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
+        reference = malloc(len);
+        if (NULL == reference)
+        {
+            goto error;
+        } // if
+
+        errno = 0;
+        count = fread(reference, 1, len, stream);
+        if (len != count)
+        {
+            goto error;
+        } // if
+
+        vrd_MNV_Tree* restrict tree = read_tree(path, i, table->tree_capacity);
+        if (NULL == tree)
+        {
+            errno = -1;
+            goto error;
+        } // if
+
+        void* const restrict elem = vrd_trie_insert(table->trie, len, reference, tree);
+        if (NULL == elem)
+        {
+            errno = -1;
+            goto error;
+        } // if
+
+        table->tree[table->next] = elem;
+
+        size_t idx = 0;
+
+        errno = 0;
+        count = fread(&idx, sizeof(idx), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
+        if (idx != table->next)
+        {
+            errno = -1;
+            goto error;
+        } // if
+
+        table->next += 1;
+
+        free(reference);
+        reference = NULL;
+    } // for
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        return errno;
+    } // if
+
+    return 0;
+
+error:
+    {
+        int const err = errno;
+
+        errno = 0;
+        (void) fclose(stream);
+        free(reference);
+
+        return err;
+    }
+} // vrd_mnv_table_read
+
+
+int
+vrd_mnv_table_write(vrd_MNV_Table const* const restrict table,
+                    char const* const restrict path)
+{
+    assert(NULL != table);
+
+    char filename[FILENAME_MAX] = {'\0'};
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
+    {
+        return -1;
+    } // if
+
+    char* reference = NULL;
+
+    errno = 0;
+    FILE* restrict stream = fopen(filename, "wb");
+    if (NULL == stream)
+    {
+        goto error;
+    } // if
+
+    errno = 0;
+    size_t count = fwrite(&table->next, sizeof(table->next), 1, stream);
+    if (1 != count)
+    {
+        goto error;
+    } // for
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        size_t const len = vrd_trie_key(table->tree[i], &reference);
+
+        errno = 0;
+        count = fwrite(&len, sizeof(len), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
+        errno = 0;
+        count = fwrite(reference, 1, len, stream);
+        if (len != count)
+        {
+            goto error;
+        } // if
+
+        errno = 0;
+        count = fwrite(&i, sizeof(i), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
+        free(reference);
+        reference = NULL;
+    } // for
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        return errno;
+    } // if
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        if (0 >= snprintf(filename, FILENAME_MAX, "%s_tree_%zu.bin", path, i))
+        {
+            return -1;
+        } // if
+
+        errno = 0;
+        stream = fopen(filename, "wb");
+        if (NULL == stream)
+        {
+            goto error;
+        } // if
+
+        int const ret = vrd_mnv_tree_write(*(vrd_MNV_Tree**) table->tree[i], stream);
+        if (0 != ret)
+        {
+            errno = ret;
+            goto error;
+        } // if
+
+        errno = 0;
+        if (0 != fclose(stream))
+        {
+            return errno;
+        } // if
+    } // for
+
+    return 0;
+
+error:
+    {
+        int const err = errno;
+
+        errno = 0;
+        (void) fclose(stream);
+        free(reference);
+
+        return err;
+    }
+} // vrd_mnv_table_write
