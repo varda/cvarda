@@ -175,7 +175,7 @@ vrd_itv_tree_remove(vrd_Itv_Tree* const restrict tree,
     uint32_t new_max = 0;
     update_avl(tree, tree->root, &new_max);
 
-    // reorder(tree);
+    reorder(tree);
 
     return count;
 } // vrd_itv_tree_remove

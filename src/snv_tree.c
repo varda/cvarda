@@ -158,13 +158,13 @@ vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
 
 
 #define TREE vrd_SNV_Tree
-#include "tree_remove.inc"
+#include "tree_remove.inc"  // traverse, balance, update_avl
 #undef TREE
 
 
 #define TREE vrd_SNV_Tree
 #define NODE vrd_SNV_Node
-#include "tree_layout.inc"
+#include "tree_layout.inc"  // reorder
 #undef NODE
 #undef TREE
 
@@ -179,7 +179,7 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
     balance(tree);
     update_avl(tree, tree->root);
 
-    //reorder(tree);
+    reorder(tree);
 
     return count;
 } // vrd_snv_tree_remove

@@ -204,16 +204,18 @@ vrd_annotate_from_file(FILE* restrict ostream,
             void* const restrict elem = vrd_seq_table_query(seq, len + 1, inserted);
             if (NULL == elem)
             {
-                continue; // skip (only exact matches)
+                num = 0;
             } // if
-
-            num = vrd_mnv_table_query(mnv,
-                                      strlen(reference),
-                                      reference,
-                                      start,
-                                      end,
-                                      *(size_t*) elem,
-                                      subset);
+            else
+            {
+                num = vrd_mnv_table_query(mnv,
+                                          strlen(reference),
+                                          reference,
+                                          start,
+                                          end,
+                                          *(size_t*) elem,
+                                          subset);
+            } // else
         } // else
 
         size_t const den = vrd_cov_table_query(cov,

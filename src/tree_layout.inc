@@ -90,6 +90,9 @@ height(TREE* const tree, uint32_t const root)
 } // height
 
 
+#include <stdio.h>
+
+
 static void
 reorder(TREE* const tree)
 {
@@ -100,6 +103,7 @@ reorder(TREE* const tree)
     } // if
 
     uint32_t const size = van_emde_boas(tree, 1, addr, tree->root, height(tree, tree->root));
+
 
     uint32_t* const restrict addr_inv = malloc(size * sizeof(*addr_inv));
     if (NULL == addr_inv)
@@ -136,7 +140,7 @@ reorder(TREE* const tree)
         tree->nodes[i] = nodes[i];
     } // for
     tree->next = size;
-    tree->root = 1;
+    tree->root = size > 1 ? 1 : NULLPTR;
 
     free(addr);
     free(addr_inv);

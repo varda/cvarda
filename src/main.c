@@ -109,11 +109,12 @@ main(int argc, char* argv[])
     } // if
     vrd_avl_tree_insert(subset, 0);
 
+    vrd_cov_table_remove(cov, subset);
     vrd_snv_table_remove(snv, subset);
+    vrd_mnv_table_remove(mnv, subset, seq);
 
     vrd_avl_tree_destroy(&subset);
 
-/*
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
     if (NULL == stream)
@@ -132,7 +133,7 @@ main(int argc, char* argv[])
     } // if
 
     (void) fprintf(stderr, "Annotated: %zu\n", ann_count);
-*/
+
     vrd_cov_table_destroy(&cov);
     vrd_snv_table_destroy(&snv);
     vrd_mnv_table_destroy(&mnv);
