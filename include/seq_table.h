@@ -102,6 +102,16 @@ vrd_seq_table_remove(vrd_Seq_Table* const restrict table,
                      size_t const elem);
 
 
+int
+vrd_seq_table_read(vrd_Seq_Table* const restrict table,
+                   char const* const restrict path);
+
+
+int
+vrd_seq_table_write(vrd_Seq_Table const* const restrict table,
+                    char const* const restrict path);
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

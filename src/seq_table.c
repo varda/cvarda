@@ -1,6 +1,9 @@
 #include <assert.h>     // assert
+#include <errno.h>      // errno
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX
+#include <stdio.h>      // FILE, FILENAME_MAX, fopen, fread, fwrite,
+                        // snprintf
 #include <stdlib.h>     // malloc, free
 #include <string.h>     // strncpy
 
@@ -124,3 +127,159 @@ vrd_seq_table_remove(vrd_Seq_Table* const restrict table,
     (void) vrd_trie_remove(table->trie, len, seq);
     free(seq);
 } // vrd_seq_table_remove
+
+
+int
+vrd_seq_table_read(vrd_Seq_Table* const restrict table,
+                   char const* const restrict path)
+{
+    assert(NULL != table);
+
+    char filename[FILENAME_MAX] = {'\0'};
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.seq", path))
+    {
+        return -1;
+    } // if
+
+    char* sequence = NULL;
+
+    errno = 0;
+    FILE* restrict stream = fopen(filename, "wb");
+    if (NULL == stream)
+    {
+        goto error;
+    } // if
+
+    size_t size = 0;
+
+    errno = 0;
+    size_t count = fwrite(&size, sizeof(size), 1, stream);
+    if (1 != count)
+    {
+        goto error;
+    } // for
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        size_t len = 0;
+
+        errno = 0;
+        count = fread(&len, sizeof(len), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
+        sequence = malloc(len);
+        if (NULL == sequence)
+        {
+            goto error;
+        } // if
+
+        errno = 0;
+        count = fread(sequence, 1, len, stream);
+        if (len != count)
+        {
+            goto error;
+        } // if
+
+        if (NULL == vrd_seq_table_insert(table, len, sequence))
+        {
+            errno = -1;
+            goto error;
+        } // if
+
+        free(sequence);
+        sequence = NULL;
+    } // for
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        return errno;
+    } // if
+
+    return 0;
+
+error:
+    {
+        int const err = errno;
+
+        errno = 0;
+        (void) fclose(stream);
+        free(sequence);
+
+        return err;
+    }
+} // vrd_seq_table_read
+
+
+int
+vrd_seq_table_write(vrd_Seq_Table const* const restrict table,
+                    char const* const restrict path)
+{
+    assert(NULL != table);
+
+    char filename[FILENAME_MAX] = {'\0'};
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.seq", path))
+    {
+        return -1;
+    } // if
+
+    char* sequence = NULL;
+
+    errno = 0;
+    FILE* restrict stream = fopen(filename, "wb");
+    if (NULL == stream)
+    {
+        goto error;
+    } // if
+
+    errno = 0;
+    size_t count = fwrite(&table->next, sizeof(table->next), 1, stream);
+    if (1 != count)
+    {
+        goto error;
+    } // for
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        size_t const len = vrd_trie_key(table->sequence[i], &sequence);
+
+        errno = 0;
+        count = fwrite(&len, sizeof(len), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
+        errno = 0;
+        count = fwrite(sequence, 1, len, stream);
+        if (len != count)
+        {
+            goto error;
+        } // if
+
+        free(sequence);
+        sequence = NULL;
+    } // for
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        return errno;
+    } // if
+
+    return 0;
+
+error:
+    {
+        int const err = errno;
+
+        errno = 0;
+        (void) fclose(stream);
+        free(sequence);
+
+        return err;
+    }
+} // vrd_seq_table_write
