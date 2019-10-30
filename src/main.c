@@ -100,7 +100,7 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Variants: %zu\n", var_count);
 
-/*
+
     vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
     if (NULL == subset)
     {
@@ -112,7 +112,7 @@ main(int argc, char* argv[])
     vrd_snv_table_remove(snv, subset);
 
     vrd_avl_tree_destroy(&subset);
-*/
+
 /*
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
