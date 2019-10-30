@@ -57,7 +57,7 @@ vrd_cov_table_init(size_t const ref_capacity,
 void
 vrd_cov_table_destroy(vrd_Cov_Table* restrict* const table)
 {
-    if (NULL == table)
+    if (NULL == table || NULL == *table)
     {
         return;
     } // if

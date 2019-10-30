@@ -55,7 +55,7 @@ vrd_snv_table_init(size_t const ref_capacity,
 void
 vrd_snv_table_destroy(vrd_SNV_Table* restrict* const table)
 {
-    if (NULL == table)
+    if (NULL == table || NULL == *table)
     {
         return;
     } // if
@@ -82,7 +82,7 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
     assert(NULL != table);
 
     vrd_SNV_Tree* restrict tree = NULL;
-    void* const restrict elem = vrd_trie_find(table->trie, len, reference);
+    void* restrict elem = vrd_trie_find(table->trie, len, reference);
     if (NULL == elem)
     {
         if (table->ref_capacity <= table->next)
@@ -90,19 +90,20 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
             return -1;
         } // if
 
-        table->tree[table->next] = vrd_snv_tree_init(table->tree_capacity);
-        if (NULL == table->tree[table->next])
+        tree = vrd_snv_tree_init(table->tree_capacity);
+        if (NULL == tree)
         {
             return -1;
         } // if
 
-        tree = table->tree[table->next];
+        elem = vrd_trie_insert(table->trie, len, reference, tree);
+        if (NULL == elem)
+        {
+            return -1;
+        } // if
+
+        table->tree[table->next] = elem;
         table->next += 1;
-
-        if (NULL == vrd_trie_insert(table->trie, len, reference, tree))
-        {
-            return -1;
-        } // if
     } // if
     else
     {
