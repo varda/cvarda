@@ -150,7 +150,7 @@ vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
     size_t count = 0;
     for (size_t i = 0; i < table->next; ++i)
     {
-        count += vrd_itv_tree_remove((vrd_Itv_Tree*) table->tree[i], subset); // OVERFLOW
+        count += vrd_itv_tree_remove(*(vrd_Itv_Tree**) table->tree[i], subset);  // OVERFLOW
     } // for
 
     return count;

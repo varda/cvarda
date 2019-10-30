@@ -152,7 +152,7 @@ vrd_snv_table_remove(vrd_SNV_Table* const restrict table,
     size_t count = 0;
     for (size_t i = 0; i < table->next; ++i)
     {
-        count += vrd_snv_tree_remove(table->tree[i], subset); // OVERFLOW
+        count += vrd_snv_tree_remove(*(vrd_SNV_Tree**) table->tree[i], subset);  // OVERFLOW
     } // for
 
     return count;
