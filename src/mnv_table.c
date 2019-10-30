@@ -16,7 +16,7 @@ struct vrd_MNV_Table
     size_t ref_capacity;
     size_t tree_capacity;
     size_t next;
-    vrd_MNV_Tree* restrict tree[];
+    void* restrict tree[];
 }; // vrd_MNV_Table
 
 
@@ -63,7 +63,7 @@ vrd_mnv_table_destroy(vrd_MNV_Table* restrict* const table)
 
     for (size_t i = 0; i < (*table)->next; ++i)
     {
-        vrd_mnv_tree_destroy(&(*table)->tree[i]);
+        vrd_mnv_tree_destroy((vrd_MNV_Tree**) (*table)->tree[i]);
     } // for
     vrd_trie_destroy(&(*table)->trie);
     free(*table);

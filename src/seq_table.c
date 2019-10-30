@@ -14,7 +14,7 @@ struct vrd_Seq_Table
 
     size_t capacity;
     size_t next;
-    void* restrict sequences[];
+    void* restrict sequence[];
 }; // vrd_Seq_Table
 
 
@@ -27,7 +27,7 @@ vrd_seq_table_init(size_t const capacity)
     } // if
 
     vrd_Seq_Table* const table = malloc(sizeof(*table) +
-                                        sizeof(table->sequences[0]) *
+                                        sizeof(table->sequence[0]) *
                                         capacity);
     if (NULL == table)
     {
@@ -90,7 +90,7 @@ vrd_seq_table_insert(vrd_Seq_Table* const table,
         return NULL;
     } // if
 
-    table->sequences[table->next] = elem;
+    table->sequence[table->next] = elem;
     table->next += 1;
 
     return elem;
@@ -120,7 +120,7 @@ vrd_seq_table_remove(vrd_Seq_Table* const restrict table,
     } // if
 
     char* seq = NULL;
-    size_t const len = vrd_trie_key(table->sequences[elem], &seq);
+    size_t const len = vrd_trie_key(table->sequence[elem], &seq);
     (void) vrd_trie_remove(table->trie, len, seq);
     free(seq);
 } // vrd_seq_table_remove

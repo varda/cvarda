@@ -15,7 +15,7 @@ struct vrd_SNV_Table
     size_t ref_capacity;
     size_t tree_capacity;
     size_t next;
-    vrd_SNV_Tree* restrict tree[];
+    void* restrict tree[];
 }; // vrd_SNV_Table
 
 
@@ -62,7 +62,7 @@ vrd_snv_table_destroy(vrd_SNV_Table* restrict* const table)
 
     for (size_t i = 0; i < (*table)->next; ++i)
     {
-        vrd_snv_tree_destroy(&(*table)->tree[i]);
+        vrd_snv_tree_destroy((vrd_SNV_Tree**) (*table)->tree[i]);
     } // for
     vrd_trie_destroy(&(*table)->trie);
     free(*table);
@@ -90,8 +90,7 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
             return -1;
         } // if
 
-        table->tree[table->next] =
-            vrd_snv_tree_init(table->tree_capacity);
+        table->tree[table->next] = vrd_snv_tree_init(table->tree_capacity);
         if (NULL == table->tree[table->next])
         {
             return -1;
@@ -100,10 +99,7 @@ vrd_snv_table_insert(vrd_SNV_Table* const table,
         tree = table->tree[table->next];
         table->next += 1;
 
-        if (NULL == vrd_trie_insert(table->trie,
-                                    len,
-                                    reference,
-                                    tree))
+        if (NULL == vrd_trie_insert(table->trie, len, reference, tree))
         {
             return -1;
         } // if

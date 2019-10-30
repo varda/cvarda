@@ -81,19 +81,6 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Covered regions: %zu\n", cov_count);
 
-    vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
-    if (NULL == subset)
-    {
-        (void) fprintf(stderr, "vrd_avl_tree_init() failed\n");
-        goto error;
-    } // if
-
-    vrd_avl_tree_insert(subset, 0);
-
-    vrd_cov_table_remove(cov, subset);
-
-
-/*
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
     if (NULL == stream)
@@ -113,6 +100,20 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Variants: %zu\n", var_count);
 
+/*
+    vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
+    if (NULL == subset)
+    {
+        (void) fprintf(stderr, "vrd_avl_tree_init() failed\n");
+        goto error;
+    } // if
+    vrd_avl_tree_insert(subset, 0);
+
+    vrd_snv_table_remove(snv, subset);
+
+    vrd_avl_tree_destroy(&subset);
+*/
+/*
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
     if (NULL == stream)
