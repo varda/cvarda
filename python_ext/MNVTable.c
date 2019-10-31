@@ -144,6 +144,48 @@ MNVTable_remove(MNVTableObject* const restrict self,
 } // MNVTable_remove
 
 
+static PyObject*
+MNVTable_read(MNVTableObject* const restrict self,
+              PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:MNVTable.read", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_mnv_table_read(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.read: vrd_mnv_table_read() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // MNVTable_read
+
+
+static PyObject*
+MNVTable_write(MNVTableObject* const restrict self,
+               PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:MNVTable.write", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_mnv_table_write(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.write: vrd_mnv_table_write() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // MNVTable_write
+
+
 static PyMethodDef MNVTable_methods[] =
 {
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
@@ -176,6 +218,16 @@ static PyMethodDef MNVTable_methods[] =
      ":type subset: list\n"
      ":return: The number of removed MNVs\n"
      ":rtype: integer\n"},
+
+    {"read", (PyCFunction) MNVTable_read, METH_VARARGS,
+     "read(path)\n"
+     "Read a :py:class:`MNVTable` from files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
+
+    {"write", (PyCFunction) MNVTable_write, METH_VARARGS,
+     "write(path)\n"
+     "Write a :py:class:`MNVTable` to files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // MNVTable_methods

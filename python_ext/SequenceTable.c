@@ -116,6 +116,48 @@ SequenceTable_remove(SequenceTableObject* const restrict self,
 } // SequenceTable_remove
 
 
+static PyObject*
+SequenceTable_read(SequenceTableObject* const restrict self,
+                   PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:SequenceTable.read", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_seq_table_read(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.read: vrd_seq_table_read() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // SequenceTable_read
+
+
+static PyObject*
+SequenceTable_write(SequenceTableObject* const restrict self,
+                    PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:SequenceTable.write", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_seq_table_write(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.write: vrd_seq_table_write() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // SequenceTable_write
+
+
 static PyMethodDef SequenceTable_methods[] =
 {
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
@@ -136,6 +178,16 @@ static PyMethodDef SequenceTable_methods[] =
      "remove(sequence)\n"
      "Remove a sequence from the :py:class:`SequenceTable`\n\n"
      ":param integer index: The index in the table.\n"},
+
+    {"read", (PyCFunction) SequenceTable_read, METH_VARARGS,
+     "read(path)\n"
+     "Read a :py:class:`SequenceTable` from files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
+
+    {"write", (PyCFunction) SequenceTable_write, METH_VARARGS,
+     "write(path)\n"
+     "Write a :py:class:`SequenceTable` to files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SequenceTable_methods

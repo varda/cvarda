@@ -155,6 +155,48 @@ SNVTable_remove(SNVTableObject* const restrict self,
 } // SNVTable_remove
 
 
+static PyObject*
+SNVTable_read(SNVTableObject* const restrict self,
+              PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:SNVTable.read", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_snv_table_read(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.read: vrd_snv_table_read() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // SNVTable_read
+
+
+static PyObject*
+SNVTable_write(SNVTableObject* const restrict self,
+               PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:SNVTable.write", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_snv_table_write(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.write: vrd_snv_table_write() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // SNVTable_write
+
+
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
@@ -185,6 +227,16 @@ static PyMethodDef SNVTable_methods[] =
      ":type subset: list\n"
      ":return: The number of removed SNVs\n"
      ":rtype: integer\n"},
+
+    {"read", (PyCFunction) SNVTable_read, METH_VARARGS,
+     "read(path)\n"
+     "Read a :py:class:`SNVTable` from files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
+
+    {"write", (PyCFunction) SNVTable_write, METH_VARARGS,
+     "write(path)\n"
+     "Write a :py:class:`SNVTable` to files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SNVTable_methods

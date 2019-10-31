@@ -139,6 +139,48 @@ CoverageTable_remove(CoverageTableObject* const restrict self,
 } // CoverageTable_remove
 
 
+static PyObject*
+CoverageTable_read(CoverageTableObject* const restrict self,
+                   PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:CoverageTable.read", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_cov_table_read(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.read: vrd_cov_table_read() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // CoverageTable_read
+
+
+static PyObject*
+CoverageTable_write(CoverageTableObject* const restrict self,
+                    PyObject* const restrict args)
+{
+    char const* restrict path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:CoverageTable.write", &path))
+    {
+        return NULL;
+    } // if
+
+    if (0 != vrd_cov_table_write(self->table, path))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.write: vrd_cov_table_write() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // CoverageTable_write
+
+
 static PyMethodDef CoverageTable_methods[] =
 {
     {"insert", (PyCFunction) CoverageTable_insert, METH_VARARGS,
@@ -167,6 +209,16 @@ static PyMethodDef CoverageTable_methods[] =
      ":type subset: list\n"
      ":return: The number of removed covered regions\n"
      ":rtype: integer\n"},
+
+    {"read", (PyCFunction) CoverageTable_read, METH_VARARGS,
+     "read(path)\n"
+     "Read a :py:class:`CoverageTable` from files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
+
+    {"write", (PyCFunction) CoverageTable_write, METH_VARARGS,
+     "write(path)\n"
+     "Write a :py:class:`CoverageTable` to files\n\n"
+     ":param string path: A path including a prefix that identifies the files.\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // CoverageTable_methods
