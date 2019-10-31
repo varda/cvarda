@@ -136,7 +136,7 @@ vrd_seq_table_read(vrd_Seq_Table* const restrict table,
     assert(NULL != table);
 
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s.seq", path))
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
     {
         return -1;
     } // if
@@ -144,7 +144,7 @@ vrd_seq_table_read(vrd_Seq_Table* const restrict table,
     char* sequence = NULL;
 
     errno = 0;
-    FILE* restrict stream = fopen(filename, "wb");
+    FILE* restrict stream = fopen(filename, "rb");
     if (NULL == stream)
     {
         goto error;
@@ -153,7 +153,7 @@ vrd_seq_table_read(vrd_Seq_Table* const restrict table,
     size_t size = 0;
 
     errno = 0;
-    size_t count = fwrite(&size, sizeof(size), 1, stream);
+    size_t count = fread(&size, sizeof(size), 1, stream);
     if (1 != count)
     {
         goto error;
@@ -221,7 +221,7 @@ vrd_seq_table_write(vrd_Seq_Table const* const restrict table,
     assert(NULL != table);
 
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s.seq", path))
+    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
     {
         return -1;
     } // if
