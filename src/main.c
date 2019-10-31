@@ -93,8 +93,95 @@ main(int argc, char* argv[])
 
     (void) fprintf(stderr, "Variants: %zu\n", var_count);
 
-    int const err = vrd_seq_table_write(seq, "store/my_sequence");
-    (void) fprintf(stderr, "WRITE: %d\n", err);
+
+    int err = vrd_cov_table_write(cov, "store/cov");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_cov_table_write() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_snv_table_write(snv, "store/snv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_snv_table_write() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_mnv_table_write(mnv, "store/mnv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_mnv_table_write() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_seq_table_write(seq, "store/seq");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_seq_table_write() failed\n");
+        goto error;
+    } // if
+
+    vrd_cov_table_destroy(&cov);
+    vrd_snv_table_destroy(&snv);
+    vrd_mnv_table_destroy(&mnv);
+    vrd_seq_table_destroy(&seq);
+
+    cov = vrd_cov_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == cov)
+    {
+        (void) fprintf(stderr, "vrd_cov_table_init() failed\n");
+        goto error;
+    } // if
+
+    snv = vrd_snv_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_snv_table_init() failed\n");
+        goto error;
+    } // if
+
+    mnv = vrd_mnv_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == mnv)
+    {
+        (void) fprintf(stderr, "vrd_mnv_table_init() failed\n");
+        goto error;
+    } // if
+
+    seq = vrd_seq_table_init(SEQ_CAPACITY);
+    if (NULL == seq)
+    {
+        (void) fprintf(stderr, "vrd_seq_table_init() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_cov_table_read(cov, "store/cov");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_cov_table_read() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_snv_table_read(snv, "store/snv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_snv_table_read() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_mnv_table_read(mnv, "store/mnv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_mnv_table_read() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_seq_table_read(seq, "store/seq");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_seq_table_read() failed\n");
+        goto error;
+    } // if
 
     errno = 0;
     stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");

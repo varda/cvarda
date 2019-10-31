@@ -210,8 +210,8 @@ vrd_snv_tree_read(vrd_SNV_Tree* const restrict tree,
     {
         return -1;
     } // if
-    count = fread(&tree->nodes, sizeof(tree->nodes[0]), tree->next, stream);
-    if (tree->next != count)
+    count = fread(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
+    if (tree->next - 1 != count)
     {
         return -1;
     } // if
@@ -235,8 +235,8 @@ vrd_snv_tree_write(vrd_SNV_Tree const* const restrict tree,
     {
         return -1;
     } // if
-    count = fwrite(&tree->nodes, sizeof(tree->nodes[0]), tree->next, stream);
-    if (tree->next != count)
+    count = fwrite(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
+    if (tree->next - 1 != count)
     {
         return -1;
     } // if
