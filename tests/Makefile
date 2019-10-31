@@ -12,6 +12,7 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
 
 all: $(TEST_TARGETS)
 	$(foreach TARGET, $(TEST_TARGETS), $(TARGET);)
+	rm $(TEST_TARGETS)
 
 %.out: %.o
 	$(CC) $(CFLAGS) -o $@ $< $(addprefix ../, $(filter-out src/main.o, $(OBJECTS)))

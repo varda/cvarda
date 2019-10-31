@@ -12,7 +12,7 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_Seq_Table* seq = vrd_seq_table_init(1000, 100000);
+    vrd_Seq_Table* seq = vrd_seq_table_init(1000);
     assert(NULL != seq);
 
     void* const a = vrd_seq_table_insert(seq, 4, "ACGT");
