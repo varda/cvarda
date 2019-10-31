@@ -157,6 +157,10 @@ vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
 
 
 int
+vrd_cov_table_reorder(vrd_Cov_Table* const table);
+
+
+int
 vrd_cov_table_read(vrd_Cov_Table* const restrict table,
                    char const* const restrict path);
 

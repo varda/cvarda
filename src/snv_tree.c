@@ -162,13 +162,6 @@ vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
 #undef TREE
 
 
-#define TREE vrd_SNV_Tree
-#define NODE vrd_SNV_Node
-#include "tree_layout.inc"  // reorder
-#undef NODE
-#undef TREE
-
-
 size_t
 vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
                     vrd_AVL_Tree const* const restrict subset)
@@ -179,18 +172,23 @@ vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
     balance(tree);
     update_avl(tree, tree->root);
 
-    reorder(tree);
-
     return count;
 } // vrd_snv_tree_remove
 
 
-void
+#define TREE vrd_SNV_Tree
+#define NODE vrd_SNV_Node
+#include "tree_layout.inc"  // reorder
+#undef NODE
+#undef TREE
+
+
+int
 vrd_snv_tree_reorder(vrd_SNV_Tree* const tree)
 {
     assert(NULL != tree);
 
-    reorder(tree);
+    return reorder(tree);
 } // vrd_snv_tree_reorder
 
 

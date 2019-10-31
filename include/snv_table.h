@@ -154,6 +154,10 @@ vrd_snv_table_remove(vrd_SNV_Table* const restrict table,
 
 
 int
+vrd_snv_table_reorder(vrd_SNV_Table* const table);
+
+
+int
 vrd_snv_table_read(vrd_SNV_Table* const restrict table,
                    char const* const restrict path);
 

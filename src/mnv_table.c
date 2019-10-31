@@ -163,6 +163,23 @@ vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
 } // vrd_mnv_table_remove
 
 
+int
+vrd_mnv_table_reorder(vrd_MNV_Table* const table)
+{
+    assert(NULL != table);
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        if (0 != vrd_mnv_tree_reorder(*(vrd_MNV_Tree**) table->tree[i]))
+        {
+            return -1;
+        } // if
+    } // for
+
+    return 0;
+} // vrd_mnv_table_reorder
+
+
 static vrd_MNV_Tree*
 read_tree(char const* const restrict path,
           size_t const idx,

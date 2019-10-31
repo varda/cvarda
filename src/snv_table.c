@@ -160,6 +160,23 @@ vrd_snv_table_remove(vrd_SNV_Table* const restrict table,
 } // vrd_snv_table_remove
 
 
+int
+vrd_snv_table_reorder(vrd_SNV_Table* const table)
+{
+    assert(NULL != table);
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        if (0 != vrd_snv_tree_reorder(*(vrd_SNV_Tree**) table->tree[i]))
+        {
+            return -1;
+        } // if
+    } // for
+
+    return 0;
+} // vrd_snv_table_reorder
+
+
 static vrd_SNV_Tree*
 read_tree(char const* const restrict path,
           size_t const idx,

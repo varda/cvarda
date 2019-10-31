@@ -170,6 +170,10 @@ vrd_mnv_table_remove(vrd_MNV_Table* const restrict table,
 
 
 int
+vrd_mnv_table_reorder(vrd_MNV_Table* const table);
+
+
+int
 vrd_mnv_table_read(vrd_MNV_Table* const restrict table,
                    char const* const restrict path);
 

@@ -98,7 +98,7 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
                     vrd_Seq_Table* const restrict seq_table);
 
 
-void
+int
 vrd_mnv_tree_reorder(vrd_MNV_Tree* const tree);
 
 

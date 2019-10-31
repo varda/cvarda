@@ -172,13 +172,6 @@ vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
 #undef TREE
 
 
-#define TREE vrd_MNV_Tree
-#define NODE vrd_MNV_Node
-#include "tree_layout.inc"  // reorder
-#undef NODE
-#undef TREE
-
-
 size_t
 vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
                     vrd_AVL_Tree const* const restrict subset,
@@ -191,18 +184,23 @@ vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
     uint32_t new_max = 0;
     update_avl(tree, tree->root, &new_max);
 
-    reorder(tree);
-
     return count;
 } // vrd_mnv_tree_remove
 
 
-void
+#define TREE vrd_MNV_Tree
+#define NODE vrd_MNV_Node
+#include "tree_layout.inc"  // reorder
+#undef NODE
+#undef TREE
+
+
+int
 vrd_mnv_tree_reorder(vrd_MNV_Tree* const tree)
 {
     assert(NULL != tree);
 
-    reorder(tree);
+    return reorder(tree);
 } // vrd_mnv_tree_reorder
 
 

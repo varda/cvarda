@@ -159,6 +159,23 @@ vrd_cov_table_remove(vrd_Cov_Table* const restrict table,
 } // vrd_cov_table_remove
 
 
+int
+vrd_cov_table_reorder(vrd_Cov_Table* const table)
+{
+    assert(NULL != table);
+
+    for (size_t i = 0; i < table->next; ++i)
+    {
+        if (0 != vrd_itv_tree_reorder(*(vrd_Itv_Tree**) table->tree[i]))
+        {
+            return -1;
+        } // if
+    } // for
+
+    return 0;
+} // vrd_cov_table_reorder
+
+
 static vrd_Itv_Tree*
 read_tree(char const* const restrict path,
           size_t const idx,
