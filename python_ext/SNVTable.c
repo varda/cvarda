@@ -156,6 +156,22 @@ SNVTable_remove(SNVTableObject* const restrict self,
 
 
 static PyObject*
+SNVTable_reorder(SNVTableObject* const restrict self,
+                 PyObject* const restrict args)
+{
+    (void) args;
+
+    if (0 != vrd_snv_table_reorder(self->table))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.reorder: vrd_snv_table_reorder() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // SNVTable_reorder
+
+
+static PyObject*
 SNVTable_read(SNVTableObject* const restrict self,
               PyObject* const restrict args)
 {
@@ -227,6 +243,10 @@ static PyMethodDef SNVTable_methods[] =
      ":type subset: list\n"
      ":return: The number of removed SNVs\n"
      ":rtype: integer\n"},
+
+    {"reorder", (PyCFunction) SNVTable_reorder, METH_NOARGS,
+     "reorder()\n"
+     "Reorders all structures in the :py:class:`SNVTable`\n\n"},
 
     {"read", (PyCFunction) SNVTable_read, METH_VARARGS,
      "read(path)\n"

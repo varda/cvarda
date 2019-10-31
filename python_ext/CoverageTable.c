@@ -140,6 +140,22 @@ CoverageTable_remove(CoverageTableObject* const restrict self,
 
 
 static PyObject*
+CoverageTable_reorder(CoverageTableObject* const restrict self,
+                      PyObject* const restrict args)
+{
+    (void) args;
+
+    if (0 != vrd_cov_table_reorder(self->table))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.reorder: vrd_cov_table_reorder() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // CoverageTable_reorder
+
+
+static PyObject*
 CoverageTable_read(CoverageTableObject* const restrict self,
                    PyObject* const restrict args)
 {
@@ -209,6 +225,10 @@ static PyMethodDef CoverageTable_methods[] =
      ":type subset: list\n"
      ":return: The number of removed covered regions\n"
      ":rtype: integer\n"},
+
+    {"reorder", (PyCFunction) CoverageTable_reorder, METH_NOARGS,
+     "reorder()\n"
+     "Reorders all structures in the :py:class:`CoverageTable`\n\n"},
 
     {"read", (PyCFunction) CoverageTable_read, METH_VARARGS,
      "read(path)\n"

@@ -145,6 +145,22 @@ MNVTable_remove(MNVTableObject* const restrict self,
 
 
 static PyObject*
+MNVTable_reorder(MNVTableObject* const restrict self,
+                 PyObject* const restrict args)
+{
+    (void) args;
+
+    if (0 != vrd_mnv_table_reorder(self->table))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.reorder: vrd_mnv_table_reorder() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // MNVTable_reorder
+
+
+static PyObject*
 MNVTable_read(MNVTableObject* const restrict self,
               PyObject* const restrict args)
 {
@@ -218,6 +234,10 @@ static PyMethodDef MNVTable_methods[] =
      ":type subset: list\n"
      ":return: The number of removed MNVs\n"
      ":rtype: integer\n"},
+
+    {"reorder", (PyCFunction) MNVTable_reorder, METH_NOARGS,
+     "reorder()\n"
+     "Reorders all structures in the :py:class:`MNVTable`\n\n"},
 
     {"read", (PyCFunction) MNVTable_read, METH_VARARGS,
      "read(path)\n"
