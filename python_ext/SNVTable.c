@@ -3,9 +3,9 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/avl_tree.h"    // vrd_avl_tree_destroy
-#include "../include/iupac.h"   // vrd_iuapc_to_idx
-#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/iupac.h"       // vrd_iuapc_to_idx
+#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_SNV_table_*
 #include "helpers.h"    // CFG_*, sample_set
 
 
@@ -33,11 +33,11 @@ SNVTable_new(PyTypeObject* const restrict type,
 
     SNVTableObject* const restrict self = (SNVTableObject*) type->tp_alloc(type, 0);
 
-    self->table = vrd_snv_table_init(ref_capacity, tree_capacity);
+    self->table = vrd_SNV_table_init(ref_capacity, tree_capacity);
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable: vrd_snv_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable: vrd_SNV_table_init() failed");
         return NULL;
     } // if
 
@@ -48,7 +48,7 @@ SNVTable_new(PyTypeObject* const restrict type,
 static void
 SNVTable_dealloc(SNVTableObject* const self)
 {
-    vrd_snv_table_destroy(&self->table);
+    vrd_SNV_table_destroy(&self->table);
     Py_TYPE(self)->tp_free((PyObject*) self);
 } // SNVTable_dealloc
 
@@ -76,9 +76,9 @@ SNVTable_insert(SNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (-1 == vrd_snv_table_insert(self->table, len, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
+    if (-1 == vrd_SNV_table_insert(self->table, len, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_snv_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_SNV_table_insert() failed");
         return NULL;
     } // if
 
@@ -120,8 +120,8 @@ SNVTable_query(SNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_snv_table_query(self->table, len, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
-    vrd_avl_tree_destroy(&subset);
+    result = vrd_SNV_table_query_stab(self->table, len, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
+    vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
@@ -147,8 +147,8 @@ SNVTable_remove(SNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_snv_table_remove(self->table, subset);
-    vrd_avl_tree_destroy(&subset);
+    result = vrd_SNV_table_remove(self->table, subset);
+    vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
@@ -161,9 +161,9 @@ SNVTable_reorder(SNVTableObject* const restrict self,
 {
     (void) args;
 
-    if (0 != vrd_snv_table_reorder(self->table))
+    if (0 != vrd_SNV_table_reorder(self->table))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.reorder: vrd_snv_table_reorder() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.reorder: vrd_SNV_table_reorder() failed");
         return NULL;
     } // if
 
@@ -182,9 +182,9 @@ SNVTable_read(SNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_snv_table_read(self->table, path))
+    if (0 != vrd_SNV_table_read(self->table, path))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.read: vrd_snv_table_read() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.read: vrd_SNV_table_read() failed");
         return NULL;
     } // if
 
@@ -203,9 +203,9 @@ SNVTable_write(SNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_snv_table_write(self->table, path))
+    if (0 != vrd_SNV_table_write(self->table, path))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.write: vrd_snv_table_write() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.write: vrd_SNV_table_write() failed");
         return NULL;
     } // if
 

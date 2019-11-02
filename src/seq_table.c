@@ -133,7 +133,7 @@ vrd_Seq_table_remove(vrd_Seq_Table* const restrict self, size_t const elem)
 
 
 int
-vrd_seq_table_read(vrd_Seq_Table* const restrict self,
+vrd_Seq_table_read(vrd_Seq_Table* const restrict self,
                    char const* const restrict path)
 {
     assert(NULL != self);
@@ -206,7 +206,7 @@ error:
 
         return err;
     }
-} // vrd_seq_table_read
+} // vrd_Seq_table_read
 
 
 int

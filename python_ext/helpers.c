@@ -35,7 +35,7 @@ sample_set(PyObject* const restrict list)
             return NULL;
         } // if
 
-        if (NULL == vrd_AVL_tree_insert(tree, sample_id))
+        if (0 != vrd_AVL_tree_insert(tree, sample_id))
         {
             vrd_AVL_tree_destroy(&tree);
             PyErr_SetString(PyExc_RuntimeError, "sample_set(): vrd_avl_tree_insert() failed");

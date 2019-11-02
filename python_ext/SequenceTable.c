@@ -7,7 +7,7 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
+#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
 #include "helpers.h"    // CFG_*
 
 
@@ -34,11 +34,11 @@ SequenceTable_new(PyTypeObject* const restrict type,
 
     SequenceTableObject* const restrict self = (SequenceTableObject*) type->tp_alloc(type, 0);
 
-    self->table = vrd_seq_table_init(ref_capacity);
+    self->table = vrd_Seq_table_init(ref_capacity);
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "SequenceTable: vrd_seq_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable: vrd_Seq_table_init() failed");
         return NULL;
     } // if
 
@@ -49,7 +49,7 @@ SequenceTable_new(PyTypeObject* const restrict type,
 static void
 SequenceTable_dealloc(SequenceTableObject* const self)
 {
-    vrd_seq_table_destroy(&self->table);
+    vrd_Seq_table_destroy(&self->table);
     Py_TYPE(self)->tp_free((PyObject*) self);
 } // SequenceTable_dealloc
 
@@ -66,10 +66,10 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* const restrict result = vrd_seq_table_insert(self->table, len + 1, sequence);
+    void* const restrict result = vrd_Seq_table_insert(self->table, len + 1, sequence);
     if (NULL == result)
     {
-        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_seq_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_Seq_table_insert() failed");
         return NULL;
     } // if
 
@@ -89,7 +89,7 @@ SequenceTable_query(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* const restrict result = vrd_seq_table_query(self->table, len + 1, sequence);
+    void* const restrict result = vrd_Seq_table_query(self->table, len + 1, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
@@ -110,7 +110,7 @@ SequenceTable_remove(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    vrd_seq_table_remove(self->table, elem);
+    vrd_Seq_table_remove(self->table, elem);
 
     Py_RETURN_NONE;
 } // SequenceTable_remove
@@ -127,9 +127,9 @@ SequenceTable_read(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_seq_table_read(self->table, path))
+    if (0 != vrd_Seq_table_read(self->table, path))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.read: vrd_seq_table_read() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.read: vrd_Seq_table_read() failed");
         return NULL;
     } // if
 
@@ -148,9 +148,9 @@ SequenceTable_write(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_seq_table_write(self->table, path))
+    if (0 != vrd_Seq_table_write(self->table, path))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.write: vrd_seq_table_write() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.write: vrd_Seq_table_write() failed");
         return NULL;
     } // if
 

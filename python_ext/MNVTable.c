@@ -3,8 +3,9 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
-#include "helpers.h"    // CFG_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
+#include "helpers.h"    // CFG_*, sample_set
 
 #include "SequenceTable.c"  // SequenceTable, SequenceTableObject
 
@@ -33,11 +34,11 @@ MNVTable_new(PyTypeObject* const restrict type,
 
     MNVTableObject* const restrict self = (MNVTableObject*) type->tp_alloc(type, 0);
 
-    self->table = vrd_mnv_table_init(ref_capacity, tree_capacity);
+    self->table = vrd_MNV_table_init(ref_capacity, tree_capacity);
     if (NULL == self->table)
     {
         Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable: vrd_mnv_table_init() failed");
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable: vrd_MNV_table_init() failed");
         return NULL;
     } // if
 
@@ -48,7 +49,7 @@ MNVTable_new(PyTypeObject* const restrict type,
 static void
 MNVTable_dealloc(MNVTableObject* const self)
 {
-    vrd_mnv_table_destroy(&self->table);
+    vrd_MNV_table_destroy(&self->table);
     Py_TYPE(self)->tp_free((PyObject*) self);
 } // MNVTable_dealloc
 
@@ -70,9 +71,9 @@ MNVTable_insert(MNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (-1 == vrd_mnv_table_insert(self->table, len, reference, start, end, sample_id, phase, inserted))
+    if (0 != vrd_MNV_table_insert(self->table, len, reference, start, end, sample_id, phase, inserted))
     {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert: vrd_mnv_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert: vrd_MNV_table_insert() failed");
         return NULL;
     } // if
 
@@ -108,8 +109,8 @@ MNVTable_query(MNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_mnv_table_query(self->table, len, reference, start, end, inserted, subset);
-    vrd_avl_tree_destroy(&subset);
+    result = vrd_MNV_table_query_stab(self->table, len, reference, start, end, inserted, subset);
+    vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
@@ -136,8 +137,8 @@ MNVTable_remove(MNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_mnv_table_remove(self->table, subset, seq->table);
-    vrd_avl_tree_destroy(&subset);
+    result = vrd_MNV_table_remove_seq(self->table, subset, seq->table);
+    vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
@@ -150,7 +151,7 @@ MNVTable_reorder(MNVTableObject* const restrict self,
 {
     (void) args;
 
-    if (0 != vrd_mnv_table_reorder(self->table))
+    if (0 != vrd_MNV_table_reorder(self->table))
     {
         PyErr_SetString(PyExc_RuntimeError, "MNVTable.reorder: vrd_mnv_table_reorder() failed");
         return NULL;
@@ -171,9 +172,9 @@ MNVTable_read(MNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_mnv_table_read(self->table, path))
+    if (0 != vrd_MNV_table_read(self->table, path))
     {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.read: vrd_mnv_table_read() failed");
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.read: vrd_MNV_table_read() failed");
         return NULL;
     } // if
 
@@ -192,9 +193,9 @@ MNVTable_write(MNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_mnv_table_write(self->table, path))
+    if (0 != vrd_MNV_table_write(self->table, path))
     {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.write: vrd_mnv_table_write() failed");
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.write: vrd_MNV_table_write() failed");
         return NULL;
     } // if
 

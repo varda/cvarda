@@ -37,6 +37,7 @@ vrd_version(int* const restrict major,
 #include "mnv_table.h"
 #include "seq_table.h"
 #include "snv_table.h"
+#include "utils.h"
 
 
 #ifdef __cplusplus
