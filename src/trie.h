@@ -1,5 +1,5 @@
-#ifndef TRIE_H
-#define TRIE_H
+#ifndef VRD_TRIE_H
+#define VRD_TRIE_H
 
 #ifdef __cplusplus
 #define restrict
@@ -19,24 +19,24 @@ vrd_trie_init(void);
 
 
 void
-vrd_trie_destroy(vrd_Trie* restrict* const trie);
+vrd_trie_destroy(vrd_Trie* restrict* const self);
 
 
 void*
-vrd_trie_insert(vrd_Trie* const restrict trie,
+vrd_trie_insert(vrd_Trie* const restrict self,
                 size_t const len,
                 char const key[len],
                 void* const restrict data);
 
 
 void
-vrd_trie_remove(vrd_Trie* const restrict trie,
+vrd_trie_remove(vrd_Trie* const restrict self,
                 size_t const len,
                 char const key[len]);
 
 
 void*
-vrd_trie_find(vrd_Trie const* const trie,
+vrd_trie_find(vrd_Trie const* const self,
               size_t const len,
               char const key[len]);
 

@@ -11,7 +11,6 @@
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/utils.h"       // vrd_coverage_from_file,
                                     // vrd_variants_from_file
-#include "tree.h"   // HOMOZYGOUS
 
 
 size_t
@@ -27,30 +26,30 @@ vrd_coverage_from_file(FILE* restrict stream,
     int end = 0;
 
     size_t count = 0;
-    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end)) // UNSAFE
+    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end))  // UNSAFE
     {
-        if (-1 == vrd_cov_table_insert(cov,
-                                       strlen(reference),
-                                       reference,
-                                       start,
-                                       end,
-                                       sample_id))
+        if (0 != vrd_Cov_table_insert(cov,
+                                      strlen(reference),
+                                      reference,
+                                      start,
+                                      end,
+                                      sample_id))
         {
-            vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
+            vrd_AVL_Tree* restrict subset = vrd_AVL_tree_init(1);
             if (NULL == subset)
             {
                 return count;
             } // if
-            if (NULL == vrd_avl_tree_insert(subset, sample_id))
+            if (0 != vrd_AVL_tree_insert(subset, sample_id))
             {
                 return count;
             } // if
 
-            count -= vrd_cov_table_remove(cov, subset);
-            vrd_avl_tree_destroy(&subset);
+            count -= vrd_Cov_table_remove(cov, subset);
+            vrd_AVL_tree_destroy(&subset);
             return count;
         } // if
-        count += 1; // OVERFLOW
+        count += 1;  // OVERFLOW
     } // while
 
     return count;
@@ -82,7 +81,7 @@ vrd_variants_from_file(FILE* restrict stream,
                                                            &end,
                                                            &phase,
                                                            &len,
-                                                           inserted)) // UNSAFE
+                                                           inserted))  // UNSAFE
     {
         if (1023 < len)
         {
@@ -91,31 +90,31 @@ vrd_variants_from_file(FILE* restrict stream,
 
         if (-1 == phase)
         {
-            phase = HOMOZYGOUS;
+            phase = VRD_HOMOZYGOUS;
         } // if
 
         if (1 == len && inserted[0] != '.' && 1 == end - start)
         {
-            if (-1 == vrd_snv_table_insert(snv,
-                                           strlen(reference),
-                                           reference,
-                                           start,
-                                           sample_id,
-                                           phase,
-                                           vrd_iupac_to_idx(inserted[0])))
+            if (0 != vrd_SNV_table_insert(snv,
+                                          strlen(reference),
+                                          reference,
+                                          start,
+                                          sample_id,
+                                          phase,
+                                          vrd_iupac_to_idx(inserted[0])))
             {
                 goto error;
             } // if
         } // if
         else
         {
-            void* const restrict elem = vrd_seq_table_insert(seq, len + 1, inserted);
+            void* const restrict elem = vrd_Seq_table_insert(seq, len + 1, inserted);
             if (0 != len && NULL == elem)
             {
                 goto error;
             } // if
 
-            if (-1 == vrd_mnv_table_insert(mnv,
+            if (-1 == vrd_MNV_table_insert(mnv,
                                            strlen(reference),
                                            reference,
                                            start,
@@ -135,19 +134,19 @@ vrd_variants_from_file(FILE* restrict stream,
 
 error:
     {
-        vrd_AVL_Tree* restrict subset = vrd_avl_tree_init(1);
+        vrd_AVL_Tree* restrict subset = vrd_AVL_tree_init(1);
         if (NULL == subset)
         {
             return count;
         } // if
-        if (NULL == vrd_avl_tree_insert(subset, sample_id))
+        if (0 != vrd_AVL_tree_insert(subset, sample_id))
         {
             return count;
         } // if
 
-        count -= vrd_snv_table_remove(snv, subset);
-        count -= vrd_mnv_table_remove(mnv, subset, seq);
-        vrd_avl_tree_destroy(&subset);
+        count -= vrd_SNV_table_remove(snv, subset);
+        count -= vrd_MNV_table_remove_seq(mnv, subset, seq);
+        vrd_AVL_tree_destroy(&subset);
     }
     return count;
 } // vrd_variants_from_file
@@ -182,7 +181,7 @@ vrd_annotate_from_file(FILE* restrict ostream,
                                                             &end,
                                                             &phase,
                                                             &len,
-                                                            inserted)) // UNSAFE
+                                                            inserted))  // UNSAFE
     {
         if (1023 < len)
         {
@@ -192,38 +191,38 @@ vrd_annotate_from_file(FILE* restrict ostream,
         size_t num = 0;
         if (1 == len && inserted[0] != '.' && 1 == end - start)
         {
-            num = vrd_snv_table_query(snv,
-                                      strlen(reference),
-                                      reference,
-                                      start,
-                                      vrd_iupac_to_idx(inserted[0]),
-                                      subset);
+            num = vrd_SNV_table_query_stab(snv,
+                                           strlen(reference),
+                                           reference,
+                                           start,
+                                           vrd_iupac_to_idx(inserted[0]),
+                                           subset);
         } // if
         else
         {
-            void* const restrict elem = vrd_seq_table_query(seq, len + 1, inserted);
+            void* const restrict elem = vrd_Seq_table_query(seq, len + 1, inserted);
             if (NULL == elem)
             {
                 num = 0;
             } // if
             else
             {
-                num = vrd_mnv_table_query(mnv,
-                                          strlen(reference),
-                                          reference,
-                                          start,
-                                          end,
-                                          *(size_t*) elem,
-                                          subset);
-            } // else
-        } // else
-
-        size_t const den = vrd_cov_table_query(cov,
+                num = vrd_MNV_table_query_stab(mnv,
                                                strlen(reference),
                                                reference,
                                                start,
                                                end,
-                                               subset) * 2;
+                                               *(size_t*) elem,
+                                               subset);
+            } // else
+        } // else
+
+        size_t const den = vrd_Cov_table_query_stab(cov,
+                                                    strlen(reference),
+                                                    reference,
+                                                    start,
+                                                    end,
+                                                    subset) * 2;
 
         (void) fprintf(ostream, "%s\t%d\t%d\t%d\t%d\t%s\t%zu:%zu\n",
                        reference,
@@ -235,7 +234,7 @@ vrd_annotate_from_file(FILE* restrict ostream,
                        num,
                        den);
 
-        count += 1; // OVERFLOW
+        count += 1;  // OVERFLOW
     } // while
 
     return count;

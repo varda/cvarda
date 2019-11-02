@@ -1,19 +1,20 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
-#include <stdio.h>      // FILE, fread, fwrite
-#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
-#include <stdlib.h>     // malloc, free
+#include <stdint.h>     // int32_t, uint32_t
 
-#include "../include/avl_tree.h"    // vrd_AVL_Tree,
-                                    // vrd_avl_tree_is_element
-#include "snv_tree.h"    // vrd_SNV_*, vrd_snv_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
+#include "../include/avl_tree.h"    // vrd_AVL_Tree
+#include "../include/iupac.h"       // VRD_HOMOZYGOUS
+#include "../include/template.h"    // VRD_TEMPLATE
+#include "snv_tree.h"    // vrd_SNV_Tree, vrd_SNV_tree_*
 
 
-struct vrd_SNV_Node
+#define VRD_TYPENAME SNV
+
+
+struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t position;
+    uint32_t key;
     int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
     uint32_t phase     : 28;
@@ -21,222 +22,89 @@ struct vrd_SNV_Node
 }; // vrd_SNV_Node
 
 
-struct vrd_SNV_Tree
+#include "template_tree.inc"    // vrd_SNV_tree_*
+
+
+int
+VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                         size_t const position,
+                                         size_t const sample_id,
+                                         size_t const phase,
+                                         size_t const inserted)
 {
-    uint32_t root;
+    assert(NULL != self);
 
-    uint32_t next;
-    uint32_t capacity;
-    vrd_SNV_Node nodes[];
-}; // vrd_SNV_Tree
-
-
-vrd_SNV_Tree*
-vrd_snv_tree_init(size_t const capacity)
-{
-    if ((size_t) UINT32_MAX <= capacity)
+    if (UINT32_MAX == self->next || self->capacity < self->next)
     {
-        return NULL;
+        return -1;
     } // if
 
-    vrd_SNV_Tree* const tree = malloc(sizeof(vrd_SNV_Tree) +
-                                      sizeof(vrd_SNV_Node) *
-                                      ((size_t) capacity + 1));
-    if (NULL == tree)
-    {
-        return NULL;
-    } // if
+    uint32_t const ptr = self->next;
+    self->next += 1;
 
-    tree->root = NULLPTR;
-    tree->next = 1;
-    tree->capacity = capacity;
+    self->nodes[ptr].child[LEFT] = NULLPTR;
+    self->nodes[ptr].child[RIGHT] = NULLPTR;
+    self->nodes[ptr].key = position;
+    self->nodes[ptr].balance = 0;
+    self->nodes[ptr].sample_id = sample_id;
+    self->nodes[ptr].phase = phase;
+    self->nodes[ptr].inserted = inserted;
 
-    return tree;
-} // vrd_snv_tree_init
+    insert(self, ptr);
 
-
-void
-vrd_snv_tree_destroy(vrd_SNV_Tree* restrict* const tree)
-{
-    if (NULL == tree)
-    {
-        return;
-    } // if
-
-    free(*tree);
-    *tree = NULL;
-} // vrd_snv_tree_destroy
-
-
-#define TREE vrd_SNV_Tree
-#define NODE vrd_SNV_Node
-#define KEY position
-#include "tree_insert.inc"
-#undef KEY
-#undef NODE
-#undef TREE
-
-
-vrd_SNV_Node*
-vrd_snv_tree_insert(vrd_SNV_Tree* const tree,
-                    size_t const position,
-                    size_t const sample_id,
-                    size_t const phase,
-                    size_t const inserted)
-{
-    assert(NULL != tree);
-
-    if (UINT32_MAX == tree->next || tree->capacity < tree->next)
-    {
-        return NULL;
-    } // if
-
-    uint32_t const ptr = tree->next;
-    tree->next += 1;
-
-    tree->nodes[ptr].child[LEFT] = NULLPTR;
-    tree->nodes[ptr].child[RIGHT] = NULLPTR;
-    tree->nodes[ptr].position = position;
-    tree->nodes[ptr].balance = 0;
-    tree->nodes[ptr].sample_id = sample_id;
-    tree->nodes[ptr].phase = phase;
-    tree->nodes[ptr].inserted = inserted;
-
-    return insert(tree, ptr);
-} // vrd_snv_tree_insert
+    return 0;
+} // vrd_SNV_tree_insert
 
 
 static size_t
-query_contains(vrd_SNV_Tree const* const restrict tree,
-               uint32_t const root,
-               size_t const position,
-               size_t const inserted,
-               vrd_AVL_Tree const* const restrict subset)
+query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const restrict self,
+           size_t const root,
+           size_t const position,
+           size_t const inserted,
+           vrd_AVL_Tree const* const restrict subset)
 {
     if (NULLPTR == root)
     {
         return 0;
     } // if
 
-    if (tree->nodes[root].position > position)
+    if (self->nodes[root].key > position)
     {
-        return query_contains(tree, tree->nodes[root].child[LEFT], position, inserted, subset);
+        return query_stab(self, self->nodes[root].child[LEFT], position, inserted, subset);
     } // if
 
-    if (tree->nodes[root].position < position)
+    if (self->nodes[root].key < position)
     {
-        return query_contains(tree, tree->nodes[root].child[RIGHT], position, inserted, subset);
+        return query_stab(self, self->nodes[root].child[RIGHT], position, inserted, subset);
     } // if
 
     size_t res = 0;
     // TODO: IUPAC match on inserted
-    if (tree->nodes[root].inserted == inserted &&
-        (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
+    if (inserted == self->nodes[root].inserted &&
+        (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
         res = 1;
-        if (HOMOZYGOUS == tree->nodes[root].phase)
+        if (VRD_HOMOZYGOUS == self->nodes[root].phase)
         {
             res = 2;
         } // if
     } // if
 
-    return res + query_contains(tree, tree->nodes[root].child[LEFT], position, inserted, subset) +
-                 query_contains(tree, tree->nodes[root].child[RIGHT], position, inserted, subset);
-} // query_contains
+    return res + query_stab(self, self->nodes[root].child[LEFT], position, inserted, subset) +
+                 query_stab(self, self->nodes[root].child[RIGHT], position, inserted, subset);
+} // query_stab
 
 
 size_t
-vrd_snv_tree_query(vrd_SNV_Tree const* const restrict tree,
-                   size_t const position,
-                   size_t const inserted,
-                   vrd_AVL_Tree const* const restrict subset)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+                                             size_t const position,
+                                             size_t const inserted,
+                                             vrd_AVL_Tree const* const restrict subset)
 {
-    assert(NULL != tree);
+    assert(NULL != self);
 
-    return query_contains(tree, tree->root, position, inserted, subset);
-} // vrd_snv_tree_query
-
-
-#define TREE vrd_SNV_Tree
-#include "tree_remove.inc"  // traverse, balance, update_avl
-#undef TREE
+    return query_stab(self, self->root, position, inserted, subset);
+} // vrd_SNV_tree_query_stab
 
 
-size_t
-vrd_snv_tree_remove(vrd_SNV_Tree* const restrict tree,
-                    vrd_AVL_Tree const* const restrict subset)
-{
-    assert(NULL != tree);
-
-    size_t const count = traverse(tree, tree->root, 0, 0, subset);
-    balance(tree);
-    update_avl(tree, tree->root);
-
-    return count;
-} // vrd_snv_tree_remove
-
-
-#define TREE vrd_SNV_Tree
-#define NODE vrd_SNV_Node
-#include "tree_layout.inc"  // reorder
-#undef NODE
-#undef TREE
-
-
-int
-vrd_snv_tree_reorder(vrd_SNV_Tree* const tree)
-{
-    assert(NULL != tree);
-
-    return reorder(tree);
-} // vrd_snv_tree_reorder
-
-
-int
-vrd_snv_tree_read(vrd_SNV_Tree* const restrict tree,
-                  FILE* restrict stream)
-{
-    assert(NULL != tree);
-
-    size_t count = fread(&tree->root, sizeof(tree->root), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fread(&tree->next, sizeof(tree->next), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fread(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
-    if (tree->next - 1 != count)
-    {
-        return -1;
-    } // if
-    return 0;
-} // vrd_snv_tree_read
-
-
-int
-vrd_snv_tree_write(vrd_SNV_Tree const* const restrict tree,
-                   FILE* restrict stream)
-{
-    assert(NULL != tree);
-
-    size_t count = fwrite(&tree->root, sizeof(tree->root), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fwrite(&tree->next, sizeof(tree->next), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fwrite(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
-    if (tree->next - 1 != count)
-    {
-        return -1;
-    } // if
-    return 0;
-} // vrd_snv_tree_write
+#undef VRD_TYPENAME
