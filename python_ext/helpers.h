@@ -1,13 +1,5 @@
-#ifndef HELPERS_H
-#define HELPERS_H
-
-
-#ifdef __cplusplus
-#define restrict
-
-extern "C"
-{
-#endif
+#ifndef VRD_HELPERS_H
+#define VRD_HELPERS_H
 
 
 #define PY_SSIZE_T_CLEAN
@@ -27,9 +19,5 @@ enum
 vrd_AVL_Tree*
 sample_set(PyObject* const list);
 
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #endif
