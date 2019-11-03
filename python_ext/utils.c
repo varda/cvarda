@@ -4,7 +4,7 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/avl_tree.h"   // vrd_AVL_Tree, vrd_AVL_tree_*
-#include "helpers.h"    // sample_set
+#include "utils.h"    // sample_set
 
 
 vrd_AVL_Tree*

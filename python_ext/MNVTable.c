@@ -5,53 +5,20 @@
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
-#include "helpers.h"    // CFG_*, sample_set
-
-#include "SequenceTable.c"  // SequenceTable, SequenceTableObject
-
-
-typedef struct
-{
-    PyObject_HEAD
-    vrd_MNV_Table* table;
-} MNVTableObject;
+#include "utils.h"          // CFG_*, sample_set
+#include "MNVTable.h"       // MNVTable*
+#include "SequenceTable.h"  // SequenceTable*
 
 
-static PyObject*
-MNVTable_new(PyTypeObject* const restrict type,
-             PyObject* const restrict args,
-             PyObject* const restrict kwds)
-{
-    (void) kwds;
-
-    size_t ref_capacity = CFG_REF_CAPACITY;
-    size_t tree_capacity = CFG_TREE_CAPACITY;
-
-    if (!PyArg_ParseTuple(args, "|nn:MNVTable", &ref_capacity, &tree_capacity))
-    {
-        return NULL;
-    } // if
-
-    MNVTableObject* const restrict self = (MNVTableObject*) type->tp_alloc(type, 0);
-
-    self->table = vrd_MNV_table_init(ref_capacity, tree_capacity);
-    if (NULL == self->table)
-    {
-        Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable: vrd_MNV_table_init() failed");
-        return NULL;
-    } // if
-
-    return (PyObject*) self;
-} // MNVTable_new
+#define VRD_TYPENAME MNV
+#define VRD_OBJNAME MNVTable
 
 
-static void
-MNVTable_dealloc(MNVTableObject* const self)
-{
-    vrd_MNV_table_destroy(&self->table);
-    Py_TYPE(self)->tp_free((PyObject*) self);
-} // MNVTable_dealloc
+#include "template_table.inc"   // MNVTable_*
+
+
+#undef VRD_TYPENAME
+#undef VRD_OBJNAME
 
 
 static PyObject*
@@ -92,7 +59,7 @@ MNVTable_query(MNVTableObject* const restrict self,
     int inserted = 0;
     PyObject* restrict list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ii|iO!:MNVTable.insert", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ii|iO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -143,64 +110,6 @@ MNVTable_remove(MNVTableObject* const restrict self,
 
     return Py_BuildValue("i", result);
 } // MNVTable_remove
-
-
-static PyObject*
-MNVTable_reorder(MNVTableObject* const restrict self,
-                 PyObject* const restrict args)
-{
-    (void) args;
-
-    if (0 != vrd_MNV_table_reorder(self->table))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.reorder: vrd_mnv_table_reorder() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // MNVTable_reorder
-
-
-static PyObject*
-MNVTable_read(MNVTableObject* const restrict self,
-              PyObject* const restrict args)
-{
-    char const* restrict path = NULL;
-
-    if (!PyArg_ParseTuple(args, "s:MNVTable.read", &path))
-    {
-        return NULL;
-    } // if
-
-    if (0 != vrd_MNV_table_read(self->table, path))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.read: vrd_MNV_table_read() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // MNVTable_read
-
-
-static PyObject*
-MNVTable_write(MNVTableObject* const restrict self,
-               PyObject* const restrict args)
-{
-    char const* restrict path = NULL;
-
-    if (!PyArg_ParseTuple(args, "s:MNVTable.write", &path))
-    {
-        return NULL;
-    } // if
-
-    if (0 != vrd_MNV_table_write(self->table, path))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "MNVTable.write: vrd_MNV_table_write() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // MNVTable_write
 
 
 static PyMethodDef MNVTable_methods[] =
@@ -254,7 +163,7 @@ static PyMethodDef MNVTable_methods[] =
 }; // MNVTable_methods
 
 
-static PyTypeObject MNVTable =
+PyTypeObject MNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.MNVTable",

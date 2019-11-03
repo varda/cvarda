@@ -3,15 +3,19 @@ from setuptools import setup, Extension
 
 VERSION_MAJOR = 2
 VERSION_MINOR = 0
-VERSION_PATCH = 1
+VERSION_PATCH = 2
 VERSION = '.'.join(map(str, [VERSION_MAJOR,
                              VERSION_MINOR,
                              VERSION_PATCH]))
 
 
 cvarda = Extension('cvarda',
-                   sources = ['python_ext/wrapper.c',
-                              'python_ext/helpers.c',
+                   sources = ['python_ext/utils.c',
+                              'python_ext/wrapper.c',
+                              'python_ext/CoverageTable.c',
+                              'python_ext/MNVTable.c',
+                              'python_ext/SequenceTable.c',
+                              'python_ext/SNVTable.c',
                               'src/avl_tree.c',
                               'src/cov_table.c',
                               'src/cov_tree.c',

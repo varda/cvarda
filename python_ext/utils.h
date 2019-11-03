@@ -1,5 +1,5 @@
-#ifndef VRD_HELPERS_H
-#define VRD_HELPERS_H
+#ifndef VRD_EXT_UTILS_H
+#define VRD_EXT_UTILS_H
 
 
 #define PY_SSIZE_T_CLEAN

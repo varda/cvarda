@@ -95,7 +95,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
 } // vrd_*_table_remove
 
 
-size_t
+int
 VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self)
 {
     assert(NULL != self);

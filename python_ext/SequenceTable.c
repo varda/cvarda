@@ -1,21 +1,11 @@
-#ifndef SEQUENCE_TABLE_C
-#define SEQUENCE_TABLE_C
-
-
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
-#include "helpers.h"    // CFG_*
-
-
-typedef struct
-{
-    PyObject_HEAD
-    vrd_Seq_Table* table;
-} SequenceTableObject;
+#include "utils.h"          // CFG_*
+#include "SequenceTable.h"  // SequenceTable*
 
 
 static PyObject*
@@ -193,7 +183,7 @@ static PyMethodDef SequenceTable_methods[] =
 }; // SequenceTable_methods
 
 
-static PyTypeObject SequenceTable =
+PyTypeObject SequenceTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.SequenceTable",
@@ -209,6 +199,3 @@ static PyTypeObject SequenceTable =
     .tp_dealloc = (destructor) SequenceTable_dealloc,
     .tp_methods = SequenceTable_methods
 }; // SequenceTable
-
-
-#endif

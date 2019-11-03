@@ -5,51 +5,19 @@
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_Cov_table_*
-#include "helpers.h"    // CFG_*, sample_set
+#include "utils.h"          // CFG_*, sample_set
+#include "CoverageTable.h"  // CoverageTable*
 
 
-typedef struct
-{
-    PyObject_HEAD
-    vrd_Cov_Table* table;
-} CoverageTableObject;
+#define VRD_TYPENAME Cov
+#define VRD_OBJNAME CoverageTable
 
 
-static PyObject*
-CoverageTable_new(PyTypeObject* const restrict type,
-                  PyObject* const restrict args,
-                  PyObject* const restrict kwds)
-{
-    (void) kwds;
-
-    size_t ref_capacity = CFG_REF_CAPACITY;
-    size_t tree_capacity = CFG_TREE_CAPACITY;
-
-    if (!PyArg_ParseTuple(args, "|nn:CoverageTable", &ref_capacity, &tree_capacity))
-    {
-        return NULL;
-    } // if
-
-    CoverageTableObject* const restrict self = (CoverageTableObject*) type->tp_alloc(type, 0);
-
-    self->table = vrd_Cov_table_init(ref_capacity, tree_capacity);
-    if (NULL == self->table)
-    {
-        Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "CoverageTable: vrd_Cov_table_init() failed");
-        return NULL;
-    } // if
-
-    return (PyObject*) self;
-} // CoverageTable_new
+#include "template_table.inc"   // CoverageTable_*
 
 
-static void
-CoverageTable_dealloc(CoverageTableObject* const self)
-{
-    vrd_Cov_table_destroy(&self->table);
-    Py_TYPE(self)->tp_free((PyObject*) self);
-} // CoverageTable_dealloc
+#undef VRD_TYPENAME
+#undef VRD_OBJNAME
 
 
 static PyObject*
@@ -139,64 +107,6 @@ CoverageTable_remove(CoverageTableObject* const restrict self,
 } // CoverageTable_remove
 
 
-static PyObject*
-CoverageTable_reorder(CoverageTableObject* const restrict self,
-                      PyObject* const restrict args)
-{
-    (void) args;
-
-    if (0 != vrd_Cov_table_reorder(self->table))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.reorder: vrd_cov_table_reorder() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // CoverageTable_reorder
-
-
-static PyObject*
-CoverageTable_read(CoverageTableObject* const restrict self,
-                   PyObject* const restrict args)
-{
-    char const* restrict path = NULL;
-
-    if (!PyArg_ParseTuple(args, "s:CoverageTable.read", &path))
-    {
-        return NULL;
-    } // if
-
-    if (0 != vrd_Cov_table_read(self->table, path))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.read: vrd_Cov_table_read() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // CoverageTable_read
-
-
-static PyObject*
-CoverageTable_write(CoverageTableObject* const restrict self,
-                    PyObject* const restrict args)
-{
-    char const* restrict path = NULL;
-
-    if (!PyArg_ParseTuple(args, "s:CoverageTable.write", &path))
-    {
-        return NULL;
-    } // if
-
-    if (0 != vrd_Cov_table_write(self->table, path))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.write: vrd_Cov_table_write() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // CoverageTable_write
-
-
 static PyMethodDef CoverageTable_methods[] =
 {
     {"insert", (PyCFunction) CoverageTable_insert, METH_VARARGS,
@@ -244,7 +154,7 @@ static PyMethodDef CoverageTable_methods[] =
 }; // CoverageTable_methods
 
 
-static PyTypeObject CoverageTable =
+PyTypeObject CoverageTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.CoverageTable",

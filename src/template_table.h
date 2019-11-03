@@ -21,7 +21,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
                                           vrd_AVL_Tree const* const restrict subset);
 
 
-size_t
+int
 VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self);
 
 
