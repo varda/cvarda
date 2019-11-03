@@ -21,9 +21,9 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 }; // vrd_Cov_Node
 
 
-#define VRD_ITV
+#define VRD_INTERVAL
 #include "template_tree.inc"
-#undef VRD_ITV
+#undef VRD_INTERVAL
 
 
 int
@@ -46,6 +46,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     self->nodes[ptr].child[RIGHT] = NULLPTR;
     self->nodes[ptr].key = start;
     self->nodes[ptr].end = end;
+    self->nodes[ptr].max = end;
     self->nodes[ptr].balance = 0;
     self->nodes[ptr].sample_id = sample_id;
 

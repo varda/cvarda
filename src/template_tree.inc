@@ -90,7 +90,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* res
 } // vrd_*_tree_destroy
 
 
-#ifdef VRD_ITV
+#ifdef VRD_INTERVAL
 static inline uint32_t
 update_max(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 {
@@ -137,7 +137,7 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
     while (NULLPTR != tmp)
     {
 
-#ifdef VRD_ITV
+#ifdef VRD_INTERVAL
         self->nodes[tmp].max = umax(self->nodes[tmp].max,
                                     self->nodes[ptr].end);
 #endif
@@ -194,10 +194,12 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
             self->nodes[child].child[RIGHT] = unbal;
             self->nodes[child].balance = 0;
             self->nodes[unbal].balance = 0;
-#ifdef VRD_ITV
+
+#ifdef VRD_INTERVAL
             self->nodes[child].max = update_max(self, child);
             self->nodes[unbal].max = update_max(self, unbal);
 #endif
+
         } // if
         else
         {
@@ -222,11 +224,13 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
                 self->nodes[unbal].balance = 0;
             } // else
             self->nodes[root].balance = 0;
-#ifdef VRD_ITV
+
+#ifdef VRD_INTERVAL
             self->nodes[root].max = update_max(self, root);
             self->nodes[child].max = update_max(self, child);
             self->nodes[unbal].max = update_max(self, unbal);
 #endif
+
         } // else
     } // if
     else if (2 == self->nodes[unbal].balance)
@@ -239,10 +243,12 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
             self->nodes[child].child[LEFT] = unbal;
             self->nodes[child].balance = 0;
             self->nodes[unbal].balance = 0;
-#ifdef VRD_ITV
+
+#ifdef VRD_INTERVAL
             self->nodes[child].max = update_max(self, child);
             self->nodes[unbal].max = update_max(self, unbal);
 #endif
+
         } // if
         else
         {
@@ -267,11 +273,13 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
                 self->nodes[unbal].balance = 0;
             } // else
             self->nodes[root].balance = 0;
-#ifdef VRD_ITV
+
+#ifdef VRD_INTERVAL
             self->nodes[root].max = update_max(self, root);
             self->nodes[child].max = update_max(self, child);
             self->nodes[unbal].max = update_max(self, unbal);
 #endif
+
         } // else
     } // if
     else
@@ -483,7 +491,7 @@ traverse(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
 } // traverse
 
 
-#ifdef VRD_ITV
+#ifdef VRD_INTERVAL
 static int
 update_avl(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root, uint32_t* const new_max)
 {
@@ -526,11 +534,13 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 
     size_t const count = traverse(self, self->root, 0, 0, subset);
     balance(self);
-#ifdef VRD_ITV
+
+#ifdef VRD_INTERVAL
     update_avl(self, self->root, 0);
 #else
     update_avl(self, self->root);
 #endif
+
     return count;
 } // vrd_*_tree_remove
 

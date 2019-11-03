@@ -1,6 +1,18 @@
-#include <stdlib.h>     // EXIT_SUCCESS
+#include <errno.h>      // errno
+#include <stddef.h>     // NULL
+#include <stdio.h>      // FILE, stderr, stdout, fclose, fopen, fprintf,
+                        // perror
+#include <stdlib.h>     // EXIT_*
 
 #include "../include/varda.h"   // VRD_*, vrd_*
+
+
+enum
+{
+    REF_CAPACITY = 1000,
+    SEQ_CAPACITY = 100000,
+    TREE_CAPACITY = 1 << 24
+}; // constants
 
 
 int
@@ -9,18 +21,199 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_AVL_Tree* restrict subset = vrd_AVL_tree_init(100);
-    vrd_Cov_Table* restrict cov = vrd_Cov_table_init(100, 1000);
-    vrd_Seq_Table* restrict seq = vrd_Seq_table_init(10000);
-    vrd_SNV_Table* restrict snv = vrd_SNV_table_init(100, 1000);
+    vrd_Cov_Table* restrict cov = NULL;
+    vrd_SNV_Table* restrict snv = NULL;
+    vrd_MNV_Table* restrict mnv = NULL;
+    vrd_Seq_Table* restrict seq = NULL;
+    FILE* restrict stream = NULL;
 
-    vrd_SNV_table_remove(snv, subset);
+    cov = vrd_Cov_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == cov)
+    {
+        (void) fprintf(stderr, "vrd_Cov_table_init() failed\n");
+        goto error;
+    } // if
 
+    snv = vrd_SNV_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
+        goto error;
+    } // if
 
-    vrd_SNV_table_destroy(&snv);
-    vrd_Seq_table_destroy(&seq);
+    mnv = vrd_MNV_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == mnv)
+    {
+        (void) fprintf(stderr, "vrd_MNV_table_init() failed\n");
+        goto error;
+    } // if
+
+    seq = vrd_Seq_table_init(SEQ_CAPACITY);
+    if (NULL == seq)
+    {
+        (void) fprintf(stderr, "vrd_Seq_table_init() failed\n");
+        goto error;
+    } // if
+
+    errno = 0;
+    stream = fopen("../data/depth10.bed", "r");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
+
+    size_t const cov_count = vrd_coverage_from_file(stream, cov, 0);
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
+
+    (void) fprintf(stderr, "Covered regions: %zu\n", cov_count);
+
+    errno = 0;
+    stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
+
+    size_t const var_count = vrd_variants_from_file(stream, snv, mnv, seq, 0);
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
+
+    (void) fprintf(stderr, "Variants: %zu\n", var_count);
+
+    int err = vrd_Cov_table_write(cov, "store/cov");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_Cov_table_write() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_SNV_table_write(snv, "store/snv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_write() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_MNV_table_write(mnv, "store/mnv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_MNV_table_write() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_Seq_table_write(seq, "store/seq");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_Seq_table_write() failed\n");
+        goto error;
+    } // if
+
     vrd_Cov_table_destroy(&cov);
-    vrd_AVL_tree_destroy(&subset);
+    vrd_SNV_table_destroy(&snv);
+    vrd_MNV_table_destroy(&mnv);
+    vrd_Seq_table_destroy(&seq);
+
+    cov = vrd_Cov_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == cov)
+    {
+        (void) fprintf(stderr, "vrd_Cov_table_init() failed\n");
+        goto error;
+    } // if
+
+    snv = vrd_SNV_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
+        goto error;
+    } // if
+
+    mnv = vrd_MNV_table_init(REF_CAPACITY, TREE_CAPACITY);
+    if (NULL == mnv)
+    {
+        (void) fprintf(stderr, "vrd_MNV_table_init() failed\n");
+        goto error;
+    } // if
+
+    seq = vrd_Seq_table_init(SEQ_CAPACITY);
+    if (NULL == seq)
+    {
+        (void) fprintf(stderr, "vrd_Seq_table_init() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_Cov_table_read(cov, "store/cov");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_Cov_table_read() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_SNV_table_read(snv, "store/snv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_read() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_MNV_table_read(mnv, "store/mnv");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_MNV_table_read() failed\n");
+        goto error;
+    } // if
+
+    err = vrd_Seq_table_read(seq, "store/seq");
+    if (0 != err)
+    {
+        (void) fprintf(stderr, "vrd_Seq_table_read() failed\n");
+        goto error;
+    } // if
+
+    errno = 0;
+    stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
+
+    size_t const ann_count = vrd_annotate_from_file(stdout, stream, cov, snv, mnv, seq, NULL);
+
+    errno = 0;
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
+
+    (void) fprintf(stderr, "Annotated: %zu\n", ann_count);
+
+    vrd_Cov_table_destroy(&cov);
+    vrd_SNV_table_destroy(&snv);
+    vrd_MNV_table_destroy(&mnv);
+    vrd_Seq_table_destroy(&seq);
 
     return EXIT_SUCCESS;
+
+error:
+
+    vrd_Cov_table_destroy(&cov);
+    vrd_SNV_table_destroy(&snv);
+    vrd_MNV_table_destroy(&mnv);
+    vrd_Seq_table_destroy(&seq);
+
+    return EXIT_FAILURE;
 } // main
