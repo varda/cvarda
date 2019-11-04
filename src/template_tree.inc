@@ -506,7 +506,10 @@ update_avl(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root, u
     int const right = update_avl(self, self->nodes[root].child[RIGHT], &max_right);
     self->nodes[root].max = umax(umax(max_left, max_right), self->nodes[root].end);
     self->nodes[root].balance = right - left;
-    *new_max = self->nodes[root].max;
+    if (NULL != new_max)
+    {
+        *new_max = self->nodes[root].max;
+    } // if
     return umax(left, right) + 1;
 } // update_avl
 #else
@@ -536,7 +539,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     balance(self);
 
 #ifdef VRD_INTERVAL
-    update_avl(self, self->root, 0);
+    update_avl(self, self->root, NULL);
 #else
     update_avl(self, self->root);
 #endif

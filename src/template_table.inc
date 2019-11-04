@@ -157,7 +157,8 @@ read_tree(char const* const restrict path,
           size_t const capacity)
 {
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s_tree_%zu.bin", path, idx))
+    size_t const buf_size = FILENAME_MAX;
+    if (0 >= snprintf(filename, buf_size, "%s_tree_%zu.bin", path, idx))
     {
         return NULL;
     } // if
@@ -204,7 +205,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
     assert(NULL != self);
 
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
+    size_t const buf_size = FILENAME_MAX;
+    if (0 >= snprintf(filename, buf_size, "%s.idx", path))
     {
         return errno;
     } // if
@@ -305,7 +307,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
     assert(NULL != self);
 
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
+    size_t const buf_size = FILENAME_MAX;
+    if (0 >= snprintf(filename, buf_size, "%s.idx", path))
     {
         return errno;
     } // if
@@ -356,7 +359,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 
     for (size_t i = 0; i < self->next; ++i)
     {
-        if (0 >= snprintf(filename, FILENAME_MAX, "%s_tree_%zu.bin", path, i))
+        if (0 >= snprintf(filename, buf_size, "%s_tree_%zu.bin", path, i))
         {
             return errno;
         } // if

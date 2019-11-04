@@ -139,13 +139,13 @@ vrd_Seq_table_read(vrd_Seq_Table* const restrict self,
     assert(NULL != self);
 
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
+    size_t const buf_size = FILENAME_MAX;
+    if (0 >= snprintf(filename, buf_size, "%s.idx", path))
     {
         return errno;
     } // if
 
     char* sequence = NULL;
-
     FILE* restrict stream = fopen(filename, "rb");
     if (NULL == stream)
     {
@@ -153,7 +153,6 @@ vrd_Seq_table_read(vrd_Seq_Table* const restrict self,
     } // if
 
     size_t size = 0;
-
     size_t count = fread(&size, sizeof(size), 1, stream);
     if (1 != count)
     {
@@ -216,13 +215,13 @@ vrd_Seq_table_write(vrd_Seq_Table const* const restrict self,
     assert(NULL != self);
 
     char filename[FILENAME_MAX] = {'\0'};
-    if (0 >= snprintf(filename, FILENAME_MAX, "%s.idx", path))
+    size_t const buf_size = FILENAME_MAX;
+    if (0 >= snprintf(filename, buf_size, "%s.idx", path))
     {
         return errno;
     } // if
 
     char* sequence = NULL;
-
     FILE* restrict stream = fopen(filename, "wb");
     if (NULL == stream)
     {
