@@ -1,5 +1,5 @@
-#ifndef IUPAC_H
-#define IUPAC_H
+#ifndef VRD_IUPAC_H
+#define VRD_IUPAC_H
 
 #ifdef __cplusplus
 #define restrict

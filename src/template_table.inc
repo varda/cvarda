@@ -218,7 +218,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
     } // if
 
     size_t size = 0;
-
     size_t count = fread(&size, sizeof(size), 1, stream);
     if (1 != count)
     {
@@ -228,7 +227,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
     for (size_t i = 0; i < size; ++i)
     {
         size_t len = 0;
-
         count = fread(&len, sizeof(len), 1, stream);
         if (1 != count)
         {
@@ -264,7 +262,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
         self->trees[self->next] = elem;
 
         size_t idx = 0;
-
         count = fread(&idx, sizeof(idx), 1, stream);
         if (1 != count)
         {
