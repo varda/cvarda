@@ -1,120 +1,71 @@
-/**
- * @file avl_tree.c
- *
- * Implements an AVL tree
- */
-
 #include <assert.h>     // assert
+#include <errno.h>      // errno
 #include <stdbool.h>    // bool, false, true
-#include <stddef.h>     // NULL
-#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t, uint64_t,
-#include <stdlib.h>     // malloc, free
+#include <stddef.h>     // NULL, size_t
+#include <stdint.h>     // UINT32_MAX, int32_t, uint32_t
 
-#include "../include/avl_tree.h"    // vrd_AVL_*, vrd_avl_tree_*
-#include "tree.h"   // NULLPTR, LEFT, RIGHT
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/template.h"    // VRD_TEMPLATE
 
 
-typedef struct
+#define VRD_TYPENAME AVL
+
+
+struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t value;
-    int32_t  balance;  // we use [-2, ..., 2]
-} vrd_AVL_Node;
+    uint32_t key;
+    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+    uint32_t sample_id : 29;
+}; // vrd_AVL_Node
 
 
-struct vrd_AVL_Tree
+#include "template_tree.inc"    // vrd_AVL_tree_*, insert
+
+
+int
+VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                         size_t const key)
 {
-    uint32_t root;
+    assert(NULL != self);
 
-    uint32_t next;
-    uint32_t capacity;
-    vrd_AVL_Node nodes[];
-}; // vrd_AVL_Tree
-
-
-vrd_AVL_Tree*
-vrd_avl_tree_init(size_t const capacity)
-{
-    if ((size_t) UINT32_MAX <= capacity)
+    if (UINT32_MAX == self->next || self->capacity < self->next)
     {
-        return NULL;
+        return -1;
     } // if
 
-    vrd_AVL_Tree* const tree = malloc(sizeof(vrd_AVL_Tree) +
-                                      sizeof(vrd_AVL_Node) *
-                                      ((size_t) capacity + 1));
-    if (NULL == tree)
-    {
-        return NULL;
-    } // if
+    uint32_t const ptr = self->next;
+    self->next += 1;
 
-    tree->root = NULLPTR;
-    tree->next = 1;
-    tree->capacity = capacity;
+    self->nodes[ptr].child[LEFT] = NULLPTR;
+    self->nodes[ptr].child[RIGHT] = NULLPTR;
+    self->nodes[ptr].key = key;
+    self->nodes[ptr].balance = 0;
 
-    return tree;
-} // vrd_avl_tree_init
+    insert(self, ptr);
 
-
-void
-vrd_avl_tree_destroy(vrd_AVL_Tree* restrict* const tree)
-{
-    if (NULL == tree)
-    {
-        return;
-    } // if
-
-    free(*tree);
-    *tree = NULL;
-} // vrd_avl_tree_destroy
-
-
-#define TREE vrd_AVL_Tree
-#define NODE vrd_AVL_Node
-#define KEY value
-#include "tree_insert.inc"  // insert
-#undef KEY
-#undef NODE
-#undef TREE
-
-
-void*
-vrd_avl_tree_insert(vrd_AVL_Tree* const tree, size_t const value)
-{
-    assert(NULL != tree);
-
-    if (UINT32_MAX == tree->next || tree->capacity < tree->next)
-    {
-        return NULL;
-    } // if
-
-    uint32_t const ptr = tree->next;
-    tree->next += 1;
-
-    tree->nodes[ptr].child[LEFT] = NULLPTR;
-    tree->nodes[ptr].child[RIGHT] = NULLPTR;
-    tree->nodes[ptr].value = value;
-    tree->nodes[ptr].balance = 0;
-
-    return insert(tree, ptr);
-} // vrd_avl_tree_insert
+    return 0;
+} // vrd_AVL_tree_insert
 
 
 bool
-vrd_avl_tree_is_element(vrd_AVL_Tree const* const tree,
-                        size_t const value)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_is_element)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                             size_t const key)
 {
-    assert(NULL != tree);
+    assert(NULL != self);
 
-    uint32_t tmp = tree->root;
+    uint32_t tmp = self->root;
     while (NULLPTR != tmp)
     {
-        if (value == tree->nodes[tmp].value)
+        if (key == self->nodes[tmp].key)
         {
             return true;
         } // if
-        tmp = tree->nodes[tmp].child[value > tree->nodes[tmp].value];
+        tmp = self->nodes[tmp].child[key > self->nodes[tmp].key];
     } // while
 
     return false;
-} // vrd_avl_tree_is_element
+} // vrd_AVL_tree_is_element
+
+
+#undef VRD_TYPENAME

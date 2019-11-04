@@ -22,7 +22,7 @@ copyright = '2019, LUMC'
 author = 'LUMC'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.9'
+release = '2.0.1'
 
 
 # -- General configuration ---------------------------------------------------

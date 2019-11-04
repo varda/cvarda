@@ -3,54 +3,21 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/avl_tree.h"    // vrd_avl_tree_destroy
-#include "../include/iupac.h"   // vrd_iuapc_to_idx
-#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
-#include "helpers.h"    // CFG_*, sample_set
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/iupac.h"       // vrd_iuapc_to_idx
+#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_SNV_table_*
+#include "utils.h"      // CFG_*, sample_set
+#include "SNVTable.h"   // SNVTable*
 
 
-typedef struct
-{
-    PyObject_HEAD
-    vrd_SNV_Table* table;
-} SNVTableObject;
+#define VRD_TYPENAME SNV
+#define VRD_OBJNAME SNVTable
+
+#include "template_table.inc"   // SNVTable_*
 
 
-static PyObject*
-SNVTable_new(PyTypeObject* const restrict type,
-             PyObject* const restrict args,
-             PyObject* const restrict kwds)
-{
-    (void) kwds;
-
-    size_t ref_capacity = CFG_REF_CAPACITY;
-    size_t tree_capacity = CFG_TREE_CAPACITY;
-
-    if (!PyArg_ParseTuple(args, "|nn:SNVTable", &ref_capacity, &tree_capacity))
-    {
-        return NULL;
-    } // if
-
-    SNVTableObject* const restrict self = (SNVTableObject*) type->tp_alloc(type, 0);
-
-    self->table = vrd_snv_table_init(ref_capacity, tree_capacity);
-    if (NULL == self->table)
-    {
-        Py_TYPE(self)->tp_free((PyObject*) self);
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable: vrd_snv_table_init() failed");
-        return NULL;
-    } // if
-
-    return (PyObject*) self;
-} // SNVTable_new
-
-
-static void
-SNVTable_dealloc(SNVTableObject* const self)
-{
-    vrd_snv_table_destroy(&self->table);
-    Py_TYPE(self)->tp_free((PyObject*) self);
-} // SNVTable_dealloc
+#undef VRD_TYPENAME
+#undef VRD_OBJNAME
 
 
 static PyObject*
@@ -76,9 +43,9 @@ SNVTable_insert(SNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (-1 == vrd_snv_table_insert(self->table, len, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
+    if (0 != vrd_SNV_table_insert(self->table, len, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
     {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_snv_table_insert() failed");
+        PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_SNV_table_insert() failed");
         return NULL;
     } // if
 
@@ -120,8 +87,8 @@ SNVTable_query(SNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_snv_table_query(self->table, len, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
-    vrd_avl_tree_destroy(&subset);
+    result = vrd_SNV_table_query_stab(self->table, len, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
+    vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
@@ -147,70 +114,12 @@ SNVTable_remove(SNVTableObject* const restrict self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_snv_table_remove(self->table, subset);
-    vrd_avl_tree_destroy(&subset);
+    result = vrd_SNV_table_remove(self->table, subset);
+    vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
 } // SNVTable_remove
-
-
-static PyObject*
-SNVTable_reorder(SNVTableObject* const restrict self,
-                 PyObject* const restrict args)
-{
-    (void) args;
-
-    if (0 != vrd_snv_table_reorder(self->table))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.reorder: vrd_snv_table_reorder() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // SNVTable_reorder
-
-
-static PyObject*
-SNVTable_read(SNVTableObject* const restrict self,
-              PyObject* const restrict args)
-{
-    char const* restrict path = NULL;
-
-    if (!PyArg_ParseTuple(args, "s:SNVTable.read", &path))
-    {
-        return NULL;
-    } // if
-
-    if (0 != vrd_snv_table_read(self->table, path))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.read: vrd_snv_table_read() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // SNVTable_read
-
-
-static PyObject*
-SNVTable_write(SNVTableObject* const restrict self,
-               PyObject* const restrict args)
-{
-    char const* restrict path = NULL;
-
-    if (!PyArg_ParseTuple(args, "s:SNVTable.write", &path))
-    {
-        return NULL;
-    } // if
-
-    if (0 != vrd_snv_table_write(self->table, path))
-    {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.write: vrd_snv_table_write() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
-} // SNVTable_write
 
 
 static PyMethodDef SNVTable_methods[] =
@@ -262,7 +171,7 @@ static PyMethodDef SNVTable_methods[] =
 }; // SNVTable_methods
 
 
-static PyTypeObject SNVTable =
+PyTypeObject SNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.SNVTable",

@@ -3,16 +3,16 @@
 
 #include <errno.h>      // errno
 #include <stddef.h>     // NULL
-#include <stdio.h>      // FILE, fprintf, stderr
+#include <stdio.h>      // FILE, fclose, fopen, fprintf, stderr
 #include <stdlib.h>     // EXIT_*
 
-#include "../include/varda.h"   // vrd_version, vrd_coverage_from_file,
-                                // vrd_variants_from_file
-#include "CoverageTable.c"  // CoverageTable, CoverageTableObject
-#include "MNVTable.c"       // MNVTable, MNVTableObject
-#include "SequenceTable.c"  // SequenceTable, SequenceTableObject
-#include "SNVTable.c"       // SNVTable, SNVTableObject
-#include "helpers.h"    // sample_set
+#include "../include/varda.h"   // vrd_*
+
+#include "CoverageTable.h"  // CoverageTable*
+#include "MNVTable.h"       // MNVTable*
+#include "SequenceTable.h"  // SequenceTable*
+#include "SNVTable.h"       // SNVTable*
+#include "utils.h"          // sample_set
 
 
 static PyObject*

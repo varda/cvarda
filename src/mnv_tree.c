@@ -1,18 +1,21 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // UINT32_MAX, uint32_t, int32_t
-#include <stdio.h>      // FILE, fread, fwrite
-#include <stdlib.h>     // malloc, free
+#include <stdint.h>     // int32_t, uint32_t
 
-#include "../include/seq_table.h"   // Seq_Table
-#include "mnv_tree.h"   // vrd_MNV_*, vrd_mnv_tree_*
-#include "tree.h"       // NULLPTR, LEFT, RIGHT, HOMOZYGOUS
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/iupac.h"       // VRD_HOMOZYGOUS
+#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
+#include "../include/template.h"    // VRD_TEMPLATE
+#include "mnv_tree.h"    // vrd_MNV_Tree, vrd_MNV_tree_*
 
 
-struct vrd_MNV_Node
+#define VRD_TYPENAME MNV
+
+
+struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t start;
+    uint32_t key;
     uint32_t end;
     uint32_t max;
     int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
@@ -22,233 +25,135 @@ struct vrd_MNV_Node
 }; // vrd_MNV_Node
 
 
-struct vrd_MNV_Tree
+#define VRD_INTERVAL
+#include "template_tree.inc"    // vrd_MNV_tree_*
+#undef VRD_INTERVAL
+
+
+int
+VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                         size_t const start,
+                                         size_t const end,
+                                         size_t const sample_id,
+                                         size_t const phase,
+                                         size_t const inserted)
 {
-    uint32_t root;
+    assert(NULL != self);
 
-    uint32_t next;
-    uint32_t capacity;
-    vrd_MNV_Node nodes[];
-}; // vrd_MNV_Tree
-
-
-vrd_MNV_Tree*
-vrd_mnv_tree_init(size_t const capacity)
-{
-    if ((size_t) UINT32_MAX <= capacity)
+    if (UINT32_MAX == self->next || self->capacity < self->next)
     {
-        return NULL;
+        return -1;
     } // if
 
-    vrd_MNV_Tree* const tree = malloc(sizeof(vrd_MNV_Tree) +
-                                      sizeof(vrd_MNV_Node) *
-                                      ((size_t) capacity + 1));
-    if (NULL == tree)
-    {
-        return NULL;
-    } // if
+    uint32_t const ptr = self->next;
+    self->next += 1;
 
-    tree->root = NULLPTR;
-    tree->next = 1;
-    tree->capacity = capacity;
+    self->nodes[ptr].child[LEFT] = NULLPTR;
+    self->nodes[ptr].child[RIGHT] = NULLPTR;
+    self->nodes[ptr].key = start;
+    self->nodes[ptr].end = end;
+    self->nodes[ptr].max = end;
+    self->nodes[ptr].balance = 0;
+    self->nodes[ptr].sample_id = sample_id;
+    self->nodes[ptr].phase = phase;
+    self->nodes[ptr].inserted = inserted;
 
-    return tree;
-} // vrd_mnv_tree_init
+    insert(self, ptr);
+
+    return 0;
+} // vrd_MNV_tree_insert
 
 
-void
-vrd_mnv_tree_destroy(vrd_MNV_Tree* restrict* const tree)
+static size_t
+query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const restrict self,
+           size_t const root,
+           size_t const start,
+           size_t const end,
+           size_t const inserted,
+           vrd_AVL_Tree const* const restrict subset)
 {
-    if (NULL == tree)
-    {
-        return;
-    } // if
-
-    free(*tree);
-    *tree = NULL;
-} // vrd_mnv_tree_destroy
-
-
-#define TREE vrd_MNV_Tree
-#define NODE vrd_MNV_Node
-#define KEY start
-#define ITV
-#include "tree_insert.inc"  // insert
-#undef ITV
-#undef KEY
-#undef NODE
-#undef TREE
-
-
-vrd_MNV_Node*
-vrd_mnv_tree_insert(vrd_MNV_Tree* const restrict tree,
-                    size_t const start,
-                    size_t const end,
-                    size_t const sample_id,
-                    size_t const phase,
-                    size_t const inserted)
-{
-    assert(NULL != tree);
-
-    if (UINT32_MAX == tree->next || tree->capacity < tree->next)
-    {
-        return NULL;
-    } // if
-
-    uint32_t const ptr = tree->next;
-    tree->next += 1;
-
-    tree->nodes[ptr].child[LEFT] = NULLPTR;
-    tree->nodes[ptr].child[RIGHT] = NULLPTR;
-    tree->nodes[ptr].start = start;
-    tree->nodes[ptr].end = end;
-    tree->nodes[ptr].max = end;
-    tree->nodes[ptr].balance = 0;
-    tree->nodes[ptr].sample_id = sample_id;
-    tree->nodes[ptr].phase = phase;
-    tree->nodes[ptr].inserted = inserted;
-
-    return insert(tree, ptr);
-} // vrd_mnv_tree_insert
-
-
-static
-size_t
-query_contains(vrd_MNV_Tree const* const restrict tree,
-               size_t const root,
-               size_t const start,
-               size_t const end,
-               size_t const inserted,
-               vrd_AVL_Tree const* const restrict subset)
-{
-    if (NULLPTR == root || tree->nodes[root].max < start)
+    if (NULLPTR == root || self->nodes[root].max < start)
     {
         return 0;
     } // if
 
-    if (tree->nodes[root].start > start)
+    if (self->nodes[root].key > start)
     {
-        return query_contains(tree, tree->nodes[root].child[LEFT], start, end, inserted, subset);
+        return query_stab(self, self->nodes[root].child[LEFT], start, end, inserted, subset);
     } // if
 
-    // TODO: semantics on inserted
     size_t res = 0;
-    if (start >= tree->nodes[root].start &&
-        end <= tree->nodes[root].end &&
-        inserted == tree->nodes[root].inserted &&
-        (NULL == subset || vrd_avl_tree_is_element(subset, tree->nodes[root].sample_id)))
+    if (start >= self->nodes[root].key &&
+        end <= self->nodes[root].end &&
+        inserted == self->nodes[root].inserted &&
+        (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
         res = 1;
-        if (HOMOZYGOUS == tree->nodes[root].phase)
+        if (VRD_HOMOZYGOUS == self->nodes[root].phase)
         {
             res = 2;
         } // if
     } // if
 
-    return res + query_contains(tree, tree->nodes[root].child[LEFT], start, end, inserted, subset) +
-                 query_contains(tree, tree->nodes[root].child[RIGHT], start, end, inserted, subset);
-} // query_contains
+    return res + query_stab(self, self->nodes[root].child[LEFT], start, end, inserted, subset) +
+                 query_stab(self, self->nodes[root].child[RIGHT], start, end, inserted, subset);
+} // query_stab
 
 
 size_t
-vrd_mnv_tree_query(vrd_MNV_Tree const* const restrict tree,
-                   size_t const start,
-                   size_t const end,
-                   size_t const inserted,
-                   vrd_AVL_Tree const* const restrict subset)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+                                             size_t const start,
+                                             size_t const end,
+                                             size_t const inserted,
+                                             vrd_AVL_Tree const* const restrict subset)
 {
-    assert(NULL != tree);
+    assert(NULL != self);
 
-    return query_contains(tree, tree->root, start, end, inserted, subset);
-} // vrd_mnv_tree_query
+    return query_stab(self, self->root, start, end, inserted, subset);
+} // vrd_MNV_tree_query_stab
 
 
-#define TREE vrd_MNV_Tree
-#define ITV
-#define SEQ
-#include "tree_remove.inc"  // traverse, balance, update_avl
-#undef SEQ
-#undef ITV
-#undef TREE
+static size_t
+traverse_seq(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+             uint32_t const root,
+             int const depth,
+             uint64_t const path,
+             vrd_AVL_Tree const* const restrict subset,
+             vrd_Seq_Table* const restrict seq_table)
+{
+    if (NULLPTR == root)
+    {
+        return 0;
+    } // if
+
+    size_t count = 0;
+
+    count += traverse_seq(self, self->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset, seq_table);
+    count += traverse_seq(self, self->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset, seq_table);
+
+    if (vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
+    {
+        remove_node(self, depth, path);
+        vrd_Seq_table_remove(seq_table, self->nodes[root].inserted);
+        count += 1;  // OVERFLOW
+    } // if
+    return count;
+} // traverse_seq
 
 
 size_t
-vrd_mnv_tree_remove(vrd_MNV_Tree* const restrict tree,
-                    vrd_AVL_Tree const* const restrict subset,
-                    vrd_Seq_Table* const restrict seq_table)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+                                             vrd_AVL_Tree const* const restrict subset,
+                                             vrd_Seq_Table* const restrict seq_table)
 {
-    assert(NULL != tree);
+    assert(NULL != self);
 
-    size_t const count = traverse(tree, tree->root, 0, 0, subset, seq_table);
-    balance(tree);
-    uint32_t new_max = 0;
-    update_avl(tree, tree->root, &new_max);
+    size_t const count = traverse_seq(self, self->root, 0, 0, subset, seq_table);
+    balance(self);
+    update_avl(self, self->root, 0);
 
     return count;
-} // vrd_mnv_tree_remove
+} // vrd_MNV_tree_remove_seq
 
 
-#define TREE vrd_MNV_Tree
-#define NODE vrd_MNV_Node
-#include "tree_layout.inc"  // reorder
-#undef NODE
-#undef TREE
-
-
-int
-vrd_mnv_tree_reorder(vrd_MNV_Tree* const tree)
-{
-    assert(NULL != tree);
-
-    return reorder(tree);
-} // vrd_mnv_tree_reorder
-
-
-int
-vrd_mnv_tree_read(vrd_MNV_Tree* const restrict tree,
-                  FILE* restrict stream)
-{
-    assert(NULL != tree);
-
-    size_t count = fread(&tree->root, sizeof(tree->root), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fread(&tree->next, sizeof(tree->next), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fread(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
-    if (tree->next - 1 != count)
-    {
-        return -1;
-    } // if
-    return 0;
-} // vrd_mnv_tree_read
-
-
-int
-vrd_mnv_tree_write(vrd_MNV_Tree const* const restrict tree,
-                   FILE* restrict stream)
-{
-    assert(NULL != tree);
-
-    size_t count = fwrite(&tree->root, sizeof(tree->root), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fwrite(&tree->next, sizeof(tree->next), 1, stream);
-    if (1 != count)
-    {
-        return -1;
-    } // if
-    count = fwrite(&tree->nodes[1], sizeof(tree->nodes[0]), tree->next - 1, stream);
-    if (tree->next - 1 != count)
-    {
-        return -1;
-    } // if
-    return 0;
-} // vrd_mnv_tree_write
+#undef VRD_TYPENAME

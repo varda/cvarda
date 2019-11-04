@@ -61,16 +61,16 @@ trie_destroy(struct Node* const root)
 
 
 void
-vrd_trie_destroy(vrd_Trie* restrict* const trie)
+vrd_trie_destroy(vrd_Trie* restrict* const self)
 {
-    if (NULL == trie || NULL == *trie)
+    if (NULL == self || NULL == *self)
     {
         return;
     } // if
 
-    trie_destroy((*trie)->root);
-    free(*trie);
-    *trie = NULL;
+    trie_destroy((*self)->root);
+    free(*self);
+    *self = NULL;
 } // vrd_trie_destroy
 
 
@@ -169,8 +169,7 @@ trie_insert(struct Node* const restrict root,
     size_t const k = prefix(len, key, root->len, root->key);
     if (0 == k)
     {
-        struct Node* const restrict node =
-            trie_insert(root->next, len, key, data);
+        struct Node* const restrict node = trie_insert(root->next, len, key, data);
         if (NULL == node)
         {
             return NULL;
@@ -313,37 +312,37 @@ trie_find(struct Node* const root,
 
 
 void*
-vrd_trie_insert(vrd_Trie* const restrict trie,
+vrd_trie_insert(vrd_Trie* const restrict self,
                 size_t const len,
                 char const key[len],
                 void* const restrict data)
 {
-    assert(NULL != trie);
+    assert(NULL != self);
 
-    trie->root = trie_insert(trie->root, len, key, data);
-    return trie_find(trie->root, len, key);
+    self->root = trie_insert(self->root, len, key, data);
+    return trie_find(self->root, len, key);
 } // vrd_trie_insert
 
 
 void
-vrd_trie_remove(vrd_Trie* const restrict trie,
+vrd_trie_remove(vrd_Trie* const restrict self,
                 size_t const len,
                 char const key[len])
 {
-    assert(NULL != trie);
+    assert(NULL != self);
 
-    trie->root = trie_remove(trie->root, len, key);
+    self->root = trie_remove(self->root, len, key);
 } // vrd_trie_remove
 
 
 void*
-vrd_trie_find(vrd_Trie const* const trie,
+vrd_trie_find(vrd_Trie const* const self,
               size_t const len,
               char const key[len])
 {
-    assert(NULL != trie);
+    assert(NULL != self);
 
-    return trie_find(trie->root, len, key);
+    return trie_find(self->root, len, key);
 } // vrd_trie_find
 
 

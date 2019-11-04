@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef VRD_UTILS_H
+#define VRD_UTILS_H
 
 #ifdef __cplusplus
 #define restrict

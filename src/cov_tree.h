@@ -1,5 +1,5 @@
-#ifndef VRD_SNV_TREE_H
-#define VRD_SNV_TREE_H
+#ifndef VRD_COV_TREE_H
+#define VRD_COV_TREE_H
 
 #ifdef __cplusplus
 #define restrict
@@ -14,7 +14,7 @@ extern "C"
 #include "../include/template.h"    // VRD_TEMPLATE
 
 
-#define VRD_TYPENAME SNV
+#define VRD_TYPENAME Cov
 
 
 typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Tree) VRD_TEMPLATE(VRD_TYPENAME, _Tree);
@@ -22,20 +22,19 @@ typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Tree) VRD_TEMPLATE(VRD_TYPENAME, _Tre
 
 int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
-                                         size_t const position,
-                                         size_t const sample_id,
-                                         size_t const phase,
-                                         size_t const inserted);
+                                         size_t const start,
+                                         size_t const end,
+                                         size_t const sample_id);
 
 
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
-                                             size_t const position,
-                                             size_t const inserted,
+                                             size_t const start,
+                                             size_t const end,
                                              vrd_AVL_Tree const* const restrict subset);
 
 
-#include "template_tree.h"  // vrd_SNV_tree_*
+#include "template_tree.h"  // vrd_Cov_tree_*
 
 
 #undef VRD_TYPENAME

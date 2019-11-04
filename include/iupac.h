@@ -1,11 +1,3 @@
-/**
- * @file iupac.h
- *
- * Defines the IUPAC nucleotide alphabet. See also:
- * https://en.wikipedia.org/wiki/Nucleic_acid_notation
- */
-
-
 #ifndef IUPAC_H
 #define IUPAC_H
 
@@ -19,23 +11,14 @@ extern "C"
 #include <stddef.h>     // size_t
 
 
-enum VRD_IUPAC_CONSTANTS
+enum
 {
-    /**
-     * `VRD_IUPAC_SIZE` The size of the IUPAC nucleotide alphabet.
-     */
-    VRD_IUPAC_SIZE = 16
-}; // VRD_IUPAC_CONSTANTS
+    VRD_IUPAC_SIZE = 16,
+
+    VRD_HOMOZYGOUS = (1 << 28) - 1
+}; // constants
 
 
-/**
- * Map IUPAC nucleotides to a consecutive integer interval for array
- * indexing (case insensitive).
- *
- * @param ch the IUPAC nucleotide (ASCII encoding).
- * @return An integer in [0, `VRD_IUPAC_SIZE`) on success, otherwise
- *         `VRD_IUPAC_SIZE`.
- */
 static inline size_t
 vrd_iupac_to_idx(char const ch)
 {
