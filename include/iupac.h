@@ -13,9 +13,7 @@ extern "C"
 
 enum
 {
-    VRD_IUPAC_SIZE = 16,
-
-    VRD_HOMOZYGOUS = (1 << 28) - 1
+    VRD_IUPAC_SIZE = 16
 }; // constants
 
 

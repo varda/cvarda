@@ -21,6 +21,12 @@ extern "C"
 #endif
 
 
+enum
+{
+    VRD_HOMOZYGOUS = (1 << 28) - 1
+}; // constants
+
+
 static inline void
 vrd_version(int* const restrict major,
             int* const restrict minor,

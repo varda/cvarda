@@ -10,7 +10,9 @@
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
 #include "../include/utils.h"       // vrd_coverage_from_file,
-                                    // vrd_variants_from_file
+                                    // vrd_variants_from_file,
+                                    // vrd_annotate_from_file
+#include "../include/varda.h"       // VRD_HOMOZYGOUS
 
 
 size_t
