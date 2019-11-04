@@ -20,6 +20,9 @@ extern "C"
 typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Tree) VRD_TEMPLATE(VRD_TYPENAME, _Tree);
 
 
+#include "../src/template_tree.h"   // vrd_AVL_tree_*
+
+
 int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const key);
@@ -28,9 +31,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 bool
 VRD_TEMPLATE(VRD_TYPENAME, _tree_is_element)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                              size_t const key);
-
-
-#include "../src/template_tree.h"   // vrd_AVL_tree_*
 
 
 #undef VRD_TYPENAME

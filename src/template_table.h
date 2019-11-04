@@ -1,4 +1,4 @@
-#include "../include/template.h"
+#include "../include/template.h"    // VRD_TEMPLATE
 #ifndef VRD_TYPENAME
 #error "Undefined template typename"
 #endif

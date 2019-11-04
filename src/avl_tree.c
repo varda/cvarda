@@ -20,7 +20,7 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 }; // vrd_AVL_Node
 
 
-#include "template_tree.inc"    // vrd_AVL_tree_*
+#include "template_tree.inc"    // vrd_AVL_tree_*, insert
 
 
 int
