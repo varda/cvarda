@@ -35,7 +35,12 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
         return NULL;
     } // if
 
-    if (0 != vrd_Cov_table_insert(self->table, len, reference, start, end, sample_id))
+    int ret = 0;
+    Py_BEGIN_ALLOW_THREADS
+    ret = vrd_Cov_table_insert(self->table, len, reference, start, end, sample_id);
+    Py_END_ALLOW_THREADS
+
+    if (0 != ret)
     {
         PyErr_SetString(PyExc_RuntimeError, "CoverageTable.insert: vrd_Cov_table_insert() failed");
         return NULL;
@@ -97,13 +102,19 @@ CoverageTable_remove(CoverageTableObject* const restrict self,
         return NULL;
     } // if
 
-    size_t result = 0;
+    int ret = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_Cov_table_remove(self->table, subset);
+    ret = vrd_Cov_table_remove(self->table, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
-    return Py_BuildValue("i", result);
+    if (0 != ret)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "CoverageTable.remove: vrd_Cov_table_remove() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
 } // CoverageTable_remove
 
 
@@ -132,9 +143,7 @@ static PyMethodDef CoverageTable_methods[] =
      "remove(subset)\n"
      "Remove for covered regions in the :py:class:`CoverageTable`\n\n"
      ":param subset: A list of sample IDs (`integer`)\n"
-     ":type subset: list\n"
-     ":return: The number of removed covered regions\n"
-     ":rtype: integer\n"},
+     ":type subset: list\n"},
 
     {"reorder", (PyCFunction) CoverageTable_reorder, METH_NOARGS,
      "reorder()\n"

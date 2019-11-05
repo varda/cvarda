@@ -102,13 +102,19 @@ MNVTable_remove(MNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    size_t result = 0;
+    int ret = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_MNV_table_remove_seq(self->table, subset, seq->table);
+    ret = vrd_MNV_table_remove_seq(self->table, subset, seq->table);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
-    return Py_BuildValue("i", result);
+    if (0 != ret)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "MNVTable.remove: vrd_MNV_table_remove() failed");
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
 } // MNVTable_remove
 
 
@@ -141,9 +147,7 @@ static PyMethodDef MNVTable_methods[] =
      "remove(subset)\n"
      "Remove for MNVs in the :py:class:`MNVTable`\n\n"
      ":param subset: A list of sample IDs (`integer`)\n"
-     ":type subset: list\n"
-     ":return: The number of removed MNVs\n"
-     ":rtype: integer\n"},
+     ":type subset: list\n"},
 
     {"reorder", (PyCFunction) MNVTable_reorder, METH_NOARGS,
      "reorder()\n"

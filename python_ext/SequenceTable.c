@@ -100,7 +100,11 @@ SequenceTable_remove(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    vrd_Seq_table_remove(self->table, elem);
+    if (0 != vrd_Seq_table_remove(self->table, elem))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "SequenceTable.remove: vrd_Seq_table_remove() failed");
+        return NULL;
+    } // if
 
     Py_RETURN_NONE;
 } // SequenceTable_remove
