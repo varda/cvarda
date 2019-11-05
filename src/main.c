@@ -209,11 +209,12 @@ main(int argc, char* argv[])
     return EXIT_SUCCESS;
 
 error:
-
-    vrd_Cov_table_destroy(&cov);
-    vrd_SNV_table_destroy(&snv);
-    vrd_MNV_table_destroy(&mnv);
-    vrd_Seq_table_destroy(&seq);
+    {
+        vrd_Cov_table_destroy(&cov);
+        vrd_SNV_table_destroy(&snv);
+        vrd_MNV_table_destroy(&mnv);
+        vrd_Seq_table_destroy(&seq);
+    }
 
     return EXIT_FAILURE;
 } // main

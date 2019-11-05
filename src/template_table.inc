@@ -191,10 +191,12 @@ read_tree(char const* const restrict path,
     return tree;
 
 error:
-    (void) fclose(stream);
-    VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(&tree);
+    {
+        (void) fclose(stream);
+        VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(&tree);
 
-    return NULL;
+        return NULL;
+    }
 } // read_tree
 
 
