@@ -539,9 +539,9 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     balance(self);
 
 #ifdef VRD_INTERVAL
-    update_avl(self, self->root, NULL);
+    (void) update_avl(self, self->root, NULL);
 #else
-    update_avl(self, self->root);
+    (void) update_avl(self, self->root);
 #endif
 
     return count;

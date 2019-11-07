@@ -100,7 +100,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 {
     assert(NULL != self);
 
-
     for (size_t i = 0; i < self->next; ++i)
     {
         int const err = VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) self->trees[i]);

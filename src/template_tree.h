@@ -4,7 +4,8 @@
 #endif
 
 
-#include <stdio.h>  // FILE
+#include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 
 VRD_TEMPLATE(VRD_TYPENAME, _Tree)*

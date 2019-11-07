@@ -4,6 +4,9 @@
 #endif
 
 
+#include <stddef.h>     // size_t
+
+
 typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Table) VRD_TEMPLATE(VRD_TYPENAME, _Table);
 
 
