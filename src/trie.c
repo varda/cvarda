@@ -212,7 +212,7 @@ trie_insert(struct Node* const restrict root,
 
 
 static struct Node*
-node_join(struct Node* const restrict node)
+node_join(struct Node* const node)
 {
     struct Node* const restrict join = node->link;
 
