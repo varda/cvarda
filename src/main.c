@@ -158,7 +158,6 @@ main(int argc, char* argv[])
         (void) fprintf(stderr, "load_giab() failed\n");
         goto error;
     } // if
-
 /*
     if (0 != remove_sample(cov, snv, mnv, seq, 0))
     {
@@ -166,6 +165,22 @@ main(int argc, char* argv[])
         goto error;
     } // if
 */
+    FILE* stream = fopen("../data/CGND-HDA-02308_single.varda.csv", "r");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
+
+    size_t const ann_count = vrd_annotate_from_file(stdout, stream, cov, snv, mnv, seq, NULL);
+
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
+
+    (void) fprintf(stderr, "Annotated: %zu\n", ann_count);
 
     vrd_Cov_table_destroy(&cov);
     vrd_SNV_table_destroy(&snv);
