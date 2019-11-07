@@ -21,10 +21,10 @@
 
 
 static PyObject*
-CoverageTable_insert(CoverageTableObject* const restrict self,
-                     PyObject* const restrict args)
+CoverageTable_insert(CoverageTableObject* const self,
+                     PyObject* const args)
 {
-    char const* restrict reference = NULL;
+    char const* reference = NULL;
     size_t len = 0;
     int start = 0;
     int end = 0;
@@ -51,21 +51,21 @@ CoverageTable_insert(CoverageTableObject* const restrict self,
 
 
 static PyObject*
-CoverageTable_query(CoverageTableObject* const restrict self,
-                    PyObject* const restrict args)
+CoverageTable_query(CoverageTableObject* const self,
+                    PyObject* const args)
 {
-    char const* restrict reference = NULL;
+    char const* reference = NULL;
     size_t len = 0;
     int start = 0;
     int end = 0;
-    PyObject* restrict list = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "s#ii|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
     {
         return NULL;
     } // if
 
-    vrd_AVL_Tree* restrict subset = NULL;
+    vrd_AVL_Tree* subset = NULL;
     if (NULL != list)
     {
         subset = sample_set(list);
@@ -86,17 +86,17 @@ CoverageTable_query(CoverageTableObject* const restrict self,
 
 
 static PyObject*
-CoverageTable_remove(CoverageTableObject* const restrict self,
-                     PyObject* const restrict args)
+CoverageTable_remove(CoverageTableObject* const self,
+                     PyObject* const args)
 {
-    PyObject* restrict list = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "O!:CoverageTable.remove", &PyList_Type, &list))
     {
         return NULL;
     } // if
 
-    vrd_AVL_Tree* restrict subset = sample_set(list);
+    vrd_AVL_Tree* subset = sample_set(list);
     if (NULL == subset)
     {
         return NULL;

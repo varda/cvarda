@@ -17,13 +17,13 @@
 
 struct VRD_TEMPLATE(VRD_TYPENAME, _Table)
 {
-    vrd_Trie* restrict trie;
+    vrd_Trie* trie;
 
     size_t ref_capacity;
     size_t tree_capacity;
 
     size_t next;
-    void* restrict trees[];
+    void* trees[];
 }; // vrd_*_Table
 
 
@@ -61,7 +61,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_init)(size_t const ref_capacity,
 
 
 void
-VRD_TEMPLATE(VRD_TYPENAME, _table_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* restrict* const self)
+VRD_TEMPLATE(VRD_TYPENAME, _table_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Table)** const self)
 {
     if (NULL == self || NULL == *self)
     {
@@ -79,8 +79,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* r
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
-                                          vrd_AVL_Tree const* const restrict subset)
+VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                                          vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
     assert(NULL != subset);
@@ -114,12 +114,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 
 
 static VRD_TEMPLATE(VRD_TYPENAME, _Tree)*
-reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
+reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
                size_t const len,
                char const reference[len])
 {
 
-    void* restrict elem = vrd_trie_find(self->trie, len, reference);
+    void* elem = vrd_trie_find(self->trie, len, reference);
     if (NULL != elem)
     {
         return *(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) elem;
@@ -131,7 +131,7 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
         return NULL;
     } // if
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(self->tree_capacity);
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(self->tree_capacity);
     if (NULL == tree)
     {
         return NULL;
@@ -151,7 +151,7 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
 
 
 static VRD_TEMPLATE(VRD_TYPENAME, _Tree)*
-read_tree(char const* const restrict path,
+read_tree(char const* const path,
           size_t const idx,
           size_t const capacity)
 {
@@ -162,9 +162,9 @@ read_tree(char const* const restrict path,
         return NULL;
     } // if
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* restrict tree = NULL;
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* tree = NULL;
 
-    FILE* restrict stream = fopen(filename, "rb");
+    FILE* stream = fopen(filename, "rb");
     if (NULL == stream)
     {
         goto error;
@@ -200,8 +200,8 @@ error:
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
-                                        char const* const restrict path)
+VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                                        char const* const path)
 {
     assert(NULL != self);
 
@@ -214,7 +214,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
 
     char* reference = NULL;
 
-    FILE* restrict stream = fopen(filename, "rb");
+    FILE* stream = fopen(filename, "rb");
     if (NULL == stream)
     {
         goto error;
@@ -248,14 +248,14 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
             goto error;
         } // if
 
-        VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict tree = read_tree(path, i, self->tree_capacity);
+        VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = read_tree(path, i, self->tree_capacity);
         if (NULL == tree)
         {
             errno = -1;
             goto error;
         } // if
 
-        void* const restrict elem = vrd_trie_insert(self->trie, len, reference, tree);
+        void* const elem = vrd_trie_insert(self->trie, len, reference, tree);
         if (NULL == elem)
         {
             errno = -1;
@@ -302,8 +302,8 @@ error:
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const restrict self,
-                                         char const* const restrict path)
+VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                         char const* const path)
 {
     assert(NULL != self);
 
@@ -315,7 +315,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
     } // if
 
     char* reference = NULL;
-    FILE* restrict stream = fopen(filename, "wb");
+    FILE* stream = fopen(filename, "wb");
     if (NULL == stream)
     {
         goto error;

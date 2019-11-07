@@ -2,7 +2,6 @@
 #define VRD_TRIE_H
 
 #ifdef __cplusplus
-#define restrict
 extern "C"
 {
 #endif
@@ -19,18 +18,18 @@ vrd_trie_init(void);
 
 
 void
-vrd_trie_destroy(vrd_Trie* restrict* const self);
+vrd_trie_destroy(vrd_Trie** const self);
 
 
 void*
-vrd_trie_insert(vrd_Trie* const restrict self,
+vrd_trie_insert(vrd_Trie* const self,
                 size_t const len,
                 char const key[len],
-                void* const restrict data);
+                void* const data);
 
 
 void
-vrd_trie_remove(vrd_Trie* const restrict self,
+vrd_trie_remove(vrd_Trie* const self,
                 size_t const len,
                 char const key[len]);
 
@@ -42,7 +41,7 @@ vrd_trie_find(vrd_Trie const* const self,
 
 
 size_t
-vrd_trie_key(void* const restrict ptr, char** restrict key);
+vrd_trie_key(void* const ptr, char** key);
 
 
 #ifdef __cplusplus

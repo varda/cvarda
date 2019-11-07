@@ -2,7 +2,6 @@
 #define VRD_UTILS_H
 
 #ifdef __cplusplus
-#define restrict
 extern "C"
 {
 #endif
@@ -19,27 +18,27 @@ extern "C"
 
 
 size_t
-vrd_coverage_from_file(FILE* restrict stream,
-                       vrd_Cov_Table* const restrict cov,
+vrd_coverage_from_file(FILE* stream,
+                       vrd_Cov_Table* const cov,
                        size_t const sample_id);
 
 
 size_t
-vrd_variants_from_file(FILE* restrict stream,
-                       vrd_SNV_Table* const restrict snv,
-                       vrd_MNV_Table* const restrict mnv,
-                       vrd_Seq_Table* const restrict seq,
+vrd_variants_from_file(FILE* stream,
+                       vrd_SNV_Table* const snv,
+                       vrd_MNV_Table* const mnv,
+                       vrd_Seq_Table* const seq,
                        size_t const sample_id);
 
 
 size_t
-vrd_annotate_from_file(FILE* restrict ostream,
-                       FILE* restrict istream,
-                       vrd_Cov_Table const* const restrict cov,
-                       vrd_SNV_Table const* const restrict snv,
-                       vrd_MNV_Table const* const restrict mnv,
-                       vrd_Seq_Table const* const restrict seq,
-                       vrd_AVL_Tree const* const restrict subset);
+vrd_annotate_from_file(FILE* ostream,
+                       FILE* istream,
+                       vrd_Cov_Table const* const cov,
+                       vrd_SNV_Table const* const snv,
+                       vrd_MNV_Table const* const mnv,
+                       vrd_Seq_Table const* const seq,
+                       vrd_AVL_Tree const* const subset);
 
 
 #ifdef __cplusplus

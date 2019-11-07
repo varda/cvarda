@@ -12,12 +12,12 @@
 
 struct vrd_Seq_Table
 {
-    vrd_Trie* restrict trie;
+    vrd_Trie* trie;
 
     size_t capacity;
 
     size_t next;
-    void* restrict sequences[];
+    void* sequences[];
 }; // vrd_Seq_Table
 
 
@@ -52,7 +52,7 @@ vrd_Seq_table_init(size_t const capacity)
 
 
 void
-vrd_Seq_table_destroy(vrd_Seq_Table* restrict* const self)
+vrd_Seq_table_destroy(vrd_Seq_Table** const self)
 {
     if (NULL == self)
     {
@@ -72,7 +72,7 @@ vrd_Seq_table_insert(vrd_Seq_Table* const self,
 {
     assert(NULL != self);
 
-    void* restrict elem = vrd_trie_find(self->trie, len, sequence);
+    void* elem = vrd_trie_find(self->trie, len, sequence);
     if (NULL != elem)
     {
         if (NULL == vrd_trie_insert(self->trie, len, sequence, elem))
@@ -115,7 +115,7 @@ vrd_Seq_table_query(vrd_Seq_Table const* const self,
 
 
 int
-vrd_Seq_table_remove(vrd_Seq_Table* const restrict self, size_t const elem)
+vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem)
 {
     assert(NULL != self);
 
@@ -133,8 +133,8 @@ vrd_Seq_table_remove(vrd_Seq_Table* const restrict self, size_t const elem)
 
 
 int
-vrd_Seq_table_read(vrd_Seq_Table* const restrict self,
-                   char const* const restrict path)
+vrd_Seq_table_read(vrd_Seq_Table* const self,
+                   char const* const path)
 {
     assert(NULL != self);
 
@@ -146,7 +146,7 @@ vrd_Seq_table_read(vrd_Seq_Table* const restrict self,
     } // if
 
     char* sequence = NULL;
-    FILE* restrict stream = fopen(filename, "rb");
+    FILE* stream = fopen(filename, "rb");
     if (NULL == stream)
     {
         goto error;
@@ -209,8 +209,8 @@ error:
 
 
 int
-vrd_Seq_table_write(vrd_Seq_Table const* const restrict self,
-                    char const* const restrict path)
+vrd_Seq_table_write(vrd_Seq_Table const* const self,
+                    char const* const path)
 {
     assert(NULL != self);
 
@@ -222,7 +222,7 @@ vrd_Seq_table_write(vrd_Seq_Table const* const restrict self,
     } // if
 
     char* sequence = NULL;
-    FILE* restrict stream = fopen(filename, "wb");
+    FILE* stream = fopen(filename, "wb");
     if (NULL == stream)
     {
         goto error;

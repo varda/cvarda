@@ -16,12 +16,12 @@ enum
 
 
 static int
-load_giab(vrd_Cov_Table* restrict cov,
-          vrd_SNV_Table* restrict snv,
-          vrd_MNV_Table* restrict mnv,
-          vrd_Seq_Table* restrict seq)
+load_giab(vrd_Cov_Table* cov,
+          vrd_SNV_Table* snv,
+          vrd_MNV_Table* mnv,
+          vrd_Seq_Table* seq)
 {
-    for (int i = 0; i < 1; ++i)
+    for (int i = 0; i < 7; ++i)
     {
         (void) fprintf(stderr, "Loading sample: HG00%d\n", i + 1);
 
@@ -33,7 +33,7 @@ load_giab(vrd_Cov_Table* restrict cov,
             return -1;
         } // if
 
-        FILE* restrict stream = fopen(filename, "r");
+        FILE* stream = fopen(filename, "r");
         if (NULL == stream)
         {
             perror("fopen()");
@@ -78,13 +78,13 @@ load_giab(vrd_Cov_Table* restrict cov,
 
 
 static int
-remove_sample(vrd_Cov_Table* restrict cov,
-              vrd_SNV_Table* restrict snv,
-              vrd_MNV_Table* restrict mnv,
-              vrd_Seq_Table* restrict seq,
+remove_sample(vrd_Cov_Table* cov,
+              vrd_SNV_Table* snv,
+              vrd_MNV_Table* mnv,
+              vrd_Seq_Table* seq,
               int const idx)
 {
-    vrd_AVL_Tree* restrict subset = vrd_AVL_tree_init(1);
+    vrd_AVL_Tree* subset = vrd_AVL_tree_init(1);
     if (NULL == subset)
     {
         (void) fprintf(stderr, "vrd_AVL_tree_init() failed\n");
@@ -119,10 +119,10 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-    vrd_Cov_Table* restrict cov = NULL;
-    vrd_SNV_Table* restrict snv = NULL;
-    vrd_MNV_Table* restrict mnv = NULL;
-    vrd_Seq_Table* restrict seq = NULL;
+    vrd_Cov_Table* cov = NULL;
+    vrd_SNV_Table* snv = NULL;
+    vrd_MNV_Table* mnv = NULL;
+    vrd_Seq_Table* seq = NULL;
 
     cov = vrd_Cov_table_init(REF_CAPACITY, TREE_CAPACITY);
     if (NULL == cov)
@@ -159,13 +159,13 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-
+/*
     if (0 != remove_sample(cov, snv, mnv, seq, 0))
     {
         (void) fprintf(stderr, "remove_sample() failed\n");
         goto error;
     } // if
-
+*/
 
     vrd_Cov_table_destroy(&cov);
     vrd_SNV_table_destroy(&snv);

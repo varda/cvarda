@@ -78,7 +78,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(size_t const capacity)
 
 
 void
-VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* restrict* const self)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)** const self)
 {
     if (NULL == self)
     {
@@ -466,11 +466,11 @@ remove_node(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
 
 
 static size_t
-traverse(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+traverse(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
          uint32_t const root,
          int const depth,
          uint64_t const path,
-         vrd_AVL_Tree const* const restrict subset)
+         vrd_AVL_Tree const* const subset)
 {
     if (NULLPTR == root)
     {
@@ -530,8 +530,8 @@ update_avl(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
-                                         vrd_AVL_Tree const* const restrict subset)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                         vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
 
@@ -560,9 +560,9 @@ bittest(size_t const n, size_t const i)
 
 
 static uint32_t
-van_emde_boas(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+van_emde_boas(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
               uint32_t next,
-              uint32_t addr[restrict],
+              uint32_t addr[],
               uint32_t const root,
               int const height)
 {
@@ -636,7 +636,7 @@ height(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 static int
 reorder(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
 {
-    uint32_t* const restrict addr = malloc(self->next * sizeof(*addr));
+    uint32_t* const addr = malloc(self->next * sizeof(*addr));
     if (NULL == addr)
     {
         return errno;
@@ -644,7 +644,7 @@ reorder(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
 
     uint32_t const size = van_emde_boas(self, 1, addr, self->root, height(self, self->root));
 
-    uint32_t* const restrict addr_inv = malloc(size * sizeof(*addr_inv));
+    uint32_t* const addr_inv = malloc(size * sizeof(*addr_inv));
     if (NULL == addr_inv)
     {
         free(addr);
@@ -656,7 +656,7 @@ reorder(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
         addr_inv[addr[i]] = i;
     } // for
 
-    struct VRD_TEMPLATE(VRD_TYPENAME, _Node)* const restrict nodes = malloc(size * sizeof(*nodes));
+    struct VRD_TEMPLATE(VRD_TYPENAME, _Node)* const nodes = malloc(size * sizeof(*nodes));
     if (NULL == nodes)
     {
         free(addr);
@@ -699,8 +699,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* con
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _tree_read)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
-                                       FILE* restrict stream)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_read)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                       FILE* stream)
 {
     assert(NULL != self);
     assert(NULL != stream);
@@ -726,8 +726,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_read)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const 
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _tree_write)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const restrict self,
-                                        FILE* restrict stream)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_write)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                        FILE* stream)
 {
     assert(NULL != self);
     assert(NULL != stream);

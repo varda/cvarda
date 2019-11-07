@@ -15,9 +15,9 @@
 
 
 static PyObject*
-VRD_PY_TEMPLATE(VRD_OBJNAME, _new)(PyTypeObject* const restrict type,
-                                   PyObject* const restrict args,
-                                   PyObject* const restrict kwds)
+VRD_PY_TEMPLATE(VRD_OBJNAME, _new)(PyTypeObject* const type,
+                                   PyObject* const args,
+                                   PyObject* const kwds)
 {
     (void) kwds;
 
@@ -29,7 +29,7 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _new)(PyTypeObject* const restrict type,
         return NULL;
     } // if
 
-    VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const restrict self = (VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*) type->tp_alloc(type, 0);
+    VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self = (VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*) type->tp_alloc(type, 0);
 
     errno = 0;
     self->table = VRD_TEMPLATE(VRD_TYPENAME, _table_init)(ref_capacity, tree_capacity);
@@ -60,8 +60,8 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _dealloc)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* con
 
 
 static PyObject*
-VRD_PY_TEMPLATE(VRD_OBJNAME, _reorder)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const restrict self,
-                                       PyObject* const restrict args)
+VRD_PY_TEMPLATE(VRD_OBJNAME, _reorder)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self,
+                                       PyObject* const args)
 {
     (void) args;
 
@@ -84,10 +84,10 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _reorder)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* con
 
 
 static PyObject*
-VRD_PY_TEMPLATE(VRD_OBJNAME, _read)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const restrict self,
-                                    PyObject* const restrict args)
+VRD_PY_TEMPLATE(VRD_OBJNAME, _read)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self,
+                                    PyObject* const args)
 {
-    char const* restrict path = NULL;
+    char const* path = NULL;
 
     if (!PyArg_ParseTuple(args, "s:" VRD_PY_STRINGIZE(VRD_OBJNAME) ".read", &path))
     {
@@ -113,10 +113,10 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _read)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const 
 
 
 static PyObject*
-VRD_PY_TEMPLATE(VRD_OBJNAME, _write)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const restrict self,
-                                     PyObject* const restrict args)
+VRD_PY_TEMPLATE(VRD_OBJNAME, _write)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self,
+                                     PyObject* const args)
 {
-    char const* restrict path = NULL;
+    char const* path = NULL;
 
     if (!PyArg_ParseTuple(args, "s:" VRD_PY_STRINGIZE(VRD_OBJNAME) ".write", &path))
     {

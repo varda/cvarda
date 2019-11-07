@@ -2,7 +2,6 @@
 #define VRD_COV_TABLE_H
 
 #ifdef __cplusplus
-#define restrict
 extern "C"
 {
 #endif
@@ -21,7 +20,7 @@ extern "C"
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
+VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
                                           size_t const len,
                                           char const reference[len],
                                           size_t const start,
@@ -30,12 +29,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const restrict self,
+VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                               size_t const len,
                                               char const reference[len],
                                               size_t const start,
                                               size_t const end,
-                                              vrd_AVL_Tree const* const restrict subset);
+                                              vrd_AVL_Tree const* const subset);
 
 
 #undef VRD_TYPENAME

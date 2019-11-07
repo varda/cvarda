@@ -8,10 +8,10 @@
 
 
 vrd_AVL_Tree*
-sample_set(PyObject* const restrict list)
+sample_set(PyObject* const list)
 {
     size_t const n = PyList_Size(list);
-    vrd_AVL_Tree* restrict tree = vrd_AVL_tree_init(n);
+    vrd_AVL_Tree* tree = vrd_AVL_tree_init(n);
     if (NULL == tree)
     {
         PyErr_SetNone(PyExc_MemoryError);

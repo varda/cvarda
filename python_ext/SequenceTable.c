@@ -9,9 +9,9 @@
 
 
 static PyObject*
-SequenceTable_new(PyTypeObject* const restrict type,
-                  PyObject* const restrict args,
-                  PyObject* const restrict kwds)
+SequenceTable_new(PyTypeObject* const type,
+                  PyObject* const args,
+                  PyObject* const kwds)
 {
     (void) kwds;
 
@@ -22,7 +22,7 @@ SequenceTable_new(PyTypeObject* const restrict type,
         return NULL;
     } // if
 
-    SequenceTableObject* const restrict self = (SequenceTableObject*) type->tp_alloc(type, 0);
+    SequenceTableObject* const self = (SequenceTableObject*) type->tp_alloc(type, 0);
 
     self->table = vrd_Seq_table_init(ref_capacity);
     if (NULL == self->table)
@@ -45,10 +45,10 @@ SequenceTable_dealloc(SequenceTableObject* const self)
 
 
 static PyObject*
-SequenceTable_insert(SequenceTableObject* const restrict self,
-                     PyObject* const restrict args)
+SequenceTable_insert(SequenceTableObject* const self,
+                     PyObject* const args)
 {
-    char const* restrict sequence = NULL;
+    char const* sequence = NULL;
     size_t len = 0;
 
     if (!PyArg_ParseTuple(args, "s#:SequenceTable.insert", &sequence, &len))
@@ -56,7 +56,7 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* const restrict result = vrd_Seq_table_insert(self->table, len + 1, sequence);
+    void* const result = vrd_Seq_table_insert(self->table, len + 1, sequence);
     if (NULL == result)
     {
         PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_Seq_table_insert() failed");
@@ -68,10 +68,10 @@ SequenceTable_insert(SequenceTableObject* const restrict self,
 
 
 static PyObject*
-SequenceTable_query(SequenceTableObject* const restrict self,
-                    PyObject* const restrict args)
+SequenceTable_query(SequenceTableObject* const self,
+                    PyObject* const args)
 {
-    char const* restrict sequence = NULL;
+    char const* sequence = NULL;
     size_t len = 0;
 
     if (!PyArg_ParseTuple(args, "s#:SequenceTable.query", &sequence, &len))
@@ -79,7 +79,7 @@ SequenceTable_query(SequenceTableObject* const restrict self,
         return NULL;
     } // if
 
-    void* const restrict result = vrd_Seq_table_query(self->table, len + 1, sequence);
+    void* const result = vrd_Seq_table_query(self->table, len + 1, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
@@ -90,8 +90,8 @@ SequenceTable_query(SequenceTableObject* const restrict self,
 
 
 static PyObject*
-SequenceTable_remove(SequenceTableObject* const restrict self,
-                     PyObject* const restrict args)
+SequenceTable_remove(SequenceTableObject* const self,
+                     PyObject* const args)
 {
     int elem = 0;
 
@@ -111,10 +111,10 @@ SequenceTable_remove(SequenceTableObject* const restrict self,
 
 
 static PyObject*
-SequenceTable_read(SequenceTableObject* const restrict self,
-                   PyObject* const restrict args)
+SequenceTable_read(SequenceTableObject* const self,
+                   PyObject* const args)
 {
-    char const* restrict path = NULL;
+    char const* path = NULL;
 
     if (!PyArg_ParseTuple(args, "s:SequenceTable.read", &path))
     {
@@ -132,10 +132,10 @@ SequenceTable_read(SequenceTableObject* const restrict self,
 
 
 static PyObject*
-SequenceTable_write(SequenceTableObject* const restrict self,
-                    PyObject* const restrict args)
+SequenceTable_write(SequenceTableObject* const self,
+                    PyObject* const args)
 {
-    char const* restrict path = NULL;
+    char const* path = NULL;
 
     if (!PyArg_ParseTuple(args, "s:SequenceTable.write", &path))
     {

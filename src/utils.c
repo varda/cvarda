@@ -16,8 +16,8 @@
 
 
 size_t
-vrd_coverage_from_file(FILE* restrict stream,
-                       vrd_Cov_Table* const restrict cov,
+vrd_coverage_from_file(FILE* stream,
+                       vrd_Cov_Table* const cov,
                        size_t const sample_id)
 {
     assert(NULL != stream);
@@ -37,7 +37,7 @@ vrd_coverage_from_file(FILE* restrict stream,
                                       end,
                                       sample_id))
         {
-            vrd_AVL_Tree* restrict subset = vrd_AVL_tree_init(1);
+            vrd_AVL_Tree* subset = vrd_AVL_tree_init(1);
             if (NULL == subset)
             {
                 return count;
@@ -59,10 +59,10 @@ vrd_coverage_from_file(FILE* restrict stream,
 
 
 size_t
-vrd_variants_from_file(FILE* restrict stream,
-                       vrd_SNV_Table* const restrict snv,
-                       vrd_MNV_Table* const restrict mnv,
-                       vrd_Seq_Table* const restrict seq,
+vrd_variants_from_file(FILE* stream,
+                       vrd_SNV_Table* const snv,
+                       vrd_MNV_Table* const mnv,
+                       vrd_Seq_Table* const seq,
                        size_t const sample_id)
 {
     assert(NULL != stream);
@@ -110,7 +110,7 @@ vrd_variants_from_file(FILE* restrict stream,
         } // if
         else
         {
-            void* const restrict elem = vrd_Seq_table_insert(seq, len + 1, inserted);
+            void* const elem = vrd_Seq_table_insert(seq, len + 1, inserted);
             if (0 != len && NULL == elem)
             {
                 goto error;
@@ -136,7 +136,7 @@ vrd_variants_from_file(FILE* restrict stream,
 
 error:
     {
-        vrd_AVL_Tree* restrict subset = vrd_AVL_tree_init(1);
+        vrd_AVL_Tree* subset = vrd_AVL_tree_init(1);
         if (NULL == subset)
         {
             return count;
@@ -155,13 +155,13 @@ error:
 
 
 size_t
-vrd_annotate_from_file(FILE* restrict ostream,
-                       FILE* restrict istream,
-                       vrd_Cov_Table const* const restrict cov,
-                       vrd_SNV_Table const* const restrict snv,
-                       vrd_MNV_Table const* const restrict mnv,
-                       vrd_Seq_Table const* const restrict seq,
-                       vrd_AVL_Tree const* const restrict subset)
+vrd_annotate_from_file(FILE* ostream,
+                       FILE* istream,
+                       vrd_Cov_Table const* const cov,
+                       vrd_SNV_Table const* const snv,
+                       vrd_MNV_Table const* const mnv,
+                       vrd_Seq_Table const* const seq,
+                       vrd_AVL_Tree const* const subset)
 {
     assert(NULL != ostream);
     assert(NULL != istream);
@@ -202,7 +202,7 @@ vrd_annotate_from_file(FILE* restrict ostream,
         } // if
         else
         {
-            void* const restrict elem = vrd_Seq_table_query(seq, len + 1, inserted);
+            void* const elem = vrd_Seq_table_query(seq, len + 1, inserted);
             if (NULL == elem)
             {
                 num = 0;

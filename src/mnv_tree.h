@@ -2,7 +2,6 @@
 #define VRD_MNV_TREE_H
 
 #ifdef __cplusplus
-#define restrict
 extern "C"
 {
 #endif
@@ -31,17 +30,17 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                              size_t const start,
                                              size_t const end,
                                              size_t const inserted,
-                                             vrd_AVL_Tree const* const restrict subset);
+                                             vrd_AVL_Tree const* const subset);
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
-                                             vrd_AVL_Tree const* const restrict subset,
-                                             vrd_Seq_Table* const restrict seq_table);
+VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                             vrd_AVL_Tree const* const subset,
+                                             vrd_Seq_Table* const seq_table);
 
 
 #include "template_tree.h"  // vrd_MNV_tree_*

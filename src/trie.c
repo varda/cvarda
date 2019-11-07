@@ -8,13 +8,13 @@
 
 struct Node
 {
-    void* restrict data;
+    void* data;
     size_t count;
-    char* restrict key;
+    char* key;
     size_t len;
-    struct Node* restrict par;
-    struct Node* restrict link;
-    struct Node* restrict next;
+    struct Node* par;
+    struct Node* link;
+    struct Node* next;
 }; // Node
 
 
@@ -61,7 +61,7 @@ trie_destroy(struct Node* const root)
 
 
 void
-vrd_trie_destroy(vrd_Trie* restrict* const self)
+vrd_trie_destroy(vrd_Trie** const self)
 {
     if (NULL == self || NULL == *self)
     {
@@ -77,9 +77,9 @@ vrd_trie_destroy(vrd_Trie* restrict* const self)
 static struct Node*
 node_init(size_t const len,
           char const key[len],
-          void* const restrict data)
+          void* const data)
 {
-    struct Node* const restrict node = malloc(sizeof(*node));
+    struct Node* const node = malloc(sizeof(*node));
     if (NULL == node)
     {
         return NULL;
@@ -123,15 +123,15 @@ prefix(size_t const len_a,
 
 
 static struct Node*
-node_split(struct Node* const restrict node, size_t const k)
+node_split(struct Node* const node, size_t const k)
 {
-    struct Node* const restrict split = node_init(k, node->key, NULL);
+    struct Node* const split = node_init(k, node->key, NULL);
     if (NULL == split)
     {
         return NULL;
     } // if
 
-    char* const restrict key = malloc(node->len - k);
+    char* const key = malloc(node->len - k);
     if (NULL == key)
     {
         free(node);
@@ -154,14 +154,14 @@ node_split(struct Node* const restrict node, size_t const k)
 
 
 static struct Node*
-trie_insert(struct Node* const restrict root,
+trie_insert(struct Node* const root,
             size_t const len,
             char const key[len],
-            void* const restrict data)
+            void* const data)
 {
     if (NULL == root)
     {
-        struct Node* const restrict node = node_init(len, key, data);
+        struct Node* const node = node_init(len, key, data);
         node->count = 1;
         return node;
     } // if
@@ -169,7 +169,7 @@ trie_insert(struct Node* const restrict root,
     size_t const k = prefix(len, key, root->len, root->key);
     if (0 == k)
     {
-        struct Node* const restrict node = trie_insert(root->next, len, key, data);
+        struct Node* const node = trie_insert(root->next, len, key, data);
         if (NULL == node)
         {
             return NULL;
@@ -187,10 +187,10 @@ trie_insert(struct Node* const restrict root,
         return root;
     } // if
 
-    struct Node* restrict sub = root;
+    struct Node* sub = root;
     if (root->len > k)
     {
-        struct Node* const restrict node = node_split(root, k);
+        struct Node* const node = node_split(root, k);
         if (NULL == node)
         {
             return NULL;
@@ -198,7 +198,7 @@ trie_insert(struct Node* const restrict root,
         sub = node;
     } // if
 
-    struct Node* const restrict node =
+    struct Node* const node =
         trie_insert(sub->link, len - k, &key[k], data);
     if (NULL == node)
     {
@@ -214,9 +214,9 @@ trie_insert(struct Node* const restrict root,
 static struct Node*
 node_join(struct Node* const node)
 {
-    struct Node* const restrict join = node->link;
+    struct Node* const join = node->link;
 
-    char* const restrict key = malloc(node->len + join->len);
+    char* const key = malloc(node->len + join->len);
     if (NULL == key)
     {
         return NULL;
@@ -238,7 +238,7 @@ node_join(struct Node* const node)
 
 
 struct Node*
-trie_remove(struct Node* const restrict root,
+trie_remove(struct Node* const root,
             size_t const len,
             char const key[len])
 {
@@ -259,7 +259,7 @@ trie_remove(struct Node* const restrict root,
         root->count -= 1;
         if (0 == root->count)
         {
-            struct Node* const restrict node = root->next;
+            struct Node* const node = root->next;
             node_destroy(root);
             return node;
         } // if
@@ -271,7 +271,7 @@ trie_remove(struct Node* const restrict root,
         root->link = trie_remove(root->link, len - k, &key[k]);
         if (NULL != root->link && NULL == root->link->next)
         {
-            struct Node* const restrict node = node_join(root);
+            struct Node* const node = node_join(root);
             if (NULL == node)
             {
                 return NULL;
@@ -312,10 +312,10 @@ trie_find(struct Node* const root,
 
 
 void*
-vrd_trie_insert(vrd_Trie* const restrict self,
+vrd_trie_insert(vrd_Trie* const self,
                 size_t const len,
                 char const key[len],
-                void* const restrict data)
+                void* const data)
 {
     assert(NULL != self);
 
@@ -325,7 +325,7 @@ vrd_trie_insert(vrd_Trie* const restrict self,
 
 
 void
-vrd_trie_remove(vrd_Trie* const restrict self,
+vrd_trie_remove(vrd_Trie* const self,
                 size_t const len,
                 char const key[len])
 {
@@ -347,7 +347,7 @@ vrd_trie_find(vrd_Trie const* const self,
 
 
 static size_t
-trie_key(struct Node const* const restrict node, char** restrict key)
+trie_key(struct Node const* const node, char** key)
 {
     if (NULL == node)
     {
@@ -367,7 +367,7 @@ trie_key(struct Node const* const restrict node, char** restrict key)
 
 
 size_t
-vrd_trie_key(void* const restrict ptr, char** restrict key)
+vrd_trie_key(void* const ptr, char** key)
 {
     return trie_key(ptr, key);
 } // vrd_trie_key

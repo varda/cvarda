@@ -16,12 +16,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_init)(size_t const ref_capacity,
 
 
 void
-VRD_TEMPLATE(VRD_TYPENAME, _table_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* restrict* const self);
+VRD_TEMPLATE(VRD_TYPENAME, _table_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Table)** const self);
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
-                                          vrd_AVL_Tree const* const restrict subset);
+VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                                          vrd_AVL_Tree const* const subset);
 
 
 int
@@ -29,10 +29,10 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const restrict self,
-                                        char const* const restrict path);
+VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                                        char const* const path);
 
 
 int
-VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const restrict self,
-                                         char const* const restrict path);
+VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                         char const* const path);

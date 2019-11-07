@@ -2,7 +2,6 @@
 #define VRD_VARDA_H
 
 #ifdef __cplusplus
-#define restrict
 extern "C"
 {
 #endif
@@ -17,7 +16,7 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 2
+#define VRD_VERSION_PATCH 3
 #endif
 
 
@@ -28,9 +27,9 @@ enum
 
 
 static inline void
-vrd_version(int* const restrict major,
-            int* const restrict minor,
-            int* const restrict patch)
+vrd_version(int* const major,
+            int* const minor,
+            int* const patch)
 {
     *major = VRD_VERSION_MAJOR;
     *minor = VRD_VERSION_MINOR;

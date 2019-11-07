@@ -22,10 +22,10 @@
 
 
 static PyObject*
-MNVTable_insert(MNVTableObject* const restrict self,
-                PyObject* const restrict args)
+MNVTable_insert(MNVTableObject* const self,
+                PyObject* const args)
 {
-    char const* restrict reference = NULL;
+    char const* reference = NULL;
     size_t len = 0;
     int start = 0;
     int end = 0;
@@ -49,22 +49,22 @@ MNVTable_insert(MNVTableObject* const restrict self,
 
 
 static PyObject*
-MNVTable_query(MNVTableObject* const restrict self,
-               PyObject* const restrict args)
+MNVTable_query(MNVTableObject* const self,
+               PyObject* const args)
 {
-    char const* restrict reference = NULL;
+    char const* reference = NULL;
     size_t len = 0;
     int start = 0;
     int end = 0;
     int inserted = 0;
-    PyObject* restrict list = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "s#ii|iO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
     {
         return NULL;
     } // if
 
-    vrd_AVL_Tree* restrict subset = NULL;
+    vrd_AVL_Tree* subset = NULL;
     if (NULL != list)
     {
         subset = sample_set(list);
@@ -85,18 +85,18 @@ MNVTable_query(MNVTableObject* const restrict self,
 
 
 static PyObject*
-MNVTable_remove(MNVTableObject* const restrict self,
-                PyObject* const restrict args)
+MNVTable_remove(MNVTableObject* const self,
+                PyObject* const args)
 {
-    SequenceTableObject* restrict seq = NULL;
-    PyObject* restrict list = NULL;
+    SequenceTableObject* seq = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "O!O!:MNVTable.remove", &SequenceTable, &seq, &PyList_Type, &list))
     {
         return NULL;
     } // if
 
-    vrd_AVL_Tree* restrict subset = sample_set(list);
+    vrd_AVL_Tree* subset = sample_set(list);
     if (NULL == subset)
     {
         return NULL;

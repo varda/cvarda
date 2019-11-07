@@ -2,7 +2,6 @@
 #define VRD_SEQ_TABLE_H
 
 #ifdef __cplusplus
-#define restrict
 extern "C"
 {
 #endif
@@ -16,7 +15,7 @@ vrd_Seq_table_init(size_t const capacity);
 
 
 void
-vrd_Seq_table_destroy(vrd_Seq_Table* restrict* const self);
+vrd_Seq_table_destroy(vrd_Seq_Table** const self);
 
 
 void*
@@ -32,17 +31,17 @@ vrd_Seq_table_query(vrd_Seq_Table const* const self,
 
 
 int
-vrd_Seq_table_remove(vrd_Seq_Table* const restrict self, size_t const elem);
+vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem);
 
 
 int
-vrd_Seq_table_read(vrd_Seq_Table* const restrict self,
-                   char const* const restrict path);
+vrd_Seq_table_read(vrd_Seq_Table* const self,
+                   char const* const path);
 
 
 int
-vrd_Seq_table_write(vrd_Seq_Table const* const restrict self,
-                    char const* const restrict path);
+vrd_Seq_table_write(vrd_Seq_Table const* const self,
+                    char const* const path);
 
 
 #ifdef __cplusplus

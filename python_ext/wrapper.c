@@ -16,14 +16,14 @@
 
 
 static PyObject*
-coverage_from_file(PyObject* const restrict self,
-                   PyObject* const restrict args)
+coverage_from_file(PyObject* const self,
+                   PyObject* const args)
 {
     (void) self;
 
-    char const* restrict path = NULL;
+    char const* path = NULL;
     int sample_id = 0;
-    CoverageTableObject* restrict cov = NULL;
+    CoverageTableObject* cov = NULL;
 
     if (!PyArg_ParseTuple(args, "siO!:coverage_from_file", &path, &sample_id, &CoverageTable, &cov))
     {
@@ -31,7 +31,7 @@ coverage_from_file(PyObject* const restrict self,
     } // if
 
     errno = 0;
-    FILE* restrict stream = fopen(path, "r");
+    FILE* stream = fopen(path, "r");
     if (NULL == stream)
     {
         return PyErr_SetFromErrno(PyExc_OSError);
@@ -53,16 +53,16 @@ coverage_from_file(PyObject* const restrict self,
 
 
 static PyObject*
-variants_from_file(PyObject* const restrict self,
-                   PyObject* const restrict args)
+variants_from_file(PyObject* const self,
+                   PyObject* const args)
 {
     (void) self;
 
-    char const* restrict path = NULL;
+    char const* path = NULL;
     int sample_id = 0;
-    SNVTableObject* restrict snv = NULL;
-    MNVTableObject* restrict mnv = NULL;
-    SequenceTableObject* restrict seq = NULL;
+    SNVTableObject* snv = NULL;
+    MNVTableObject* mnv = NULL;
+    SequenceTableObject* seq = NULL;
 
     if (!PyArg_ParseTuple(args, "siO!O!O!:variants_from_file", &path, &sample_id, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq))
     {
@@ -70,7 +70,7 @@ variants_from_file(PyObject* const restrict self,
     } // if
 
     errno = 0;
-    FILE* restrict stream = fopen(path, "r");
+    FILE* stream = fopen(path, "r");
     if (NULL == stream)
     {
         return PyErr_SetFromErrno(PyExc_OSError);
@@ -92,18 +92,18 @@ variants_from_file(PyObject* const restrict self,
 
 
 static PyObject*
-annotate_from_file(PyObject* const restrict self,
-                   PyObject* const restrict args)
+annotate_from_file(PyObject* const self,
+                   PyObject* const args)
 {
     (void) self;
 
-    char const* restrict in_path = NULL;
-    char const* restrict out_path = NULL;
-    CoverageTableObject* restrict cov = NULL;
-    SNVTableObject* restrict snv = NULL;
-    MNVTableObject* restrict mnv = NULL;
-    SequenceTableObject* restrict seq = NULL;
-    PyObject* restrict list = NULL;
+    char const* in_path = NULL;
+    char const* out_path = NULL;
+    CoverageTableObject* cov = NULL;
+    SNVTableObject* snv = NULL;
+    MNVTableObject* mnv = NULL;
+    SequenceTableObject* seq = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "ssO!O!O!O!|O!:annotate_from_file", &out_path, &in_path, &CoverageTable, &cov, &SNVTable, &snv, &MNVTable, &mnv, &SequenceTable, &seq, &PyList_Type, &list))
     {
@@ -111,21 +111,21 @@ annotate_from_file(PyObject* const restrict self,
     } // if
 
     errno = 0;
-    FILE* restrict istream = fopen(in_path, "r");
+    FILE* istream = fopen(in_path, "r");
     if (NULL == istream)
     {
         return PyErr_SetFromErrno(PyExc_OSError);
     } // if
 
     errno = 0;
-    FILE* restrict ostream = fopen(out_path, "w");
+    FILE* ostream = fopen(out_path, "w");
     if (NULL == ostream)
     {
         fclose(istream);
         return PyErr_SetFromErrno(PyExc_OSError);
     } // if
 
-    vrd_AVL_Tree* restrict subset = NULL;
+    vrd_AVL_Tree* subset = NULL;
     if (NULL != list)
     {
         subset = sample_set(list);
@@ -207,7 +207,7 @@ PyInit_cvarda(void)
         return NULL;
     } // if
 
-    PyObject* const restrict mod = PyModule_Create(&module);
+    PyObject* const mod = PyModule_Create(&module);
     if (NULL == mod)
     {
         return NULL;
@@ -264,7 +264,7 @@ main(int argc, char* argv[])
 {
     (void) argc;
 
-    wchar_t* const restrict program = Py_DecodeLocale(argv[0], NULL);
+    wchar_t* const program = Py_DecodeLocale(argv[0], NULL);
     if (NULL == program)
     {
         fprintf(stderr, "Py_DecodeLocale(): cannot decode argv[0]\n");

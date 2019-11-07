@@ -21,14 +21,14 @@
 
 
 static PyObject*
-SNVTable_insert(SNVTableObject* const restrict self,
-                PyObject* const restrict args)
+SNVTable_insert(SNVTableObject* const self,
+                PyObject* const args)
 {
-    char const* restrict reference = NULL;
+    char const* reference = NULL;
     size_t len = 0;
     int position = 0;
     int sample_id = 0;
-    char const* restrict inserted = NULL;
+    char const* inserted = NULL;
     size_t len_inserted = 0;
     int phase = 0;
 
@@ -54,15 +54,15 @@ SNVTable_insert(SNVTableObject* const restrict self,
 
 
 static PyObject*
-SNVTable_query(SNVTableObject* const restrict self,
-               PyObject* const restrict args)
+SNVTable_query(SNVTableObject* const self,
+               PyObject* const args)
 {
-    char const* restrict reference = NULL;
+    char const* reference = NULL;
     size_t len = 0;
     int position = 0;
-    char const* restrict inserted = NULL;
+    char const* inserted = NULL;
     size_t len_inserted = 0;
-    PyObject* restrict list = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "s#is#|O!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &PyList_Type, &list))
     {
@@ -75,7 +75,7 @@ SNVTable_query(SNVTableObject* const restrict self,
         return NULL;
     } // if
 
-    vrd_AVL_Tree* restrict subset = NULL;
+    vrd_AVL_Tree* subset = NULL;
     if (NULL != list)
     {
         subset = sample_set(list);
@@ -96,17 +96,17 @@ SNVTable_query(SNVTableObject* const restrict self,
 
 
 static PyObject*
-SNVTable_remove(SNVTableObject* const restrict self,
-                PyObject* const restrict args)
+SNVTable_remove(SNVTableObject* const self,
+                PyObject* const args)
 {
-    PyObject* restrict list = NULL;
+    PyObject* list = NULL;
 
     if (!PyArg_ParseTuple(args, "O!:SNVTable.remove", &PyList_Type, &list))
     {
         return NULL;
     } // if
 
-    vrd_AVL_Tree* restrict subset = sample_set(list);
+    vrd_AVL_Tree* subset = sample_set(list);
     if (NULL == subset)
     {
         return NULL;

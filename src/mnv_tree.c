@@ -65,12 +65,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 
 
 static size_t
-query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const restrict self,
+query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
            size_t const root,
            size_t const start,
            size_t const end,
            size_t const inserted,
-           vrd_AVL_Tree const* const restrict subset)
+           vrd_AVL_Tree const* const subset)
 {
     if (NULLPTR == root || self->nodes[root].max < start)
     {
@@ -101,11 +101,11 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const restrict self,
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                              size_t const start,
                                              size_t const end,
                                              size_t const inserted,
-                                             vrd_AVL_Tree const* const restrict subset)
+                                             vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
 
@@ -114,12 +114,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* 
 
 
 static size_t
-traverse_seq(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
+traverse_seq(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
              uint32_t const root,
              int const depth,
              uint64_t const path,
-             vrd_AVL_Tree const* const restrict subset,
-             vrd_Seq_Table* const restrict seq_table)
+             vrd_AVL_Tree const* const subset,
+             vrd_Seq_Table* const seq_table)
 {
     if (NULLPTR == root)
     {
@@ -142,9 +142,9 @@ traverse_seq(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const restrict self,
-                                             vrd_AVL_Tree const* const restrict subset,
-                                             vrd_Seq_Table* const restrict seq_table)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                             vrd_AVL_Tree const* const subset,
+                                             vrd_Seq_Table* const seq_table)
 {
     assert(NULL != self);
 
