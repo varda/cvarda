@@ -305,6 +305,11 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
             goto error;
         } // if
 
+        if (0 == len)
+        {
+            continue;
+        } // if
+
         sequence = malloc(len);
         if (NULL == sequence)
         {
