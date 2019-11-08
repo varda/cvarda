@@ -10,15 +10,141 @@
 #include "trie.h"   // vrd_Trie, vrd_trie_*
 
 
+struct Free_Node
+{
+    size_t start;
+    size_t end;
+    struct Free_Node* next;
+}; // Free_Node
+
+
 struct vrd_Seq_Table
 {
     vrd_Trie* trie;
 
     size_t capacity;
+    struct Free_Node* free_list;
 
-    size_t next;
     void* sequences[];
 }; // vrd_Seq_Table
+
+
+static struct Free_Node*
+free_node_init(size_t const start,
+               size_t const end,
+               struct Free_Node* const next)
+{
+    struct Free_Node* const node = malloc(sizeof(*node));
+    if (NULL == node)
+    {
+        return NULL;
+    } // if
+
+    node->start = start;
+    node->end = end;
+    node->next = next;
+
+    return node;
+} // free_node_init
+
+
+static void
+free_list_destroy(struct Free_Node** const free_list)
+{
+    if (NULL == free_list)
+    {
+        return;
+    } // if
+
+    while (NULL != *free_list)
+    {
+        struct Free_Node* const tmp = *free_list;
+        *free_list = (*free_list)->next;
+        free(tmp);
+    } // while
+
+    *free_list = NULL;
+} // free_list_destroy
+
+
+static size_t
+free_list_alloc(struct Free_Node** const free_list)
+{
+    if (NULL == *free_list)
+    {
+        return -1;
+    } // if
+
+    size_t const idx = (*free_list)->start;
+
+    (*free_list)->start += 1;
+    if ((*free_list)->start >= (*free_list)->end)
+    {
+        struct Free_Node* const tmp = (*free_list)->next;
+        free(*free_list);
+        *free_list = tmp;
+    } // if
+    return idx;
+} // free_list_alloc
+
+
+static struct Free_Node*
+free_list_dealloc(struct Free_Node* const free_list, size_t const idx)
+{
+    if (NULL == free_list || free_list->start >= idx)
+    {
+        if (NULL != free_list && idx >= free_list->start && idx < free_list->end)
+        {
+            return free_list;
+        } // if
+
+        if (NULL != free_list && idx + 1 == free_list->start)
+        {
+            free_list->start -= 1;
+            return free_list;
+        } // if
+
+        return free_node_init(idx, idx + 1, free_list);
+    } // if
+
+    struct Free_Node* tmp = free_list;
+    while (NULL != tmp->next && tmp->next->start < idx)
+    {
+        tmp = tmp->next;
+    } // while
+
+    if (idx >= tmp->start && idx < tmp->end)
+    {
+        return free_list;
+    } // if
+
+    if (idx == tmp->end)
+    {
+        tmp->end += 1;
+        return free_list;
+    } // if
+
+    if (NULL != tmp->next && idx + 1 == tmp->next->start)
+    {
+        tmp->next->start -= 1;
+        return free_list;
+    } // if
+
+    if (NULL != tmp->next && idx >= tmp->next->start && idx < tmp->next->end)
+    {
+        return free_list;
+    } // if
+
+    if (NULL != tmp->next && idx == tmp->next->end)
+    {
+        tmp->next->end += 1;
+        return free_list;
+    } // if
+
+    tmp->next = free_node_init(idx, idx + 1, tmp->next);
+
+    return free_list;
+} // free_list_dealloc
 
 
 vrd_Seq_Table*
@@ -45,7 +171,13 @@ vrd_Seq_table_init(size_t const capacity)
     } // if
 
     table->capacity = capacity;
-    table->next = 0;
+    table->free_list = free_node_init(0, capacity, NULL);
+    if (NULL == table->free_list)
+    {
+        vrd_trie_destroy(&table->trie);
+        free(table);
+        return NULL;
+    } // if
 
     return table;
 } // vrd_Seq_table_init
@@ -60,6 +192,7 @@ vrd_Seq_table_destroy(vrd_Seq_Table** const self)
     } // if
 
     vrd_trie_destroy(&(*self)->trie);
+    free_list_destroy(&(*self)->free_list);
     free(*self);
     *self = NULL;
 } // vrd_Seq_table_destroy
@@ -83,21 +216,21 @@ vrd_Seq_table_insert(vrd_Seq_Table* const self,
         return elem;
     } // if
 
-    if (self->capacity <= self->next)
+    size_t const idx = free_list_alloc(&self->free_list);
+    if ((size_t) -1 == idx)
     {
         errno = -1;
         return NULL;
     } // if
 
-    elem = vrd_trie_insert(self->trie, len, sequence, (void*) self->next);
+    elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
     if (NULL == elem)
     {
         errno = -1;
         return NULL;
     } // if
 
-    self->sequences[self->next] = elem;
-    self->next += 1;
+    self->sequences[idx] = elem;
 
     return elem;
 } // vrd_Seq_table_insert
@@ -119,15 +252,18 @@ vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem)
 {
     assert(NULL != self);
 
-    if (self->next < elem)
+    if (self->capacity <= elem)
     {
         return -1;
     } // if
+
+    self->free_list = free_list_dealloc(self->free_list, elem);
 
     char* sequence = NULL;
     size_t const len = vrd_trie_key(self->sequences[elem], &sequence);
     (void) vrd_trie_remove(self->trie, len, sequence);
     free(sequence);
+    self->sequences[elem] = NULL;
     return 0;
 } // vrd_Seq_table_remove
 
@@ -228,14 +364,25 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         goto error;
     } // if
 
-    size_t count = fwrite(&self->next, sizeof(self->next), 1, stream);
+    size_t count = fwrite(&self->capacity, sizeof(self->capacity), 1, stream);
     if (1 != count)
     {
         goto error;
     } // for
 
-    for (size_t i = 0; i < self->next; ++i)
+    for (size_t i = 0; i < self->capacity; ++i)
     {
+        if (NULL == self->sequences[i])
+        {
+            size_t const len = 0;
+            count = fwrite(&len, sizeof(len), 1, stream);
+            if (1 != count)
+            {
+                goto error;
+            } // if
+            continue;
+        } // if
+
         size_t const len = vrd_trie_key(self->sequences[i], &sequence);
 
         count = fwrite(&len, sizeof(len), 1, stream);
