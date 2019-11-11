@@ -295,6 +295,13 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
         goto error;
     } // for
 
+    if (size > self->capacity)
+    {
+        errno = -1;
+        goto error;
+    } // if
+
+    size_t last_idx = 0;
     for (size_t i = 0; i < size; ++i)
     {
         size_t len = 0;
@@ -303,11 +310,6 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
         if (1 != count)
         {
             goto error;
-        } // if
-
-        if (0 == len)
-        {
-            continue;
         } // if
 
         sequence = malloc(len);
@@ -322,10 +324,26 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
             goto error;
         } // if
 
-        if (NULL == vrd_Seq_table_insert(self, len, sequence))
+        size_t idx = 0;
+        count = fread(&idx, sizeof(idx), 1, stream);
+        if (1 != count)
         {
             goto error;
         } // if
+
+        for (; last_idx < idx; ++last_idx)
+        {
+            self->free_list = free_list_dealloc(self->free_list, last_idx);
+        } // for
+
+        void* const elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
+        if (NULL == elem)
+        {
+            errno = -1;
+            goto error;
+        } // if
+
+        self->sequences[idx] = elem;
 
         free(sequence);
         sequence = NULL;
@@ -377,33 +395,31 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
 
     for (size_t i = 0; i < self->capacity; ++i)
     {
-        if (NULL == self->sequences[i])
+        if (NULL != self->sequences[i])
         {
-            size_t const len = 0;
+            size_t const len = vrd_trie_key(self->sequences[i], &sequence);
+
             count = fwrite(&len, sizeof(len), 1, stream);
             if (1 != count)
             {
                 goto error;
             } // if
-            continue;
+
+            count = fwrite(sequence, 1, len, stream);
+            if (len != count)
+            {
+                goto error;
+            } // if
+
+            count = fwrite(&i, sizeof(i), 1, stream);
+            if (1 != count)
+            {
+                goto error;
+            } // if
+
+            free(sequence);
+            sequence = NULL;
         } // if
-
-        size_t const len = vrd_trie_key(self->sequences[i], &sequence);
-
-        count = fwrite(&len, sizeof(len), 1, stream);
-        if (1 != count)
-        {
-            goto error;
-        } // if
-
-        count = fwrite(sequence, 1, len, stream);
-        if (len != count)
-        {
-            goto error;
-        } // if
-
-        free(sequence);
-        sequence = NULL;
     } // for
 
     if (0 != fclose(stream))
