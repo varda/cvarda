@@ -20,24 +20,6 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-
-    vrd_Seq_table_insert(seq, 4, "bar");
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-    vrd_Seq_table_insert(seq, 4, "bar");
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-
-    vrd_Seq_table_remove(seq, 0);
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-    vrd_Seq_table_remove(seq, 0);
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-    vrd_Seq_table_remove(seq, 0);
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-    vrd_Seq_table_remove(seq, 0);
-    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
-
-
-/*
     vrd_Seq_table_free_list_print(seq);
 
     if (NULL == vrd_Seq_table_insert(seq, 7, "romane"))
@@ -83,7 +65,7 @@ main(int argc, char* argv[])
     q = vrd_Seq_table_query(seq, 7, "romane");
     (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
 
-    vrd_Seq_table_remove(seq, 7);
+    vrd_Seq_table_remove(seq, 0);
 
     q = vrd_Seq_table_query(seq, 7, "romane");
     (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
@@ -101,8 +83,6 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "read: %d\n", vrd_Seq_table_read(seq, "seq"));
 
     vrd_Seq_table_free_list_print(seq);
-
-*/
 
     vrd_Seq_table_destroy(&seq);
 

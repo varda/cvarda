@@ -357,7 +357,7 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
     self->free_list = NULL;
 
     size_t last_idx = 0;
-    while (last_idx <= size)
+    while (last_idx < size)
     {
         size_t len = 0;
 
@@ -462,7 +462,7 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         goto error;
     } // if
 
-    size_t const size = free_list_max(self->free_list, self->capacity) - 1;
+    size_t const size = free_list_max(self->free_list, self->capacity);
 
     size_t count = fwrite(&size, sizeof(size), 1, stream);
     if (1 != count)
@@ -470,7 +470,7 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         goto error;
     } // for
 
-    for (size_t i = 0; i <= size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
         if (NULL != self->sequences[i])
         {
