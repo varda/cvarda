@@ -112,19 +112,13 @@ SNVTable_remove(SNVTableObject* const self,
         return NULL;
     } // if
 
-    int ret = 0;
+    int result = 0;
     Py_BEGIN_ALLOW_THREADS
-    ret = vrd_SNV_table_remove(self->table, subset);
+    result = vrd_SNV_table_remove(self->table, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
-    if (0 != ret)
-    {
-        PyErr_SetString(PyExc_RuntimeError, "SNVTable.remove: vrd_SNV_table_remove() failed");
-        return NULL;
-    } // if
-
-    Py_RETURN_NONE;
+    return Py_BuildValue("i", result);
 } // SNVTable_remove
 
 
@@ -155,7 +149,9 @@ static PyMethodDef SNVTable_methods[] =
      "remove(subset)\n"
      "Remove for SNVs in the :py:class:`SNVTable`\n\n"
      ":param subset: A list of sample IDs (`integer`)\n"
-     ":type subset: list\n"},
+     ":type subset: list\n"
+     ":return: The number of removed SNVs\n"
+     ":rtype: integer\n"},
 
     {"reorder", (PyCFunction) SNVTable_reorder, METH_NOARGS,
      "reorder()\n"
