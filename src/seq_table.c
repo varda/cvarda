@@ -147,6 +147,53 @@ free_list_dealloc(struct Free_Node* const free_list, size_t const idx)
 } // free_list_dealloc
 
 
+static size_t
+free_list_max(struct Free_Node const* const head, size_t const capacity)
+{
+    if (NULL == head)
+    {
+        return capacity;
+    } // if
+
+    struct Free_Node const* tmp = head;
+
+    size_t idx = tmp->start;
+    while (NULL != tmp->next)
+    {
+        tmp = tmp->next;
+        idx = tmp->start;
+    } // while
+
+    return idx;
+} // free_list_max
+
+
+// DEBUG >>>
+static void
+free_list_print(struct Free_Node const* const head)
+{
+    struct Free_Node const* tmp = head;
+
+    (void) fprintf(stderr, "[\n");
+    while (NULL != tmp)
+    {
+        (void) fprintf(stderr, "  %zu--%zu\n", tmp->start, tmp->end);
+        tmp = tmp->next;
+    } // while
+    (void) fprintf(stderr, "]\n");
+} // free_list_print
+
+
+void
+vrd_Seq_table_free_list_print(vrd_Seq_Table const* const self)
+{
+    assert(NULL != self);
+
+    free_list_print(self->free_list);
+} // vrd_Seq_table_free_list_print
+// <<< END DEBUG
+
+
 vrd_Seq_Table*
 vrd_Seq_table_init(size_t const capacity)
 {
@@ -387,13 +434,15 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         goto error;
     } // if
 
-    size_t count = fwrite(&self->capacity, sizeof(self->capacity), 1, stream);
+    size_t const size = free_list_max(self->free_list, self->capacity);
+
+    size_t count = fwrite(&size, sizeof(size), 1, stream);
     if (1 != count)
     {
         goto error;
     } // for
 
-    for (size_t i = 0; i < self->capacity; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
         if (NULL != self->sequences[i])
         {
