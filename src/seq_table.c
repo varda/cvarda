@@ -67,24 +67,25 @@ free_list_destroy(struct Free_Node** const free_list)
 } // free_list_destroy
 
 
-static size_t
-free_list_alloc(struct Free_Node** const free_list)
+static struct Free_Node*
+free_list_alloc(struct Free_Node* const free_list, size_t* const idx)
 {
-    if (NULL == *free_list)
+    if (NULL == free_list)
     {
-        return -1;
+        *idx = -1;
+        return NULL;
     } // if
 
-    size_t const idx = (*free_list)->start;
+    *idx = free_list->start;
 
-    (*free_list)->start += 1;
-    if ((*free_list)->start >= (*free_list)->end)
+    free_list->start += 1;
+    if (free_list->start >= free_list->end)
     {
-        struct Free_Node* const tmp = (*free_list)->next;
-        free(*free_list);
-        *free_list = tmp;
+        struct Free_Node* const tmp = free_list->next;
+        free(free_list);
+        return tmp;
     } // if
-    return idx;
+    return free_list;
 } // free_list_alloc
 
 
@@ -263,7 +264,8 @@ vrd_Seq_table_insert(vrd_Seq_Table* const self,
         return elem;
     } // if
 
-    size_t const idx = free_list_alloc(&self->free_list);
+    size_t idx = -1;
+    self->free_list = free_list_alloc(self->free_list, &idx);
     if ((size_t) -1 == idx)
     {
         errno = -1;
@@ -348,8 +350,11 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
         goto error;
     } // if
 
+    free(self->free_list);
+    self->free_list = NULL;
+
     size_t last_idx = 0;
-    for (size_t i = 0; i < size; ++i)
+    while (last_idx <= size)
     {
         size_t len = 0;
 
@@ -378,10 +383,13 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
             goto error;
         } // if
 
-        for (; last_idx < idx; ++last_idx)
+        if (last_idx != idx)
         {
-            self->free_list = free_list_dealloc(self->free_list, last_idx);
-        } // for
+            for (size_t i = last_idx; i < idx; ++i)
+            {
+                self->free_list = free_list_dealloc(self->free_list, i);
+            } // for
+        } // if
 
         void* const elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
         if (NULL == elem)
@@ -394,7 +402,24 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
 
         free(sequence);
         sequence = NULL;
-    } // for
+
+        last_idx = idx + 1;
+    } // while
+
+    if (NULL == self->free_list)
+    {
+        self->free_list = free_node_init(last_idx, self->capacity, NULL);
+    } // if
+    else
+    {
+        struct Free_Node* tmp = self->free_list;
+        while (NULL != tmp->next)
+        {
+            tmp = tmp->next;
+        } // while
+
+        tmp->next = free_node_init(last_idx, self->capacity, NULL);
+    } // else
 
     if (0 != fclose(stream))
     {
@@ -434,7 +459,7 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         goto error;
     } // if
 
-    size_t const size = free_list_max(self->free_list, self->capacity);
+    size_t const size = free_list_max(self->free_list, self->capacity) - 1;
 
     size_t count = fwrite(&size, sizeof(size), 1, stream);
     if (1 != count)
@@ -442,7 +467,7 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         goto error;
     } // for
 
-    for (size_t i = 0; i < size; ++i)
+    for (size_t i = 0; i <= size; ++i)
     {
         if (NULL != self->sequences[i])
         {

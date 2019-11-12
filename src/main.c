@@ -75,25 +75,24 @@ rubicundus
     q = vrd_Seq_table_query(seq, 7, "romane");
     (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
 
-    vrd_Seq_table_remove(seq, 0);
+    vrd_Seq_table_remove(seq, 7);
 
     q = vrd_Seq_table_query(seq, 7, "romane");
     (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
 
     vrd_Seq_table_free_list_print(seq);
-
-    if (NULL == vrd_Seq_table_insert(seq, 7, "romane"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-
-    vrd_Seq_table_free_list_print(seq);
-
-    q = vrd_Seq_table_query(seq, 7, "romane");
-    (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
 
     vrd_Seq_table_write(seq, "seq");
+
+    vrd_Seq_table_destroy(&seq);
+
+    seq = vrd_Seq_table_init(100);
+
+    vrd_Seq_table_free_list_print(seq);
+
+    (void) fprintf(stderr, "read: %d\n", vrd_Seq_table_read(seq, "seq"));
+
+    vrd_Seq_table_free_list_print(seq);
 
     vrd_Seq_table_destroy(&seq);
 
