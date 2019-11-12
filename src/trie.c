@@ -1,4 +1,5 @@
 #include <assert.h>     // assert
+#include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL, size_t
 #include <stdlib.h>     // malloc, free, realloc
 #include <string.h>     // strncpy
@@ -240,7 +241,8 @@ node_join(struct Node* const node)
 struct Node*
 trie_remove(struct Node* const root,
             size_t const len,
-            char const key[len])
+            char const key[len],
+            bool* const deleted)
 {
     if (NULL == root)
     {
@@ -250,7 +252,7 @@ trie_remove(struct Node* const root,
     size_t const k = prefix(len, key, root->len, root->key);
     if (0 == k)
     {
-        root->next = trie_remove(root->next, len, key);
+        root->next = trie_remove(root->next, len, key, deleted);
         return root;
     } // if
 
@@ -259,6 +261,7 @@ trie_remove(struct Node* const root,
         root->count -= 1;
         if (0 == root->count)
         {
+            *deleted = true;
             struct Node* const node = root->next;
             node_destroy(root);
             return node;
@@ -268,7 +271,7 @@ trie_remove(struct Node* const root,
 
     if (root->len == k)
     {
-        root->link = trie_remove(root->link, len - k, &key[k]);
+        root->link = trie_remove(root->link, len - k, &key[k], deleted);
         if (NULL != root->link && NULL == root->link->next)
         {
             struct Node* const node = node_join(root);
@@ -324,14 +327,16 @@ vrd_trie_insert(vrd_Trie* const self,
 } // vrd_trie_insert
 
 
-void
+bool
 vrd_trie_remove(vrd_Trie* const self,
                 size_t const len,
                 char const key[len])
 {
     assert(NULL != self);
 
-    self->root = trie_remove(self->root, len, key);
+    bool deleted = false;
+    self->root = trie_remove(self->root, len, key, &deleted);
+    return deleted;
 } // vrd_trie_remove
 
 

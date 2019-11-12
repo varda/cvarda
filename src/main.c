@@ -20,17 +20,25 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    vrd_Seq_table_free_list_print(seq);
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+
+    vrd_Seq_table_insert(seq, 4, "bar");
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+    vrd_Seq_table_insert(seq, 4, "bar");
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+
+    vrd_Seq_table_remove(seq, 0);
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+    vrd_Seq_table_remove(seq, 0);
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+    vrd_Seq_table_remove(seq, 0);
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+    vrd_Seq_table_remove(seq, 0);
+    (void) fprintf(stderr, "q: %p\n", vrd_Seq_table_query(seq, 4, "bar"));
+
 
 /*
-romane
-romanus
-romulus
-rubens
-ruber
-rubicon
-rubicundus
-*/
+    vrd_Seq_table_free_list_print(seq);
 
     if (NULL == vrd_Seq_table_insert(seq, 7, "romane"))
     {
@@ -93,6 +101,8 @@ rubicundus
     (void) fprintf(stderr, "read: %d\n", vrd_Seq_table_read(seq, "seq"));
 
     vrd_Seq_table_free_list_print(seq);
+
+*/
 
     vrd_Seq_table_destroy(&seq);
 

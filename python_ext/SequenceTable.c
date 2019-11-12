@@ -169,7 +169,7 @@ static PyMethodDef SequenceTable_methods[] =
      ":rtype: integer\n"},
 
     {"remove", (PyCFunction) SequenceTable_remove, METH_VARARGS,
-     "remove(sequence)\n"
+     "remove(index)\n"
      "Remove a sequence from the :py:class:`SequenceTable`\n\n"
      ":param integer index: The index in the table.\n"},
 

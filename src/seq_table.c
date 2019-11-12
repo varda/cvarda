@@ -306,13 +306,16 @@ vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem)
         return -1;
     } // if
 
-    self->free_list = free_list_dealloc(self->free_list, elem);
-
     char* sequence = NULL;
     size_t const len = vrd_trie_key(self->sequences[elem], &sequence);
-    (void) vrd_trie_remove(self->trie, len, sequence);
+
+    if (vrd_trie_remove(self->trie, len, sequence))
+    {
+        self->free_list = free_list_dealloc(self->free_list, elem);
+        self->sequences[elem] = NULL;
+    } // if
+
     free(sequence);
-    self->sequences[elem] = NULL;
     return 0;
 } // vrd_Seq_table_remove
 

@@ -7,6 +7,7 @@ extern "C"
 #endif
 
 
+#include <stdbool.h>    // bool
 #include <stddef.h>     // size_t
 
 
@@ -28,7 +29,7 @@ vrd_trie_insert(vrd_Trie* const self,
                 void* const data);
 
 
-void
+bool
 vrd_trie_remove(vrd_Trie* const self,
                 size_t const len,
                 char const key[len]);
