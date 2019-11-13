@@ -138,8 +138,10 @@ static PyMethodDef MNVTable_methods[] =
      ":rtype: integer\n"},
 
     {"remove", (PyCFunction) MNVTable_remove, METH_VARARGS,
-     "remove(subset)\n"
+     "remove(seq_table, subset)\n"
      "Remove for MNVs in the :py:class:`MNVTable`\n\n"
+     ":param seq_table: A reference to the sequence table"
+     ":type sequence: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`)\n"
      ":type subset: list\n"
      ":return: The number of removed MNVs\n"
