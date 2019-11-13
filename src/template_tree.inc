@@ -633,9 +633,11 @@ height(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 } // height
 
 
-static int
-reorder(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
+int
+VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
 {
+    assert(NULL != self);
+
     uint32_t* const addr = malloc(self->next * sizeof(*addr));
     if (NULL == addr)
     {
@@ -686,15 +688,6 @@ reorder(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
     free(nodes);
 
     return 0;
-} // reorder
-
-
-int
-VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
-{
-    assert(NULL != self);
-
-    return reorder(self);
 } // vrd_*_tree_reorder
 
 

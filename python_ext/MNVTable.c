@@ -88,10 +88,10 @@ static PyObject*
 MNVTable_remove(MNVTableObject* const self,
                 PyObject* const args)
 {
-    SequenceTableObject* seq = NULL;
     PyObject* list = NULL;
+    SequenceTableObject* seq = NULL;
 
-    if (!PyArg_ParseTuple(args, "O!O!:MNVTable.remove", &SequenceTable, &seq, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "O!O!:MNVTable.remove", &PyList_Type, &list, &SequenceTable, &seq))
     {
         return NULL;
     } // if
@@ -121,7 +121,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param integer sample_id: The sample ID\n"
-     ":param integer inserted: A reference to an object stored in :py:class:`SequenceTable`\n"
+     ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
      ":param phase: The phase group (position based)\n"
      ":type phase: integer, optional\n"},
 
@@ -131,19 +131,19 @@ static PyMethodDef MNVTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
-     ":param integer inserted: A reference to an object stored in :py:class:`SequenceTable`\n"
+     ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained MNVs\n"
      ":rtype: integer\n"},
 
     {"remove", (PyCFunction) MNVTable_remove, METH_VARARGS,
-     "remove(seq_table, subset)\n"
+     "remove(subset, seq_table)\n"
      "Remove for MNVs in the :py:class:`MNVTable`\n\n"
-     ":param seq_table: A reference to the sequence table"
-     ":type sequence: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`)\n"
      ":type subset: list\n"
+     ":param seq_table: The sequence table\n"
+     ":type seq_table: :py:class:`SequenceTable`\n"
      ":return: The number of removed MNVs\n"
      ":rtype: integer\n"},
 
