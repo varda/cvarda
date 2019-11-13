@@ -12,7 +12,7 @@
                         // fwrite, snprintf
 #include <stdlib.h>     // free, malloc
 
-#include "trie.h"   // vrd_Trie_Node, vrd_Trie, vrd_trie_*
+#include "../include/trie.h"   // vrd_Trie_Node, vrd_Trie, vrd_trie_*
 
 
 struct VRD_TEMPLATE(VRD_TYPENAME, _Table)

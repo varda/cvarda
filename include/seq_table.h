@@ -7,6 +7,9 @@ extern "C"
 #endif
 
 
+#include "trie.h"   // vrd_Trie_Node
+
+
 typedef struct vrd_Seq_Table vrd_Seq_Table;
 
 
@@ -18,13 +21,13 @@ void
 vrd_Seq_table_destroy(vrd_Seq_Table** const self);
 
 
-void*
+vrd_Trie_Node*
 vrd_Seq_table_insert(vrd_Seq_Table* const self,
                      size_t const len,
                      char const sequence[len]);
 
 
-void*
+vrd_Trie_Node*
 vrd_Seq_table_query(vrd_Seq_Table const* const self,
                     size_t const len,
                     char const sequence[len]);

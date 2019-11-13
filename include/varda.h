@@ -16,7 +16,7 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 6
+#define VRD_VERSION_PATCH 7
 #endif
 
 
@@ -42,6 +42,7 @@ vrd_version(int* const major,
 #include "mnv_table.h"
 #include "seq_table.h"
 #include "snv_table.h"
+#include "trie.h"
 #include "utils.h"
 
 

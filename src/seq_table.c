@@ -7,7 +7,7 @@
 #include <stdlib.h>     // free, malloc
 
 #include "../include/seq_table.h"   // vrd_Seq_Table
-#include "trie.h"   // vrd_Trie_Node, vrd_Trie, vrd_trie_*
+#include "../include/trie.h"        // vrd_Trie_Node, vrd_Trie, vrd_trie_*
 
 
 struct Free_Node
@@ -219,7 +219,7 @@ vrd_Seq_table_destroy(vrd_Seq_Table** const self)
 } // vrd_Seq_table_destroy
 
 
-void*
+vrd_Trie_Node*
 vrd_Seq_table_insert(vrd_Seq_Table* const self,
                      size_t const len,
                      char const sequence[len])
@@ -258,7 +258,7 @@ vrd_Seq_table_insert(vrd_Seq_Table* const self,
 } // vrd_Seq_table_insert
 
 
-void*
+vrd_Trie_Node*
 vrd_Seq_table_query(vrd_Seq_Table const* const self,
                     size_t const len,
                     char const sequence[len])

@@ -3,8 +3,8 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_SNV_table_*
+#include "../include/trie.h"        // vrd_Trie_Node, vrd_trie_*
 #include "snv_tree.h"   // vrd_SNV_Tree, vrd_SNV_tree_*
-#include "trie.h"       // vrd_Trie_Node, vrd_trie_*
 
 
 #define VRD_TYPENAME SNV

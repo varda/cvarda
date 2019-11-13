@@ -3,8 +3,8 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_Cov_table_*
+#include "../include/trie.h"        // vrd_Trie_Node, vrd_trie_*
 #include "cov_tree.h"   // vrd_Cov_Tree, vrd_Cov_tree_*
-#include "trie.h"       // vrd_Trie_Node, vrd_trie_*
 
 
 #define VRD_TYPENAME Cov

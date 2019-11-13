@@ -3,8 +3,8 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
+#include "../include/trie.h"        // vrd_Trie_Node, vrd_trie_*
 #include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
-#include "trie.h"       // vrd_Trie_Node, vrd_trie_*
 
 
 #define VRD_TYPENAME MNV

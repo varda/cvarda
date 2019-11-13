@@ -4,7 +4,7 @@
 #include <stdlib.h>     // malloc, free, realloc
 #include <string.h>     // strncpy
 
-#include "trie.h"    // vrd_Trie, vrd_trie_*
+#include "../include/trie.h"    // vrd_Trie, vrd_trie_*
 
 
 struct Node

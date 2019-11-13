@@ -9,6 +9,7 @@
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+#include "../include/trie.h"        // vrd_Trie_Node
 #include "../include/utils.h"       // vrd_coverage_from_file,
                                     // vrd_variants_from_file,
                                     // vrd_annotate_from_file
@@ -110,7 +111,7 @@ vrd_variants_from_file(FILE* stream,
         } // if
         else
         {
-            void* const elem = vrd_Seq_table_insert(seq, len + 1, inserted);
+            vrd_Trie_Node* const elem = vrd_Seq_table_insert(seq, len + 1, inserted);
             if (0 != len && NULL == elem)
             {
                 goto error;
@@ -202,7 +203,7 @@ vrd_annotate_from_file(FILE* ostream,
         } // if
         else
         {
-            void* const elem = vrd_Seq_table_query(seq, len + 1, inserted);
+            vrd_Trie_Node* const elem = vrd_Seq_table_query(seq, len + 1, inserted);
             if (NULL == elem)
             {
                 num = 0;

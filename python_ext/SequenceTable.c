@@ -4,6 +4,7 @@
 #include <stddef.h>     // NULL, size_t
 
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
+#include "../include/trie.h"        // vrd_Trie_Node
 #include "utils.h"          // CFG_*
 #include "SequenceTable.h"  // SequenceTable*
 
@@ -56,14 +57,14 @@ SequenceTable_insert(SequenceTableObject* const self,
         return NULL;
     } // if
 
-    void* const result = vrd_Seq_table_insert(self->table, len + 1, sequence);
+    vrd_Trie_Node* const result = vrd_Seq_table_insert(self->table, len + 1, sequence);
     if (NULL == result)
     {
         PyErr_SetString(PyExc_RuntimeError, "SequenceTable.insert: vrd_Seq_table_insert() failed");
         return NULL;
     } // if
 
-    return Py_BuildValue("i", *(size_t*) result);
+    return Py_BuildValue("i", *(size_t*) result->data);
 } // SequenceTable_insert
 
 
@@ -79,13 +80,13 @@ SequenceTable_query(SequenceTableObject* const self,
         return NULL;
     } // if
 
-    void* const result = vrd_Seq_table_query(self->table, len + 1, sequence);
+    vrd_Trie_Node* const result = vrd_Seq_table_query(self->table, len + 1, sequence);
     if (NULL == result)
     {
         Py_RETURN_NONE;
     } // if
 
-    return Py_BuildValue("i", *(size_t*) result);
+    return Py_BuildValue("i", *(size_t*) result->data);
 } // SequenceTable_query
 
 

@@ -3,7 +3,7 @@
 
 #include <stddef.h>     // NULL, size_t
 
-#include "../include/avl_tree.h"   // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "utils.h"    // sample_set
 
 
