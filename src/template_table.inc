@@ -118,7 +118,7 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
                char const reference[len])
 {
 
-    void* elem = vrd_trie_find(self->trie, len, reference);
+    vrd_Trie_Node* elem = vrd_trie_find(self->trie, len, reference);
     if (NULL != elem)
     {
         return *(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) elem;
@@ -254,7 +254,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
             goto error;
         } // if
 
-        void* const elem = vrd_trie_insert(self->trie, len, reference, tree);
+        vrd_Trie_Node* const elem = vrd_trie_insert(self->trie, len, reference, tree);
         if (NULL == elem)
         {
             errno = -1;

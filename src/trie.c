@@ -371,7 +371,7 @@ trie_key(struct Node const* const node, char** key)
 
 
 size_t
-vrd_trie_key(void* const ptr, char** key)
+vrd_trie_key(vrd_Trie_Node const* const ptr, char** key)
 {
-    return trie_key(ptr, key);
+    return trie_key((struct Node*) ptr, key);
 } // vrd_trie_key

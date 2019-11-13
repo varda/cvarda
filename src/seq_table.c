@@ -226,7 +226,7 @@ vrd_Seq_table_insert(vrd_Seq_Table* const self,
 {
     assert(NULL != self);
 
-    void* elem = vrd_trie_find(self->trie, len, sequence);
+    vrd_Trie_Node* elem = vrd_trie_find(self->trie, len, sequence);
     if (NULL != elem)
     {
         if (NULL == vrd_trie_insert(self->trie, len, sequence, elem))
@@ -376,7 +376,7 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
 
         for (size_t i = 0; i < ref_count; ++i)
         {
-            void* const elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
+            vrd_Trie_Node* const elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
             if (NULL == elem)
             {
                 errno = -1;

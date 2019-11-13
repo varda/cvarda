@@ -49,7 +49,7 @@ vrd_trie_find(vrd_Trie const* const self,
 
 
 size_t
-vrd_trie_key(void* const ptr, char** key);
+vrd_trie_key(vrd_Trie_Node const* const ptr, char** key);
 
 
 #ifdef __cplusplus

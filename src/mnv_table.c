@@ -4,6 +4,7 @@
 
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
 #include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
+#include "trie.h"       // vrd_Trie_Node, vrd_trie_*
 
 
 #define VRD_TYPENAME MNV
@@ -45,7 +46,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
 {
     assert(NULL != self);
 
-    void* const elem = vrd_trie_find(self->trie, len, reference);
+    vrd_Trie_Node* const elem = vrd_trie_find(self->trie, len, reference);
     if (NULL == elem)
     {
         return 0;
