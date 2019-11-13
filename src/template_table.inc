@@ -87,7 +87,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
     size_t count = 0;
     for (size_t i = 0; i < self->next; ++i)
     {
-        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) self->trees[i]->data, subset);  // OVERFLOW
+        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)*) self->trees[i]->data, subset);  // OVERFLOW
     } // for
 
     return count;
@@ -101,7 +101,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 
     for (size_t i = 0; i < self->next; ++i)
     {
-        int const err = VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) self->trees[i]->data);
+        int const err = VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)*) self->trees[i]->data);
         if (0 != err)
         {
             return err;
@@ -370,7 +370,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
             goto error;
         } // if
 
-        int const ret = VRD_TEMPLATE(VRD_TYPENAME, _tree_write)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) self->trees[i]->data, stream);
+        int const ret = VRD_TEMPLATE(VRD_TYPENAME, _tree_write)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)*) self->trees[i]->data, stream);
         if (0 != ret)
         {
             errno = ret;
