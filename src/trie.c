@@ -322,7 +322,7 @@ vrd_trie_insert(vrd_Trie* const self,
     assert(NULL != self);
 
     self->root = trie_insert(self->root, len, key, data);
-    return &trie_find(self->root, len, key)->node;
+    return (vrd_Trie_Node*) trie_find(self->root, len, key);
 } // vrd_trie_insert
 
 
@@ -346,7 +346,7 @@ vrd_trie_find(vrd_Trie const* const self,
 {
     assert(NULL != self);
 
-    return &trie_find(self->root, len, key)->node;
+    return (vrd_Trie_Node*) trie_find(self->root, len, key);
 } // vrd_trie_find
 
 

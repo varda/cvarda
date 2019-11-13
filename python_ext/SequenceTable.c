@@ -64,7 +64,7 @@ SequenceTable_insert(SequenceTableObject* const self,
         return NULL;
     } // if
 
-    return Py_BuildValue("i", *(size_t*) result->data);
+    return Py_BuildValue("i", (size_t) result->data);
 } // SequenceTable_insert
 
 
@@ -86,7 +86,7 @@ SequenceTable_query(SequenceTableObject* const self,
         Py_RETURN_NONE;
     } // if
 
-    return Py_BuildValue("i", *(size_t*) result->data);
+    return Py_BuildValue("i", (size_t) result->data);
 } // SequenceTable_query
 
 
