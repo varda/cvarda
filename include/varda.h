@@ -16,7 +16,7 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 5
+#define VRD_VERSION_PATCH 6
 #endif
 
 

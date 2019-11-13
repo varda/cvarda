@@ -169,32 +169,6 @@ free_list_max(struct Free_Node const* const head, size_t const capacity)
 } // free_list_max
 
 
-// DEBUG >>>
-static void
-free_list_print(struct Free_Node const* const head)
-{
-    struct Free_Node const* tmp = head;
-
-    (void) fprintf(stderr, "[\n");
-    while (NULL != tmp)
-    {
-        (void) fprintf(stderr, "  %zu--%zu\n", tmp->start, tmp->end);
-        tmp = tmp->next;
-    } // while
-    (void) fprintf(stderr, "]\n");
-} // free_list_print
-
-
-void
-vrd_Seq_table_free_list_print(vrd_Seq_Table const* const self)
-{
-    assert(NULL != self);
-
-    free_list_print(self->free_list);
-} // vrd_Seq_table_free_list_print
-// <<< END DEBUG
-
-
 vrd_Seq_Table*
 vrd_Seq_table_init(size_t const capacity)
 {
@@ -386,6 +360,13 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
             goto error;
         } // if
 
+        size_t ref_count = 1;
+        count = fread(&ref_count, sizeof(ref_count), 1, stream);
+        if (1 != count)
+        {
+            goto error;
+        } // if
+
         if (last_idx != idx)
         {
             for (size_t i = last_idx; i < idx; ++i)
@@ -394,14 +375,17 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
             } // for
         } // if
 
-        void* const elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
-        if (NULL == elem)
+        for (size_t i = 0; i < ref_count; ++i)
         {
-            errno = -1;
-            goto error;
-        } // if
+            void* const elem = vrd_trie_insert(self->trie, len, sequence, (void*) idx);
+            if (NULL == elem)
+            {
+                errno = -1;
+                goto error;
+            } // if
 
-        self->sequences[idx] = elem;
+            self->sequences[idx] = elem;
+        } // for
 
         free(sequence);
         sequence = NULL;
@@ -489,6 +473,13 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
             } // if
 
             count = fwrite(&i, sizeof(i), 1, stream);
+            if (1 != count)
+            {
+                goto error;
+            } // if
+
+            size_t const ref_count = ((size_t*) self->sequences[i])[1];  // Opaque!
+            count = fwrite(&ref_count, sizeof(ref_count), 1, stream);
             if (1 != count)
             {
                 goto error;

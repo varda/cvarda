@@ -1,5 +1,5 @@
 #include <assert.h>     // assert
-#include <stddef.h>     // NULL
+#include <stddef.h>     // NULL, size_t
 #include <stdio.h>      // fprintf, stderr
 #include <stdlib.h>     // EXIT_*
 
@@ -23,7 +23,28 @@ main(int argc, char* argv[])
 
     assert(a == b);
 
+    void* c = vrd_Seq_table_query(seq, 4, "ACGT");
+    assert(c == a);
+
+    size_t const idx = *(size_t*) c;
+
+    int ret = vrd_Seq_table_remove(seq, idx);
+    assert(0 == ret);
+
+    c = vrd_Seq_table_query(seq, 4, "ACGT");
+    assert(c == a);
+
+    ret = vrd_Seq_table_remove(seq, idx);
+    assert(0 == ret);
+
+    ret = vrd_Seq_table_remove(seq, idx);
+    assert(0 == ret);
+
+    c = vrd_Seq_table_query(seq, 4, "ACGT");
+    assert(NULL == c);
+
     vrd_Seq_table_destroy(&seq);
+    assert(NULL == seq);
 
     return EXIT_SUCCESS;
 } // main

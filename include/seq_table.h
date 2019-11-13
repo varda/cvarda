@@ -44,11 +44,6 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
                     char const* const path);
 
 
-// DEBUG
-void
-vrd_Seq_table_free_list_print(vrd_Seq_Table const* const self);
-
-
 #ifdef __cplusplus
 } // extern "C"
 #endif
