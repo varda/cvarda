@@ -10,6 +10,14 @@
 #include "trie.h"   // vrd_Trie, vrd_trie_*
 
 
+// This should be kept in sync with the opaque! data structure in trie.c
+struct Trie_Node
+{
+    void* data;
+    size_t count;
+}; // Trie_Node
+
+
 struct Free_Node
 {
     size_t start;
@@ -478,8 +486,8 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
                 goto error;
             } // if
 
-            size_t const ref_count = ((size_t*) self->sequences[i])[1];  // Opaque!
-            count = fwrite(&ref_count, sizeof(ref_count), 1, stream);
+            struct Trie_Node* const elem = self->sequences[i];
+            count = fwrite(&elem->count, sizeof(elem->count), 1, stream);
             if (1 != count)
             {
                 goto error;
