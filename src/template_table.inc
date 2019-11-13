@@ -56,7 +56,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_init)(size_t const ref_capacity,
     table->next = 0;
 
     return table;
-
 } // vrd_*_table_init
 
 

@@ -13,12 +13,36 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
+    vrd_SNV_Table* snv = vrd_SNV_table_init(10000, 1 << 24);
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
+        goto error;
+    } // if
+
+    vrd_SNV_table_write(snv, "store/snv");
+
+    vrd_SNV_table_destroy(&snv);
+
+    snv = vrd_SNV_table_init(10000, 1 << 24);
+    if (NULL == snv)
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
+        goto error;
+    } // if
+
+    vrd_SNV_table_read(snv, "store/snv");
+
+/*
     vrd_Seq_Table* seq = vrd_Seq_table_init(100);
     if (NULL == seq)
     {
         (void) fprintf(stderr, "vrd_Seq_table_init() failed\n");
         goto error;
     } // if
+
+    vrd_Seq_table_write(seq, "seq");
+
 
     vrd_Seq_table_free_list_print(seq);
 
@@ -83,14 +107,14 @@ main(int argc, char* argv[])
     (void) fprintf(stderr, "read: %d\n", vrd_Seq_table_read(seq, "seq"));
 
     vrd_Seq_table_free_list_print(seq);
-
-    vrd_Seq_table_destroy(&seq);
+*/
+    vrd_SNV_table_destroy(&snv);
 
     return EXIT_SUCCESS;
 
 error:
     {
-        vrd_Seq_table_destroy(&seq);
+        vrd_SNV_table_destroy(&snv);
 
         return EXIT_FAILURE;
     }

@@ -11,7 +11,7 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
 .PHONY: all
 
 all: $(TEST_TARGETS)
-	$(foreach TARGET, $(TEST_TARGETS), $(TARGET);)
+	$(foreach TARGET, $(TEST_TARGETS), valgrind $(TARGET);)
 	rm $(TEST_TARGETS)
 
 %.out: %.o
