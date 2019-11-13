@@ -7,7 +7,7 @@
 #include <stdlib.h>     // free, malloc
 
 #include "../include/seq_table.h"   // vrd_Seq_Table
-#include "trie.h"   // vrd_Trie, vrd_trie_*
+#include "trie.h"   // vrd_Trie_Node, vrd_Trie, vrd_trie_*
 
 
 struct Free_Node
@@ -25,7 +25,7 @@ struct vrd_Seq_Table
     size_t capacity;
     struct Free_Node* free_list;
 
-    void* sequences[];
+    vrd_Trie_Node* sequences[];
 }; // vrd_Seq_Table
 
 
@@ -477,13 +477,7 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
                 goto error;
             } // if
 
-            // This should be kept in sync with the opaque! data type in trie.c
-            struct Trie_Node
-            {
-                void* data;
-                size_t count;
-            }* const elem = self->sequences[i];
-            count = fwrite(&elem->count, sizeof(elem->count), 1, stream);
+            count = fwrite(&self->sequences[i]->count, sizeof(self->sequences[i]->count), 1, stream);
             if (1 != count)
             {
                 goto error;

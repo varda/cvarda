@@ -9,8 +9,7 @@
 
 struct Node
 {
-    void* data;
-    size_t count;
+    vrd_Trie_Node node;
     char* key;
     size_t len;
     struct Node* par;
@@ -99,8 +98,8 @@ node_init(size_t const len,
     node->link = NULL;
     node->next = NULL;
 
-    node->count = 0;
-    node->data = data;
+    node->node.count = 0;
+    node->node.data = data;
 
     return node;
 } // node_init
@@ -163,7 +162,7 @@ trie_insert(struct Node* const root,
     if (NULL == root)
     {
         struct Node* const node = node_init(len, key, data);
-        node->count = 1;
+        node->node.count = 1;
         return node;
     } // if
 
@@ -184,7 +183,7 @@ trie_insert(struct Node* const root,
 
     if (len == k)
     {
-        root->count += 1; // OVERFLOW
+        root->node.count += 1; // OVERFLOW
         return root;
     } // if
 
@@ -258,8 +257,8 @@ trie_remove(struct Node* const root,
 
     if (len == k)
     {
-        root->count -= 1;
-        if (0 == root->count)
+        root->node.count -= 1;
+        if (0 == root->node.count)
         {
             *deleted = true;
             struct Node* const node = root->next;
@@ -314,7 +313,7 @@ trie_find(struct Node* const root,
 } // trie_find
 
 
-void*
+vrd_Trie_Node*
 vrd_trie_insert(vrd_Trie* const self,
                 size_t const len,
                 char const key[len],
@@ -323,7 +322,7 @@ vrd_trie_insert(vrd_Trie* const self,
     assert(NULL != self);
 
     self->root = trie_insert(self->root, len, key, data);
-    return trie_find(self->root, len, key);
+    return &trie_find(self->root, len, key)->node;
 } // vrd_trie_insert
 
 
@@ -340,14 +339,14 @@ vrd_trie_remove(vrd_Trie* const self,
 } // vrd_trie_remove
 
 
-void*
+vrd_Trie_Node*
 vrd_trie_find(vrd_Trie const* const self,
               size_t const len,
               char const key[len])
 {
     assert(NULL != self);
 
-    return trie_find(self->root, len, key);
+    return &trie_find(self->root, len, key)->node;
 } // vrd_trie_find
 
 

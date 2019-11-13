@@ -11,6 +11,13 @@ extern "C"
 #include <stddef.h>     // size_t
 
 
+typedef struct vrd_Trie_Node
+{
+    void* data;
+    size_t count;
+} vrd_Trie_Node;
+
+
 typedef struct vrd_Trie vrd_Trie;
 
 
@@ -22,7 +29,7 @@ void
 vrd_trie_destroy(vrd_Trie** const self);
 
 
-void*
+vrd_Trie_Node*
 vrd_trie_insert(vrd_Trie* const self,
                 size_t const len,
                 char const key[len],
@@ -35,7 +42,7 @@ vrd_trie_remove(vrd_Trie* const self,
                 char const key[len]);
 
 
-void*
+vrd_Trie_Node*
 vrd_trie_find(vrd_Trie const* const self,
               size_t const len,
               char const key[len]);
