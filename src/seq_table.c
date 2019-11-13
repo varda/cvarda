@@ -10,14 +10,6 @@
 #include "trie.h"   // vrd_Trie, vrd_trie_*
 
 
-// This should be kept in sync with the opaque! data structure in trie.c
-struct Trie_Node
-{
-    void* data;
-    size_t count;
-}; // Trie_Node
-
-
 struct Free_Node
 {
     size_t start;
@@ -186,8 +178,7 @@ vrd_Seq_table_init(size_t const capacity)
         return NULL;
     } // if
 
-    vrd_Seq_Table* const table =
-        malloc(sizeof(*table) + sizeof(table->sequences[0]) * capacity);
+    vrd_Seq_Table* const table = malloc(sizeof(*table) + sizeof(table->sequences[0]) * capacity);
     if (NULL == table)
     {
         return NULL;
@@ -486,7 +477,12 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
                 goto error;
             } // if
 
-            struct Trie_Node* const elem = self->sequences[i];
+            // This should be kept in sync with the opaque! data type in trie.c
+            struct Trie_Node
+            {
+                void* data;
+                size_t count;
+            }* const elem = self->sequences[i];
             count = fwrite(&elem->count, sizeof(elem->count), 1, stream);
             if (1 != count)
             {
