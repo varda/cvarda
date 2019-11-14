@@ -1,9 +1,9 @@
-c_tests:
+C:
   image: etews/gcc-expect-valgrind
   script:
     - make check
 
-python_tests:
+Python:
   image: python:3.7-stretch
   script:
     - pip install --upgrade .
