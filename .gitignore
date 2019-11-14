@@ -2,3 +2,8 @@
 *.o
 *.out
 .idea/
+build
+python_ext/.coverage
+python_ext/tests/__pycache__
+tests/test_seq_table.out.dSYM
+venv
