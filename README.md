@@ -13,8 +13,6 @@ Varda2 Variant frequency database C library with Python module
 - `pip install --upgrade .`
 
 ### Testing
-
-- `cd python_ext`
 - `pip install -r requirements-dev.txt`
 - `coverage run -m pytest -sv`
 - `coverage html`
