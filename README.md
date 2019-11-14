@@ -9,6 +9,12 @@ Prerequisites for macOS (Mark):
 
 `pip install --upgrade .`
 
+### Testing
+
+- `cd python_ext`
+- `pip install -r requirements-dev.txt`
+- `coverage run -m pytest -sv`
+- `coverage html`
 
 ## C
 
