@@ -2,8 +2,9 @@
 *.o
 *.out
 .idea/
-build
-python_ext/.coverage
+build/
+.coverage
+python_coverage_html_report/
 python_ext/tests/__pycache__
-tests/test_*.dSYM
-venv
+*.dSYM
+venv/
