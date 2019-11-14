@@ -7,6 +7,7 @@ Varda2 Variant frequency database C library with Python module
 Prerequisites for macOS (Mark):
 - `export CFLAGS=-isysroot/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk`
 
+Installation:
 - `python3 -m venv venv`
 - `source venv/bin/activate`
 - `pip install --upgrade .`
