@@ -37,13 +37,16 @@ vrd_version(int* const major,
 } // vrd_version
 
 
-#include "avl_tree.h"
-#include "cov_table.h"
-#include "mnv_table.h"
-#include "seq_table.h"
-#include "snv_table.h"
-#include "trie.h"
-#include "utils.h"
+#include "avl_tree.h"   // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "cov_table.h"  // vrd_Cov_Table, vrd_Cov_table_*
+#include "iupac.h"      // VRD_IUPAC_SIZE, vrd_iupac_to_idx
+#include "mnv_table.h"  // vrd_MNV_Table, vrd_MNV_table_*
+#include "seq_table.h"  // vrd_Seq_Table, vrd_Seq_table_*
+#include "snv_table.h"  // vrd_SNV_Table, vrd_SNV_table_*
+#include "trie.h"       // vrd_Trie_Node, vrd_Trie, vrd_trie_*
+#include "utils.h"      // vrd_coverage_from_file,
+                        // vrd_variants_from_file,
+                        // vrd_annotate_from_file
 
 
 #ifdef __cplusplus

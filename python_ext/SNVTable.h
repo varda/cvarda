@@ -12,7 +12,7 @@
 
 #define VRD_TYPENAME SNV
 #define VRD_OBJNAME SNVTable
-#include "template_table.h"
+#include "template_table.h"     // SNVTableObject
 #undef VRD_OBJNAME
 #undef VRD_TYPENAME
 

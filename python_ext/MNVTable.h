@@ -12,7 +12,7 @@
 
 #define VRD_TYPENAME MNV
 #define VRD_OBJNAME MNVTable
-#include "template_table.h"
+#include "template_table.h"     // MNVTableObject
 #undef VRD_OBJNAME
 #undef VRD_TYPENAME
 

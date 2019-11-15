@@ -3,12 +3,12 @@
 #include <stdio.h>      // FILE, fprintf, fscanf
 #include <string.h>     // strlen
 
-#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_avl_tree_*
-#include "../include/cov_table.h"   // vrd_Cov_Table, vrd_cov_table_*
+#include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/cov_table.h"   // vrd_Cov_Table, vrd_Cov_table_*
 #include "../include/iupac.h"       // vrd_iupac_to_idx
-#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_mnv_table_*
-#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_seq_table_*
-#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_snv_table_*
+#include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
+#include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
+#include "../include/snv_table.h"   // vrd_SNV_Table, vrd_SNV_table_*
 #include "../include/trie.h"        // vrd_Trie_Node
 #include "../include/utils.h"       // vrd_coverage_from_file,
                                     // vrd_variants_from_file,

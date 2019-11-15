@@ -6,7 +6,7 @@
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "../include/varda.h"       // VRD_HOMOZYGOUS
-#include "mnv_tree.h"    // vrd_MNV_Tree, vrd_MNV_tree_*
+#include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
 
 
 #define VRD_TYPENAME MNV

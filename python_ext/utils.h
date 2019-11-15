@@ -5,7 +5,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>     // PyObject
 
-#include "../include/avl_tree.h"   // vrd_AVL_Tree
+#include "../include/avl_tree.h"    // vrd_AVL_Tree
 
 
 enum

@@ -6,6 +6,7 @@
 
 #include <assert.h>     // assert
 #include <errno.h>      // errno
+#include <stdbool.h>    // true
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX, UINT64_C, uint32_t, uint64_t
 #include <stdio.h>      // FILE, fread, fwrite
@@ -432,7 +433,7 @@ remove_node(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
             uint32_t suc = NULLPTR; // find the inorder successor
 
             len += 1;
-            while (1)
+            while (true)
             {
                 dir[len] = LEFT;
                 nodes[len] = right;

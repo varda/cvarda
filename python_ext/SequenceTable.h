@@ -12,7 +12,7 @@
 
 #define VRD_TYPENAME Seq
 #define VRD_OBJNAME SequenceTable
-#include "template_table.h"
+#include "template_table.h"     // SequenceTableObject
 #undef VRD_OBJNAME
 #undef VRD_TYPENAME
 

@@ -12,7 +12,7 @@
 
 #define VRD_TYPENAME Cov
 #define VRD_OBJNAME CoverageTable
-#include "template_table.h"
+#include "template_table.h"     // CoverageTableObject
 #undef VRD_OBJNAME
 #undef VRD_TYPENAME
 

@@ -4,7 +4,7 @@
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/template.h"    // VRD_TEMPLATE
-#include "cov_tree.h"    // vrd_Cov_Tree, vrd_Cov_tree_*
+#include "cov_tree.h"   // vrd_Cov_Tree, vrd_Cov_tree_*
 
 
 #define VRD_TYPENAME Cov
@@ -22,7 +22,7 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 
 
 #define VRD_INTERVAL
-#include "template_tree.inc"
+#include "template_tree.inc"    // vrd_Cov_tree_*
 #undef VRD_INTERVAL
 
 

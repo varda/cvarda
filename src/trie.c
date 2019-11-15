@@ -1,7 +1,7 @@
 #include <assert.h>     // assert
 #include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL, size_t
-#include <stdlib.h>     // malloc, free, realloc
+#include <stdlib.h>     // free, malloc, realloc
 #include <string.h>     // strncpy
 
 #include "../include/trie.h"    // vrd_Trie, vrd_trie_*
