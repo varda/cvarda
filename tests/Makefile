@@ -8,11 +8,14 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
            -Wold-style-definition -Wredundant-decls -Wnested-externs \
            -Wmissing-include-dirs -O0 -ggdb3 -DDEBUG
 
-.PHONY: all
+.PHONY: all clean
 
-all: $(TEST_TARGETS)
-	$(foreach TARGET, $(TEST_TARGETS), valgrind $(TARGET);)
+all: clean $(TEST_TARGETS)
+	$(foreach TARGET, $(TEST_TARGETS), valgrind -q --leak-check=full --error-exitcode=1 $(TARGET);)
 	rm $(TEST_TARGETS)
+
+clean:
+	rm -f $(TEST_TARGETS)
 
 %.out: %.o
 	$(CC) $(CFLAGS) -o $@ $< $(addprefix ../, $(filter-out src/main.o, $(OBJECTS)))
