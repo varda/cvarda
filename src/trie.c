@@ -9,7 +9,7 @@
 
 struct Node
 {
-    vrd_Trie_Node node;
+    vrd_Trie_Node base;
     char* key;
     size_t len;
     struct Node* par;
@@ -98,8 +98,8 @@ node_init(size_t const len,
     node->link = NULL;
     node->next = NULL;
 
-    node->node.count = 0;
-    node->node.data = data;
+    node->base.count = 0;
+    node->base.data = data;
 
     return node;
 } // node_init
@@ -162,7 +162,7 @@ trie_insert(struct Node* const root,
     if (NULL == root)
     {
         struct Node* const node = node_init(len, key, data);
-        node->node.count = 1;
+        node->base.count = 1;
         return node;
     } // if
 
@@ -183,7 +183,7 @@ trie_insert(struct Node* const root,
 
     if (len == k)
     {
-        root->node.count += 1; // OVERFLOW
+        root->base.count += 1; // OVERFLOW
         return root;
     } // if
 
@@ -257,8 +257,8 @@ trie_remove(struct Node* const root,
 
     if (len == k)
     {
-        root->node.count -= 1;
-        if (0 == root->node.count)
+        root->base.count -= 1;
+        if (0 == root->base.count)
         {
             *deleted = true;
             struct Node* const node = root->next;
