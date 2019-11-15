@@ -211,14 +211,13 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
         return errno;
     } // if
 
-    char* reference = NULL;
-
     FILE* stream = fopen(filename, "rb");
     if (NULL == stream)
     {
-        goto error;
+        return errno;
     } // if
 
+    char* reference = NULL;
     size_t size = 0;
     size_t count = fread(&size, sizeof(size), 1, stream);
     if (1 != count)
@@ -313,13 +312,13 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
         return errno;
     } // if
 
-    char* reference = NULL;
     FILE* stream = fopen(filename, "wb");
     if (NULL == stream)
     {
-        goto error;
+        return errno;
     } // if
 
+    char* reference = NULL;
     size_t count = fwrite(&self->next, sizeof(self->next), 1, stream);
     if (1 != count)
     {

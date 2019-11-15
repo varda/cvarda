@@ -306,13 +306,13 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
         return errno;
     } // if
 
-    char* sequence = NULL;
     FILE* stream = fopen(filename, "rb");
     if (NULL == stream)
     {
-        goto error;
+        return errno;
     } // if
 
+    char* sequence = NULL;
     size_t size = 0;
     size_t count = fread(&size, sizeof(size), 1, stream);
     if (1 != count)
@@ -438,15 +438,15 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
         return errno;
     } // if
 
-    char* sequence = NULL;
     FILE* stream = fopen(filename, "wb");
     if (NULL == stream)
     {
-        goto error;
+        return errno;
     } // if
 
     size_t const size = free_list_max(self->free_list, self->capacity);
 
+    char* sequence = NULL;
     size_t count = fwrite(&size, sizeof(size), 1, stream);
     if (1 != count)
     {
