@@ -17,7 +17,7 @@ Varda2 Variant frequency database C library with Python module
 - `coverage run -m pytest -sv`
 - `coverage html`
 
-HTML report ends up in `cvarda/python_ext/coverage_html_report/index.html`.
+HTML report ends up in `cvarda/coverage_html_report/index.html`.
 
 ## C
 
