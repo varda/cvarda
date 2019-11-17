@@ -11,8 +11,8 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
 .PHONY: all clean
 
 all: clean $(TEST_TARGETS)
-	$(foreach TARGET, $(TEST_TARGETS), valgrind -q --leak-check=full --error-exitcode=1 $(TARGET);)
-	rm $(TEST_TARGETS)
+	./run_tests.sh "$(TEST_TARGETS)"
+	rm -f $(TEST_TARGETS)
 
 clean:
 	rm -f $(TEST_TARGETS)

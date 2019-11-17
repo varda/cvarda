@@ -21,7 +21,6 @@ main(int argc, char* argv[])
     ret = vrd_Cov_table_insert(cov, 5, "chr1", 10, 20, 0);
     assert(0 == ret);
 
-
     vrd_Cov_table_destroy(&cov);
     assert(NULL == cov);
 
