@@ -203,6 +203,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
                                         char const* const path)
 {
     assert(NULL != self);
+    assert(NULL != path);
 
     char filename[FILENAME_MAX] = {'\0'};
     size_t const buf_size = FILENAME_MAX;
@@ -304,6 +305,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
                                          char const* const path)
 {
     assert(NULL != self);
+    assert(NULL != path);
 
     char filename[FILENAME_MAX] = {'\0'};
     size_t const buf_size = FILENAME_MAX;
