@@ -5,7 +5,7 @@
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
 #include "../include/template.h"    // VRD_TEMPLATE
-#include "../include/varda.h"       // VRD_HOMOZYGOUS
+#include "constants.h"  // VRD_HOMOZYGOUS
 #include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
 
 

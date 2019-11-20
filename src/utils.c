@@ -13,7 +13,7 @@
 #include "../include/utils.h"       // vrd_coverage_from_file,
                                     // vrd_variants_from_file,
                                     // vrd_annotate_from_file
-#include "../include/varda.h"       // VRD_HOMOZYGOUS
+#include "constants.h"  // VRD_HOMOZYGOUS
 
 
 size_t

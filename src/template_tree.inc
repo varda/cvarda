@@ -8,39 +8,17 @@
 #include <errno.h>      // errno
 #include <stdbool.h>    // true
 #include <stddef.h>     // NULL, size_t
-#include <stdint.h>     // UINT32_MAX, UINT64_C, uint32_t, uint64_t
+#include <stdint.h>     // UINT32_MAX, uint32_t, uint64_t
 #include <stdio.h>      // FILE, fread, fwrite
 #include <stdlib.h>     // free, malloc
 
-
-enum
-{
-    NULLPTR = 0,
-
-    LEFT = 0,
-    RIGHT = 1
-}; // constants
+#include "imath.h"      // ilog2, ipow2, umax, bittest
 
 
-static inline int
-ilog2(size_t const x)
-{
-    return 64 - __builtin_clzll(x);
-} // ilog2
+static uint32_t const NULLPTR = 0;
 
-
-static inline size_t
-ipow2(int const x)
-{
-    return (UINT64_C(1) << x);
-} // ipow2
-
-
-static inline size_t
-umax(size_t const a, size_t const b)
-{
-    return a > b ? a : b;
-} // umax
+static unsigned int const LEFT = 0;
+static unsigned int const RIGHT = 1;
 
 
 struct VRD_TEMPLATE(VRD_TYPENAME, _Tree)
@@ -126,7 +104,7 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
     // 27,777,890,035,287 nodes
     uint64_t path = 0;  // bit-path to first unbalanced ancestor
     int len = 0;    // length of the path
-    int dir = 0;
+    unsigned int dir = 0;
 
     uint32_t tmp = self->root;
     uint32_t tmp_par = self->root;  // parent of tmp
@@ -479,7 +457,6 @@ traverse(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
     } // if
 
     size_t count = 0;
-
     count += traverse(self, self->nodes[root].child[LEFT], depth + 1, (path << 1) + LEFT, subset);
     count += traverse(self, self->nodes[root].child[RIGHT], depth + 1, (path << 1) + RIGHT, subset);
 
@@ -547,17 +524,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 
     return count;
 } // vrd_*_tree_remove
-
-
-static inline size_t
-bittest(size_t const n, size_t const i)
-{
-    if (n & (1 << i))
-    {
-        return 1;
-    } // if
-    return 0;
-} // bittest
 
 
 static uint32_t

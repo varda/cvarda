@@ -16,14 +16,8 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 7
+#define VRD_VERSION_PATCH 8
 #endif
-
-
-enum
-{
-    VRD_HOMOZYGOUS = (1 << 28) - 1
-}; // constants
 
 
 static inline void

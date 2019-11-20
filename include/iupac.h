@@ -10,10 +10,7 @@ extern "C"
 #include <stddef.h>     // size_t
 
 
-enum
-{
-    VRD_IUPAC_SIZE = 16
-}; // constants
+static size_t const VRD_IUPAC_SIZE = 16;
 
 
 static inline size_t
