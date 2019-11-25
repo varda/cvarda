@@ -164,8 +164,8 @@ static PyMethodDef MNVTable_methods[] =
     {"diagnostics", (PyCFunction) MNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"
      "Gives diagnostic information about the structures in the :py:class:`MNVTable`\n\n"
-     "return: Diagnostics information\n"
-     "rtype: dictionary\n"},
+     ":return: Diagnostics information\n"
+     ":rtype: dictionary\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // MNVTable_methods

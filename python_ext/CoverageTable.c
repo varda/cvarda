@@ -158,8 +158,8 @@ static PyMethodDef CoverageTable_methods[] =
     {"diagnostics", (PyCFunction) CoverageTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"
      "Gives diagnostic information about the structures in the :py:class:`CoverageTable`\n\n"
-     "return: Diagnostics information\n"
-     "rtype: dictionary\n"},
+     ":return: Diagnostics information\n"
+     ":rtype: dictionary\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // CoverageTable_methods

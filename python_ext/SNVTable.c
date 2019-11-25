@@ -170,8 +170,8 @@ static PyMethodDef SNVTable_methods[] =
     {"diagnostics", (PyCFunction) SNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"
      "Gives diagnostic information about the structures in the :py:class:`SNVTable`\n\n"
-     "return: Diagnostics information\n"
-     "rtype: dictionary\n"},
+     ":return: Diagnostics information\n"
+     ":rtype: dictionary\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SNVTable_methods
