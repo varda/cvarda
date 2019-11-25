@@ -161,6 +161,12 @@ static PyMethodDef MNVTable_methods[] =
      "Write a :py:class:`MNVTable` to files\n\n"
      ":param string path: A path including a prefix that identifies the files.\n"},
 
+    {"diagnostics", (PyCFunction) MNVTable_diagnostics, METH_NOARGS,
+     "diagnostics()\n"
+     "Gives diagnostic information about the structures in the :py:class:`MNVTable`\n\n"
+     "return: Diagnostics information\n"
+     "rtype: dictionary\n"},
+
     {NULL, NULL, 0, NULL}  // sentinel
 }; // MNVTable_methods
 

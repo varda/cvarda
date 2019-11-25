@@ -139,3 +139,67 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _write)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const
 
     Py_RETURN_NONE;
 } // *_write
+
+
+static PyObject*
+VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self,
+                                           PyObject* const args)
+{
+    (void) args;
+
+    char** reference = NULL;
+    size_t* used = NULL;
+    size_t* height = NULL;
+
+    size_t const count = VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(self->table, &reference, &used, &height);
+    if ((size_t) -1 == count)
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // if
+
+    PyObject* const dict = PyDict_New();
+    if (NULL == dict)
+    {
+        goto error;
+    } // if
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        PyObject* const diag = Py_BuildValue("{s:i,s:i}", "nodes", used[i], "height", height[i]);
+        if (NULL == diag)
+        {
+            Py_DECREF(dict);
+            goto error;
+        } // if
+        int const ret = PyDict_SetItemString(dict, reference[i], diag);
+        if (-1 == ret)
+        {
+            Py_DECREF(dict);
+            goto error;
+        } // if
+    } // for
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        free(reference[i]);
+    } // for
+    free(reference);
+    free(used);
+    free(height);
+
+    return dict;
+error:
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            free(reference[i]);
+        } // for
+        free(reference);
+        free(used);
+        free(height);
+
+        PyErr_SetNone(PyExc_MemoryError);
+        return NULL;
+    }
+} // *_diagnostics

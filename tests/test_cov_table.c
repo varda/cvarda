@@ -30,7 +30,7 @@ main(int argc, char* argv[])
     size_t* height = NULL;
 
     size_t const count = vrd_Cov_table_diagnostics(cov, &reference, &used, &height);
-    assert(0 == ret);
+    assert((size_t) -1 != count);
 
     for (size_t i = 0; i < count; ++i)
     {
