@@ -38,3 +38,10 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
 int
 VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                          char const* const path);
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                               char*** const reference,
+                                               size_t** const used,
+                                               size_t** const height);

@@ -10,7 +10,7 @@
 #define VRD_TYPENAME SNV
 
 
-#include "template_table.inc"   // vrd_SNV_table_*
+#include "template_table.inc"   // reference_tree, vrd_SNV_table_*
 
 
 int

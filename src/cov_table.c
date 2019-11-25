@@ -10,7 +10,7 @@
 #define VRD_TYPENAME Cov
 
 
-#include "template_table.inc"   // vrd_Cov_table_*
+#include "template_table.inc"   // reference_tree, vrd_Cov_table_*
 
 
 int

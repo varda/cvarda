@@ -113,7 +113,7 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
     uint32_t unbal = self->root;    // first unbalanced ancestor of tmp
     uint32_t unbal_par = self->root;    // parent of unbalanced
 
-    uint32_t height = 0;
+    uint32_t height = 1;
     // Insert a new node at the BST position
     while (NULLPTR != tmp)
     {

@@ -10,7 +10,7 @@
 #define VRD_TYPENAME MNV
 
 
-#include "template_table.inc"   // vrd_MNV_table_*
+#include "template_table.inc"   // reference_tree, vrd_MNV_table_*
 
 
 int
