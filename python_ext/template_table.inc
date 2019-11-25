@@ -161,6 +161,7 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
     PyObject* const dict = PyDict_New();
     if (NULL == dict)
     {
+        fprintf(stderr, "PyDict_New()\n");
         goto error;
     } // if
 
@@ -169,12 +170,14 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
         PyObject* const diag = Py_BuildValue("{s:i,s:i}", "nodes", used[i], "height", height[i]);
         if (NULL == diag)
         {
+            fprintf(stderr, "Py_BuildValue()\n");
             Py_DECREF(dict);
             goto error;
         } // if
         int const ret = PyDict_SetItemString(dict, reference[i], diag);
         if (-1 == ret)
         {
+            fprintf(stderr, "PyDict_SetItemString()\n");
             Py_DECREF(dict);
             goto error;
         } // if
