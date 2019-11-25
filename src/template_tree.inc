@@ -12,21 +12,16 @@
 #include <stdio.h>      // FILE, fread, fwrite
 #include <stdlib.h>     // free, malloc
 
-#include "imath.h"      // ilog2, ipow2, umax, bittest
-
-
-static uint32_t const NULLPTR = 0;
-
-static unsigned int const LEFT = 0;
-static unsigned int const RIGHT = 1;
+#include "imath.h"  // ilog2, ipow2, umax, bittest
+#include "tree.h"   // NULLPTR, LEFT, RIGHT, vrd_Tree
 
 
 struct VRD_TEMPLATE(VRD_TYPENAME, _Tree)
 {
+    vrd_Tree base;
     uint32_t root;
 
     uint32_t capacity;
-
     uint32_t next;
     struct VRD_TEMPLATE(VRD_TYPENAME, _Node) nodes[];
 }; // vrd_*_Tree
@@ -51,6 +46,9 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(size_t const capacity)
     tree->root = NULLPTR;
     tree->next = 1;
     tree->capacity = capacity;
+
+    tree->base.used = 0;
+    tree->base.height = 0;
 
     return tree;
 } // vrd_*_tree_init
@@ -92,10 +90,13 @@ update_max(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 static void
 insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
 {
+    self->base.used += 1;
+
     // This is the first node in the tree
     if (NULLPTR == self->root)
     {
         self->root = ptr;
+        self->base.height = 1;
         return;
     } // if
 
@@ -112,6 +113,7 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
     uint32_t unbal = self->root;    // first unbalanced ancestor of tmp
     uint32_t unbal_par = self->root;    // parent of unbalanced
 
+    uint32_t height = 0;
     // Insert a new node at the BST position
     while (NULLPTR != tmp)
     {
@@ -137,9 +139,13 @@ insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
         } // if
         len += 1;
 
+        height += 1;
+
         tmp_par = tmp;
         tmp = self->nodes[tmp].child[dir];
     } // while
+
+    self->base.height = umax(self->base.height, height);
 
     self->nodes[tmp_par].child[dir] = ptr;
 
@@ -339,19 +345,22 @@ compress(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, size_t const count)
 static void
 balance(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
 {
-    size_t const nodes = tree_to_vine(self);
+    self->base.used = tree_to_vine(self);
+    self->base.height = 0;
 
-    size_t const leaves = nodes - (ipow2(ilog2(nodes + 1) - 1) - 1);
+    size_t const leaves = self->base.used - (ipow2(ilog2(self->base.used + 1) - 1) - 1);
     if (0 < leaves)
     {
         compress(self, leaves);
+        self->base.height = 1;
     } // if
 
-    size_t rem = nodes - leaves;
+    size_t rem = self->base.used - leaves;
     while (1 < rem)
     {
         rem /= 2;
         compress(self, rem);
+        self->base.height += 1;
     } // while
 } // balance
 
@@ -363,6 +372,8 @@ remove_node(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
             int const depth,
             uint64_t const path)
 {
+    self->base.used -= 1;
+
     uint32_t nodes[64] = {NULLPTR};
     int dir[64] = {LEFT};
     uint32_t tmp = self->root;
@@ -463,7 +474,7 @@ traverse(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
     if (vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
     {
         remove_node(self, depth, path);
-        count += 1;  // OVERFLOW
+        count += 1;
     } // if
     return count;
 } // traverse

@@ -130,7 +130,7 @@ vrd_variants_from_file(FILE* stream,
             } // if
 
         } // else
-        count += 1; // OVERFLOW
+        count += 1;  // OVERFLOW
     } // while
 
     return count;

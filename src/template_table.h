@@ -6,6 +6,8 @@
 
 #include <stddef.h>     // size_t
 
+#include "tree.h"   // vrd_Tree
+
 
 typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Table) VRD_TEMPLATE(VRD_TYPENAME, _Table);
 

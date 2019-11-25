@@ -135,7 +135,7 @@ traverse_seq(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
     {
         remove_node(self, depth, path);
         vrd_Seq_table_remove(seq_table, self->nodes[root].inserted);
-        count += 1;  // OVERFLOW
+        count += 1;
     } // if
     return count;
 } // traverse_seq

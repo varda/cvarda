@@ -183,7 +183,7 @@ trie_insert(struct Node* const root,
 
     if (len == k)
     {
-        root->base.count += 1; // OVERFLOW
+        root->base.count += 1;  // OVERFLOW
         return root;
     } // if
 
