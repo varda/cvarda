@@ -16,9 +16,9 @@ for target in ${1}; do
     ret=${?}
     if [ ${ret} -ne 0 ]; then
         FAIL=1
-        echo -e "\e[31mFAILED\e[39m"
+        echo -e "\x1b[31mFAILED\x1b[39m"
     else
-        echo -e "\e[32mPASSED\e[39m"
+        echo -e "\x1b[32mPASSED\x1b[39m"
     fi
 done
 
