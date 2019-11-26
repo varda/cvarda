@@ -37,7 +37,7 @@ CoverageTable_insert(CoverageTableObject* const self,
 
     int ret = 0;
     Py_BEGIN_ALLOW_THREADS
-    ret = vrd_Cov_table_insert(self->table, len, reference, start, end, sample_id);
+    ret = vrd_Cov_table_insert(self->table, len + 1, reference, start, end, sample_id);
     Py_END_ALLOW_THREADS
 
     if (0 != ret)
@@ -77,7 +77,7 @@ CoverageTable_query(CoverageTableObject* const self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_Cov_table_query_stab(self->table, len, reference, start, end, subset);
+    result = vrd_Cov_table_query_stab(self->table, len + 1, reference, start, end, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
