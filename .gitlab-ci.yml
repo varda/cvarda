@@ -1,7 +1,7 @@
 C:
   image: etews/gcc-expect-valgrind
   script:
-    - make check
+    - make check MEMCHECK=TRUE
 
 Python:
   image: python:3.7-stretch

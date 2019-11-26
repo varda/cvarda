@@ -11,7 +11,7 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
 .PHONY: all clean
 
 all: clean $(TEST_TARGETS)
-	./run_tests.sh "$(TEST_TARGETS)"
+	./run_tests.sh "$(TEST_TARGETS)" $(MEMCHECK)
 	rm -f $(TEST_TARGETS)
 
 clean:

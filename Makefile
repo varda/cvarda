@@ -26,7 +26,7 @@ all: $(TARGET)
 
 export OBJECTS
 check: $(OBJECTS)
-	$(MAKE) -C tests
+	$(MAKE) -C tests MEMCHECK=$(MEMCHECK)
 
 clean:
 	rm -f $(OBJECTS) $(DEPS) $(TARGET)
