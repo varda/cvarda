@@ -34,9 +34,9 @@ main(int argc, char* argv[])
 
     for (size_t i = 0; i < count; ++i)
     {
-        fprintf(stderr, "ref: %s\n", reference[i]);
-        fprintf(stderr, "used: %zu\n", used[i]);
-        fprintf(stderr, "height: %zu\n", height[i]);
+        (void) fprintf(stderr, "ref: %s\n", reference[i]);
+        (void) fprintf(stderr, "used: %zu\n", used[i]);
+        (void) fprintf(stderr, "height: %zu\n", height[i]);
         free(reference[i]);
     } // for
     free(reference);

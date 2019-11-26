@@ -41,6 +41,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     self->nodes[ptr].child[RIGHT] = NULLPTR;
     self->nodes[ptr].key = key;
     self->nodes[ptr].balance = 0;
+    self->nodes[ptr].sample_id = 0;
 
     insert(self, ptr);
 

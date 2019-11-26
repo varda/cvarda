@@ -43,7 +43,7 @@ SNVTable_insert(SNVTableObject* const self,
         return NULL;
     } // if
 
-    if (0 != vrd_SNV_table_insert(self->table, len, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
+    if (0 != vrd_SNV_table_insert(self->table, len + 1, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
     {
         PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_SNV_table_insert() failed");
         return NULL;
@@ -87,7 +87,7 @@ SNVTable_query(SNVTableObject* const self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_SNV_table_query_stab(self->table, len, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
+    result = vrd_SNV_table_query_stab(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 

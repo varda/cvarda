@@ -38,7 +38,7 @@ MNVTable_insert(MNVTableObject* const self,
         return NULL;
     } // if
 
-    if (0 != vrd_MNV_table_insert(self->table, len, reference, start, end, sample_id, phase, inserted))
+    if (0 != vrd_MNV_table_insert(self->table, len + 1, reference, start, end, sample_id, phase, inserted))
     {
         PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert: vrd_MNV_table_insert() failed");
         return NULL;
@@ -76,7 +76,7 @@ MNVTable_query(MNVTableObject* const self,
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_MNV_table_query_stab(self->table, len, reference, start, end, inserted, subset);
+    result = vrd_MNV_table_query_stab(self->table, len + 1, reference, start, end, inserted, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 

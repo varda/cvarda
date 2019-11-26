@@ -432,12 +432,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table
     for (size_t i = 0; i < self->next; ++i)
     {
         (*reference)[i] = NULL;
-        size_t const len = vrd_trie_key(self->trees[i], &(*reference)[i]);
-
-        fprintf(stderr, "len: %zu\n", len);
-        fprintf(stderr, "ch: %d\n", (*reference)[i][len - 1]);
-
-        (void) len;
+        (void) vrd_trie_key(self->trees[i], &(*reference)[i]);
 
         vrd_Tree const tree = *(vrd_Tree*) self->trees[i]->data;
         (*used)[i] = tree.used;
