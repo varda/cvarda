@@ -22,3 +22,14 @@ def test_diag():
     cov_table.insert('chr1', 4, 5, 0)
     diag = cov_table.diagnostics()
     assert diag == {'chr1': {'height': 3, 'nodes': 4}}
+
+
+def test_a():
+    # cov table
+    ref_capacity = 1000  # max number of distinct reference sequences
+    tree_capacity = pow(2, 24)  # number of nodes per tree
+    cov_table = cvarda.CoverageTable(ref_capacity, tree_capacity)
+
+    coverage_filename = "python_ext/tests/test_diag_coverage.varda"
+    cvarda.coverage_from_file(coverage_filename, 1, cov_table)
+    stats = cov_table.diagnostics()
