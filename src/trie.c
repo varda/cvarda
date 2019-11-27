@@ -362,7 +362,7 @@ trie_key(struct Node const* const node, char** key)
     *key = realloc(*key, len + node->len);
     if (NULL == *key)
     {
-        free(*key);
+        // FIXME: leaking
         return 0;
     } // if
     (void) strncpy(&(*key)[len], node->key, node->len);
@@ -373,5 +373,15 @@ trie_key(struct Node const* const node, char** key)
 size_t
 vrd_trie_key(vrd_Trie_Node const* const ptr, char** key)
 {
-    return trie_key((struct Node*) ptr, key);
+    size_t const len = trie_key((struct Node*) ptr, key);
+
+    *key = realloc(*key, len + 1);
+    if (NULL == *key)
+    {
+        // FIXME: leaking
+        return 0;
+    } // if
+    (*key)[len] = '\0';
+
+    return len;
 } // vrd_trie_key
