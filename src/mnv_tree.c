@@ -83,6 +83,7 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
     } // if
 
     size_t res = 0;
+    // TODO: match inserted; iupac, overlap, ...
     if (start >= self->nodes[root].key &&
         end <= self->nodes[root].end &&
         inserted == self->nodes[root].inserted &&
