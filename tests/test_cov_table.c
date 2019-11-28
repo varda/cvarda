@@ -22,23 +22,19 @@ main(int argc, char* argv[])
 
     fclose(stream);
 
-    char** reference = NULL;
-    size_t* used = NULL;
-    size_t* height = NULL;
+    vrd_Diagnostics* diag = NULL;
 
-    size_t const count = vrd_Cov_table_diagnostics(cov, &reference, &used, &height);
+    size_t const count = vrd_Cov_table_diagnostics(cov, &diag);
     assert((size_t) -1 != count);
 
     for (size_t i = 0; i < count; ++i)
     {
-        (void) fprintf(stderr, "ref: %s\n", reference[i]);
-        (void) fprintf(stderr, "used: %zu\n", used[i]);
-        (void) fprintf(stderr, "height: %zu\n", height[i]);
-        free(reference[i]);
+        (void) fprintf(stderr, "ref: %s\n", diag[i].reference);
+        (void) fprintf(stderr, "nodes: %zu\n", diag[i].nodes);
+        (void) fprintf(stderr, "height: %zu\n", diag[i].height);
+        free(diag[i].reference);
     } // for
-    free(reference);
-    free(used);
-    free(height);
+    free(diag);
 
 /*
     int ret = vrd_Cov_table_insert(cov, 5, "chr1", 10, 20, 0);

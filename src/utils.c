@@ -150,8 +150,8 @@ error:
         count -= vrd_SNV_table_remove(snv, subset);
         count -= vrd_MNV_table_remove_seq(mnv, subset, seq);
         vrd_AVL_tree_destroy(&subset);
+        return count;
     }
-    return count;
 } // vrd_variants_from_file
 
 

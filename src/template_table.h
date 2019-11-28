@@ -6,6 +6,7 @@
 
 #include <stddef.h>     // size_t
 
+#include "../include/diagnostics.h"     // vrd_Diagnostics
 #include "tree.h"   // vrd_Tree
 
 
@@ -42,6 +43,4 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
-                                               char*** const reference,
-                                               size_t** const used,
-                                               size_t** const height);
+                                               vrd_Diagnostics** diag);

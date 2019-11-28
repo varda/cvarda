@@ -16,7 +16,7 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 9
+#define VRD_VERSION_PATCH 10
 #endif
 
 
@@ -33,6 +33,7 @@ vrd_version(int* const major,
 
 #include "avl_tree.h"   // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "cov_table.h"  // vrd_Cov_Table, vrd_Cov_table_*
+#include "diagnostics.h"    // vrd_Diagnostics
 #include "iupac.h"      // VRD_IUPAC_SIZE, vrd_iupac_to_idx
 #include "mnv_table.h"  // vrd_MNV_Table, vrd_MNV_table_*
 #include "seq_table.h"  // vrd_Seq_Table, vrd_Seq_table_*

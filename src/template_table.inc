@@ -12,6 +12,7 @@
                         // fwrite, snprintf
 #include <stdlib.h>     // free, malloc
 
+#include "../include/diagnostics.h"     // vrd_Diagnostics
 #include "../include/trie.h"    // vrd_Trie_Node, vrd_Trie, vrd_trie_*
 
 
@@ -399,44 +400,25 @@ error:
 
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
-                                               char*** const reference,
-                                               size_t** const used,
-                                               size_t** const height)
+                                               vrd_Diagnostics** diag)
 {
     assert(NULL != self);
-    assert(NULL != reference);
-    assert(NULL != used);
-    assert(NULL != height);
+    assert(NULL != diag);
 
-    *reference = malloc(sizeof(*reference) * self->next);
-    if (NULL == *reference)
+    *diag = malloc(sizeof(**diag) * self->next);
+    if (NULL == *diag)
     {
-        return -1;
-    } // if
-
-    *used = malloc(sizeof(*used) * self->next);
-    if (NULL == *used)
-    {
-        free(*reference);
-        return -1;
-    } // if
-
-    *height = malloc(sizeof(*height) * self->next);
-    if (NULL == *height)
-    {
-        free(*reference);
-        free(*used);
         return -1;
     } // if
 
     for (size_t i = 0; i < self->next; ++i)
     {
-        (*reference)[i] = NULL;
-        (void) vrd_trie_key(self->trees[i], &(*reference)[i]);
+        (*diag)[i].reference = NULL;
+        (void) vrd_trie_key(self->trees[i], &(*diag)[i].reference);
 
         vrd_Tree const tree = *(vrd_Tree*) self->trees[i]->data;
-        (*used)[i] = tree.used;
-        (*height)[i] = tree.height;
+        (*diag)[i].nodes = tree.used;
+        (*diag)[i].height = tree.height;
     } // for
     return self->next;
 } // vrd_*_table_diagnostics

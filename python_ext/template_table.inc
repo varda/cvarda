@@ -147,11 +147,8 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
 {
     (void) args;
 
-    char** reference = NULL;
-    size_t* used = NULL;
-    size_t* height = NULL;
-
-    size_t const count = VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(self->table, &reference, &used, &height);
+    vrd_Diagnostics* diag = NULL;
+    size_t const count = VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(self->table, &diag);
     if ((size_t) -1 == count)
     {
         PyErr_SetFromErrno(PyExc_OSError);
@@ -167,14 +164,14 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
 
     for (size_t i = 0; i < count; ++i)
     {
-        PyObject* const diag = Py_BuildValue("{s:i,s:i}", "nodes", used[i], "height", height[i]);
-        if (NULL == diag)
+        PyObject* const entry = Py_BuildValue("{s:i,s:i}", "nodes", diag[i].nodes, "height", diag[i].height);
+        if (NULL == entry)
         {
             fprintf(stderr, "Py_BuildValue()\n");
             Py_DECREF(dict);
             goto error;
         } // if
-        int const ret = PyDict_SetItemString(dict, reference[i], diag);
+        int const ret = PyDict_SetItemString(dict, diag[i].reference, entry);
         if (-1 == ret)
         {
             fprintf(stderr, "PyDict_SetItemString()\n");
@@ -185,22 +182,18 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
 
     for (size_t i = 0; i < count; ++i)
     {
-        free(reference[i]);
+        free(diag[i].reference);
     } // for
-    free(reference);
-    free(used);
-    free(height);
+    free(diag);
 
     return dict;
 error:
     {
         for (size_t i = 0; i < count; ++i)
         {
-            free(reference[i]);
+            free(diag[i].reference);
         } // for
-        free(reference);
-        free(used);
-        free(height);
+        free(diag);
 
         PyErr_SetNone(PyExc_MemoryError);
         return NULL;
