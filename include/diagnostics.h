@@ -13,7 +13,7 @@ extern "C"
 typedef struct vrd_Diagnostics
 {
     char* reference;
-    size_t nodes;
+    size_t entries;
     size_t height;
 } vrd_Diagnostics;
 

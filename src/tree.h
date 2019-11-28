@@ -18,7 +18,7 @@ static unsigned int const RIGHT = 1;
 
 typedef struct vrd_Tree
 {
-    uint32_t used;
+    uint32_t entries;
     uint32_t height;
 } vrd_Tree;
 

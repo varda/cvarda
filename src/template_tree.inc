@@ -47,7 +47,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(size_t const capacity)
     tree->next = 1;
     tree->capacity = capacity;
 
-    tree->base.used = 0;
+    tree->base.entries = 0;
     tree->base.height = 0;
 
     return tree;
@@ -90,7 +90,7 @@ update_max(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 static void
 insert(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const ptr)
 {
-    self->base.used += 1;
+    self->base.entries += 1;
 
     // This is the first node in the tree
     if (NULLPTR == self->root)
@@ -345,17 +345,17 @@ compress(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, size_t const count)
 static void
 balance(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
 {
-    self->base.used = tree_to_vine(self);
+    self->base.entries = tree_to_vine(self);
     self->base.height = 0;
 
-    size_t const leaves = self->base.used - (ipow2(ilog2(self->base.used + 1) - 1) - 1);
+    size_t const leaves = self->base.entries - (ipow2(ilog2(self->base.entries + 1) - 1) - 1);
     if (0 < leaves)
     {
         compress(self, leaves);
         self->base.height = 1;
     } // if
 
-    size_t rem = self->base.used - leaves;
+    size_t rem = self->base.entries - leaves;
     while (1 < rem)
     {
         rem /= 2;
@@ -372,7 +372,7 @@ remove_node(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
             int const depth,
             uint64_t const path)
 {
-    self->base.used -= 1;
+    self->base.entries -= 1;
 
     uint32_t nodes[64] = {NULLPTR};
     int dir[64] = {LEFT};

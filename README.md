@@ -10,7 +10,7 @@ Varda2 Variant frequency database C library with Python module
 ### Installation:
 - `python3 -m venv venv`
 - `source venv/bin/activate`
-- `pip install --upgrade .`
+- `pip install --upgrade -v .`
 
 ### Testing
 - `pip install -r requirements-dev.txt`
@@ -31,6 +31,10 @@ or for a release build:
 ### Tests
 
 `make check`
+
+when valgrind is installed:
+
+`make check MEMCHECK=TRUE`
 
 
 ## Documentation

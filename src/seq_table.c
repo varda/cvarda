@@ -6,6 +6,7 @@
                         // fwrite, snprintf
 #include <stdlib.h>     // free, malloc
 
+#include "../include/diagnostics.h"     // vrd_Diagnostics
 #include "../include/seq_table.h"   // vrd_Seq_Table
 #include "../include/trie.h"        // vrd_Trie_Node, vrd_Trie, vrd_trie_*
 
@@ -504,3 +505,32 @@ error:
         return err;
     }
 } // vrd_Seq_table_write
+
+
+size_t
+vrd_Seq_table_diagnostics(vrd_Seq_Table const* const self,
+                          vrd_Diagnostics** diag)
+{
+    assert(NULL != self);
+    assert(NULL != diag);
+
+    *diag = malloc(sizeof(**diag));
+    if (NULL == *diag)
+    {
+        return -1;
+    } // if
+
+    (*diag)[0].reference = NULL;
+    (*diag)[0].height = 0;
+    (*diag)[0].entries = 0;
+    size_t const size = free_list_max(self->free_list, self->capacity);
+    for (size_t i = 0; i < size; ++i)
+    {
+        if (NULL != self->sequences[i])
+        {
+            (*diag)[0].entries += 1;
+        } // if
+    } // for
+
+    return 1;
+} // vrd_Seq_table_diagnostics

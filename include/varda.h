@@ -12,11 +12,11 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_MINOR
-#define VRD_VERSION_MINOR 0
+#define VRD_VERSION_MINOR 1
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 10
+#define VRD_VERSION_PATCH 0
 #endif
 
 

@@ -153,6 +153,33 @@ SequenceTable_write(SequenceTableObject* const self,
 } // SequenceTable_write
 
 
+static PyObject*
+SequenceTable_diagnostics(SequenceTableObject* const self,
+                          PyObject* const args)
+{
+    (void) args;
+
+    vrd_Diagnostics* diag = NULL;
+    size_t const count = vrd_Seq_table_diagnostics(self->table, &diag);
+    if ((size_t) -1 == count)
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // if
+
+    PyObject* const entry = Py_BuildValue("{s:i}", "entries", diag[0].entries);
+
+    free(diag);
+
+    if (NULL == entry)
+    {
+        PyErr_SetNone(PyExc_MemoryError);
+        return NULL;
+    } // if
+
+    return entry;
+} // *_diagnostics
+
 static PyMethodDef SequenceTable_methods[] =
 {
     {"insert", (PyCFunction) SequenceTable_insert, METH_VARARGS,
@@ -183,6 +210,12 @@ static PyMethodDef SequenceTable_methods[] =
      "write(path)\n"
      "Write a :py:class:`SequenceTable` to files\n\n"
      ":param string path: A path including a prefix that identifies the files.\n"},
+
+    {"diagnostics", (PyCFunction) SequenceTable_diagnostics, METH_NOARGS,
+     "diagnostics()\n"
+     "Gives diagnostic information about the structures in the :py:class:`SequenceTable`\n\n"
+     ":return: Diagnostics information\n"
+     ":rtype: dictionary\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SequenceTable_methods

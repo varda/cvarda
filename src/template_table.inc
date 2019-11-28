@@ -417,7 +417,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table
         (void) vrd_trie_key(self->trees[i], &(*diag)[i].reference);
 
         vrd_Tree const tree = *(vrd_Tree*) self->trees[i]->data;
-        (*diag)[i].nodes = tree.used;
+        (*diag)[i].entries = tree.entries;
         (*diag)[i].height = tree.height;
     } // for
     return self->next;

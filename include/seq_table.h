@@ -7,6 +7,9 @@ extern "C"
 #endif
 
 
+#include <stddef.h>     // size_t
+
+#include "diagnostics.h"    // vrd_Diagnostics
 #include "trie.h"   // vrd_Trie_Node
 
 
@@ -45,6 +48,11 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
 int
 vrd_Seq_table_write(vrd_Seq_Table const* const self,
                     char const* const path);
+
+
+size_t
+vrd_Seq_table_diagnostics(vrd_Seq_Table const* const self,
+                          vrd_Diagnostics** diag);
 
 
 #ifdef __cplusplus

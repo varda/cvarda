@@ -29,8 +29,8 @@ main(int argc, char* argv[])
 
     for (size_t i = 0; i < count; ++i)
     {
-        (void) fprintf(stderr, "ref: %s\n", diag[i].reference);
-        (void) fprintf(stderr, "nodes: %zu\n", diag[i].nodes);
+        (void) fprintf(stderr, "reference: %s\n", diag[i].reference);
+        (void) fprintf(stderr, "entries: %zu\n", diag[i].entries);
         (void) fprintf(stderr, "height: %zu\n", diag[i].height);
         free(diag[i].reference);
     } // for

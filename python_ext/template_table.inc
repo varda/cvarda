@@ -158,23 +158,20 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
     PyObject* const dict = PyDict_New();
     if (NULL == dict)
     {
-        fprintf(stderr, "PyDict_New()\n");
         goto error;
     } // if
 
     for (size_t i = 0; i < count; ++i)
     {
-        PyObject* const entry = Py_BuildValue("{s:i,s:i}", "nodes", diag[i].nodes, "height", diag[i].height);
+        PyObject* const entry = Py_BuildValue("{s:i,s:i}", "entries", diag[i].entries, "height", diag[i].height);
         if (NULL == entry)
         {
-            fprintf(stderr, "Py_BuildValue()\n");
             Py_DECREF(dict);
             goto error;
         } // if
         int const ret = PyDict_SetItemString(dict, diag[i].reference, entry);
         if (-1 == ret)
         {
-            fprintf(stderr, "PyDict_SetItemString()\n");
             Py_DECREF(dict);
             goto error;
         } // if
