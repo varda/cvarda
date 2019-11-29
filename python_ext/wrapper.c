@@ -200,7 +200,7 @@ static PyMethodDef methods[] =
      ":type seq_table: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
-     ":return: The number of inserted variants\n"
+     ":return: The number of annotated variants\n"
      ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
