@@ -29,24 +29,13 @@ main(int argc, char* argv[])
 
     for (size_t i = 0; i < count; ++i)
     {
-        (void) fprintf(stderr, "reference: %s\n", diag[i].reference);
-        (void) fprintf(stderr, "entries: %zu\n", diag[i].entries);
-        (void) fprintf(stderr, "height: %zu\n", diag[i].height);
+        //(void) fprintf(stderr, "reference: %s\n", diag[i].reference);
+        //(void) fprintf(stderr, "entries: %zu\n", diag[i].entries);
+        //(void) fprintf(stderr, "height: %zu\n", diag[i].height);
         free(diag[i].reference);
     } // for
     free(diag);
 
-/*
-    int ret = vrd_Cov_table_insert(cov, 5, "chr1", 10, 20, 0);
-    assert(0 == ret);
-
-    ret = vrd_Cov_table_insert(cov, 5, "chr2", 10, 20, 0);
-    assert(0 == ret);
-
-    ret = vrd_Cov_table_insert(cov, 5, "chr2", 10, 20, 0);
-    assert(0 == ret);
-
-*/
     vrd_Cov_table_destroy(&cov);
     assert(NULL == cov);
 

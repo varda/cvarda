@@ -162,13 +162,46 @@ annotate_from_file(PyObject* const self,
 static PyMethodDef methods[] =
 {
     {"coverage_from_file", (PyCFunction) coverage_from_file, METH_VARARGS,
-     "coverage_from_file(path, sample_id, cov_table)\n"},
+     "coverage_from_file(path, sample_id, cov_table)\n"
+     "Import covered regions for a given sample from a file\n\n"
+     ":param string path: The file path\n"
+     ":param int sample_id: The sample ID\n"
+     ":param cov_table: The coverage table\n"
+     ":type cov_table: :py:class:`CoverageTable`\n"
+     ":return: The number of inserted covered regions\n"
+     ":rtype: integer\n"},
 
     {"variants_from_file", (PyCFunction) variants_from_file, METH_VARARGS,
-     "variants_from_file(path, sample_id, snv_table, mnv_table, seq_table)\n"},
+     "variants_from_file(path, sample_id, snv_table, mnv_table, seq_table)\n"
+     "Import variants for a given sample from a file\n\n"
+     ":param string path: The file path\n"
+     ":param int sample_id: The sample ID\n"
+     ":param snv_table: The SNV table\n"
+     ":type snv_table: :py:class:`SNVTable`\n"
+     ":param mnv_table: The MNV table\n"
+     ":type mnv_table: :py:class:`MNVTable`\n"
+     ":param seq_table: The Sequence table\n"
+     ":type seq_table: :py:class:`SequenceTable`\n"
+     ":return: The number of inserted variants\n"
+     ":rtype: integer\n"},
 
     {"annotate_from_file", (PyCFunction) annotate_from_file, METH_VARARGS,
-     "annotate_from_file(out_path, in_path, cov_table, snv_table, mnv_table, seq_table[, subset])\n"},
+     "annotate_from_file(out_path, in_path, cov_table, snv_table, mnv_table, seq_table[, subset])\n"
+     "Annotate variants in the input file against (a subset) of the database\n\n"
+     ":param string out_path: The file path for the annotation (output)\n"
+     ":param string in_path: The file path for the variants (input)\n"
+     ":param cov_table: The coverage table\n"
+     ":type cov_table: :py:class:`CoverageTable`\n"
+     ":param snv_table: The SNV table\n"
+     ":type snv_table: :py:class:`SNVTable`\n"
+     ":param mnv_table: The MNV table\n"
+     ":type mnv_table: :py:class:`MNVTable`\n"
+     ":param seq_table: The Sequence table\n"
+     ":type seq_table: :py:class:`SequenceTable`\n"
+     ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
+     ":type subset: list, optional\n"
+     ":return: The number of inserted variants\n"
+     ":rtype: integer\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // methods
