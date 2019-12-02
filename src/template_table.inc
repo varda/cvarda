@@ -114,9 +114,9 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 
 
 static VRD_TEMPLATE(VRD_TYPENAME, _Tree)*
-reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
-               size_t const len,
-               char const reference[len])
+tree_from_reference(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                    size_t const len,
+                    char const reference[len])
 {
 
     vrd_Trie_Node* elem = vrd_trie_find(self->trie, len, reference);
@@ -148,11 +148,11 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
     self->next += 1;
 
     return elem->data;
-} // reference_tree
+} // tree_from_reference
 
 
 static VRD_TEMPLATE(VRD_TYPENAME, _Tree)*
-read_tree(char const* const path,
+tree_read(char const* const path,
           size_t const idx,
           size_t const capacity)
 {
@@ -197,7 +197,7 @@ error:
 
         return NULL;
     }
-} // read_tree
+} // tree_read
 
 
 int
@@ -249,7 +249,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
             goto error;
         } // if
 
-        VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = read_tree(path, i, self->tree_capacity);
+        VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = tree_read(path, i, self->tree_capacity);
         if (NULL == tree)
         {
             errno = -1;

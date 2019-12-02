@@ -36,19 +36,18 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(size_t const capacity)
         return NULL;
     } // if
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree =
-        malloc(sizeof(VRD_TEMPLATE(VRD_TYPENAME, _Tree)) + sizeof(struct VRD_TEMPLATE(VRD_TYPENAME, _Node)) * ((size_t) capacity + 1));
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = malloc(sizeof(*tree) + sizeof(tree->nodes[0]) * (capacity + 1));
     if (NULL == tree)
     {
         return NULL;
     } // if
 
     tree->root = NULLPTR;
-    tree->next = 1;
+    tree->next = 1;  // we skip the 0th element as we use 0 as NULL pointer
     tree->capacity = capacity;
 
     tree->base.entries = 0;
-    tree->base.entry_size = sizeof(struct VRD_TEMPLATE(VRD_TYPENAME, _Node));
+    tree->base.entry_size = sizeof(tree->nodes[0]);
     tree->base.height = 0;
 
     return tree;
@@ -369,7 +368,7 @@ balance(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self)
 // Adapted from:
 // http://adtinfo.org/libavl.html/Deleting-from-an-AVL-Tree.html
 static void
-remove_node(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+node_remove(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
             int const depth,
             uint64_t const path)
 {
@@ -453,7 +452,7 @@ remove_node(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
             nodes[depth] = suc;
         } // else
     } // else
-} // remove_node
+} // node_remove
 
 
 static size_t
@@ -474,7 +473,7 @@ traverse(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
 
     if (vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
     {
-        remove_node(self, depth, path);
+        node_remove(self, depth, path);
         count += 1;
     } // if
     return count;

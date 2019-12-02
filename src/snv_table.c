@@ -24,7 +24,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
 {
     assert(NULL != self);
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = reference_tree(self, len, reference);
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = tree_from_reference(self, len, reference);
     if (NULL == tree)
     {
         return errno;

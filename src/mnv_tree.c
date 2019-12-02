@@ -134,7 +134,7 @@ traverse_seq(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
 
     if (vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
     {
-        remove_node(self, depth, path);
+        node_remove(self, depth, path);
         vrd_Seq_table_remove(seq_table, self->nodes[root].inserted);
         count += 1;
     } // if
