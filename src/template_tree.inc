@@ -48,6 +48,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(size_t const capacity)
     tree->capacity = capacity;
 
     tree->base.entries = 0;
+    tree->base.entry_size = sizeof(struct VRD_TEMPLATE(VRD_TYPENAME, _Node));
     tree->base.height = 0;
 
     return tree;

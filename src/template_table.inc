@@ -418,6 +418,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table
 
         vrd_Tree const tree = *(vrd_Tree*) self->trees[i]->data;
         (*diag)[i].entries = tree.entries;
+        (*diag)[i].entry_size = tree.entry_size;
         (*diag)[i].height = tree.height;
     } // for
     return self->next;

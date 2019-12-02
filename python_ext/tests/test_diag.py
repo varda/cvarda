@@ -9,19 +9,19 @@ def test_diag_cov_entries():
 
     cov_table.insert('chr1', 10, 11, 0)
     diag = cov_table.diagnostics()
-    assert diag == {'chr1': {'height': 1, 'entries': 1}}
+    assert diag == {'chr1': {'height': 1, 'entry_size': 24, 'entries': 1}}
 
     cov_table.insert('chr1', 5, 6, 0)
     diag = cov_table.diagnostics()
-    assert diag == {'chr1': {'height': 2, 'entries': 2}}
+    assert diag == {'chr1': {'height': 2, 'entry_size': 24, 'entries': 2}}
 
     cov_table.insert('chr1', 15, 16, 0)
     diag = cov_table.diagnostics()
-    assert diag == {'chr1': {'height': 2, 'entries': 3}}
+    assert diag == {'chr1': {'height': 2, 'entry_size': 24, 'entries': 3}}
 
     cov_table.insert('chr1', 4, 5, 0)
     diag = cov_table.diagnostics()
-    assert diag == {'chr1': {'height': 3, 'entries': 4}}
+    assert diag == {'chr1': {'height': 3, 'entry_size': 24, 'entries': 4}}
 
 
 def test_diag_cov_file():

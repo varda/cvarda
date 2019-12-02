@@ -163,7 +163,7 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
 
     for (size_t i = 0; i < count; ++i)
     {
-        PyObject* const entry = Py_BuildValue("{s:i,s:i}", "entries", diag[i].entries, "height", diag[i].height);
+        PyObject* const entry = Py_BuildValue("{s:i,s:i,s:i}", "entries", diag[i].entries, "entry_size", diag[i].entry_size, "height", diag[i].height);
         if (NULL == entry)
         {
             Py_DECREF(dict);

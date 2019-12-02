@@ -14,6 +14,7 @@ typedef struct vrd_Diagnostics
 {
     char* reference;
     size_t entries;
+    size_t entry_size;
     size_t height;
 } vrd_Diagnostics;
 
