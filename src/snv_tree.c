@@ -3,8 +3,8 @@
 #include <stdint.h>     // int32_t, uint32_t
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
+#include "../include/constants.h"   // VRD_HOMOZYGOUS
 #include "../include/template.h"    // VRD_TEMPLATE
-#include "constants.h"  // VRD_HOMOZYGOUS
 #include "snv_tree.h"   // vrd_SNV_Tree, vrd_SNV_tree_*
 
 
@@ -14,7 +14,7 @@
 struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t key;
+    uint32_t key;  // position
     int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
     uint32_t phase     : 28;

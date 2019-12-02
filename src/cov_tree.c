@@ -13,7 +13,7 @@
 struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t key;
+    uint32_t key;  // start
     uint32_t end;
     uint32_t max;
     int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]

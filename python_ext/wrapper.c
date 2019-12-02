@@ -264,6 +264,15 @@ PyInit_cvarda(void)
         return NULL;
     } // if
 
+    if (0 > PyModule_AddIntConstant(mod, "MAX_POSITION", VRD_MAX_POSITION))
+    {
+        return NULL;
+    } // if
+    if (0 > PyModule_AddIntConstant(mod, "MAX_SAMPLE_ID", VRD_MAX_SAMPLE_ID))
+    {
+        return NULL;
+    } // if
+
     Py_INCREF(&CoverageTable);
     if (0 > PyModule_AddObject(mod, "CoverageTable", (PyObject*) &CoverageTable))
     {
