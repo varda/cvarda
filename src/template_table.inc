@@ -70,7 +70,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Table)** 
 
     for (size_t i = 0; i < (*self)->next; ++i)
     {
-        VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) (*self)->trees[i]);
+        VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) &(*self)->trees[i]->data);
     } // for
     vrd_trie_destroy(&(*self)->trie);
     free(*self);
@@ -88,7 +88,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
     size_t count = 0;
     for (size_t i = 0; i < self->next; ++i)
     {
-        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)*) self->trees[i]->data, subset);  // OVERFLOW
+        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_remove)(self->trees[i]->data, subset);  // OVERFLOW
     } // for
 
     return count;
@@ -102,7 +102,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 
     for (size_t i = 0; i < self->next; ++i)
     {
-        int const err = VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)*) self->trees[i]->data);
+        int const err = VRD_TEMPLATE(VRD_TYPENAME, _tree_reorder)(self->trees[i]->data);
         if (0 != err)
         {
             return err;
@@ -122,7 +122,7 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
     vrd_Trie_Node* elem = vrd_trie_find(self->trie, len, reference);
     if (NULL != elem)
     {
-        return *(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) elem;
+        return elem->data;
     } // if
 
     if (self->ref_capacity <= self->next)
@@ -131,7 +131,7 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
         return NULL;
     } // if
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(self->tree_capacity);
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(self->tree_capacity);
     if (NULL == tree)
     {
         return NULL;
@@ -140,13 +140,14 @@ reference_tree(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
     elem = vrd_trie_insert(self->trie, len, reference, tree);
     if (NULL == elem)
     {
+        VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(&tree);
         return NULL;
     } // if
 
     self->trees[self->next] = elem;
     self->next += 1;
 
-    return *(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) elem;
+    return elem->data;
 } // reference_tree
 
 
@@ -372,7 +373,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
             goto error;
         } // if
 
-        int const ret = VRD_TEMPLATE(VRD_TYPENAME, _tree_write)((VRD_TEMPLATE(VRD_TYPENAME, _Tree)*) self->trees[i]->data, stream);
+        int const ret = VRD_TEMPLATE(VRD_TYPENAME, _tree_write)(self->trees[i]->data, stream);
         if (0 != ret)
         {
             errno = ret;
@@ -416,10 +417,10 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table
         (*diag)[i].reference = NULL;
         (void) vrd_trie_key(self->trees[i], &(*diag)[i].reference);
 
-        vrd_Tree const tree = *(vrd_Tree*) self->trees[i]->data;
-        (*diag)[i].entries = tree.entries;
-        (*diag)[i].entry_size = tree.entry_size;
-        (*diag)[i].height = tree.height;
+        vrd_Tree* const tree = self->trees[i]->data;
+        (*diag)[i].entries = tree->entries;
+        (*diag)[i].entry_size = tree->entry_size;
+        (*diag)[i].height = tree->height;
     } // for
     return self->next;
 } // vrd_*_table_diagnostics
