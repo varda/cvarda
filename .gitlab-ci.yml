@@ -8,3 +8,4 @@ Python:
   script:
     - pip install --upgrade -v .
     - pip install -r requirements-dev.txt
+    - pytest -sv
