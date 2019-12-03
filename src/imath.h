@@ -14,7 +14,7 @@ extern "C"
 static inline int
 ilog2(size_t const x)
 {
-    return 64 - __builtin_clzll(x);
+    return 64 - __builtin_clzll(x);  // GCC builtin also works with clang
 } // ilog2
 
 
@@ -32,10 +32,10 @@ umax(size_t const a, size_t const b)
 } // umax
 
 
-static inline size_t
-bittest(size_t const n, size_t const i)
+static inline int
+bittest(size_t const n, int const i)
 {
-    if (n & (1 << i))
+    if (n & (UINT64_C(1) << i))
     {
         return 1;
     } // if
