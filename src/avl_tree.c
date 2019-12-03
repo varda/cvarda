@@ -1,5 +1,4 @@
 #include <assert.h>     // assert
-#include <errno.h>      // errno
 #include <stdbool.h>    // bool, false, true
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // UINT32_MAX, int32_t, uint32_t
