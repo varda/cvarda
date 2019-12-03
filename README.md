@@ -14,10 +14,6 @@ Varda2 Variant frequency database C library with Python module
 
 ### Testing
 - `pip install -r requirements-dev.txt`
-- `coverage run -m pytest -sv`
-- `coverage html`
-
-HTML report ends up in `cvarda/coverage_html_report/index.html`.
 
 ## C
 
