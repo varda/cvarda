@@ -3,8 +3,6 @@
 *.out
 .idea/
 build/
-.coverage
-python_coverage_html_report/
 python_ext/tests/__pycache__
 *.dSYM
 venv/
