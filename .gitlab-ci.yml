@@ -8,4 +8,3 @@ Python:
   script:
     - pip install --upgrade -v .
     - pip install -r requirements-dev.txt
-    - coverage run -m pytest -sv
