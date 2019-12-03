@@ -1,8 +1,7 @@
 *.d
 *.o
 *.out
+*.dSYM
 .idea/
 build/
-python_ext/tests/__pycache__
-*.dSYM
 venv/
