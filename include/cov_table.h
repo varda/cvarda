@@ -50,8 +50,10 @@ extern "C"
 /**
  * Insert a covered region into the coverage table.
  *
- * @param self points to the coverage table.
- * @param len
+ * @param self refers to a coverage table. Must be a valid reference
+ *             otherwise this function results in undefined behavior.
+ * @param len the length of the reference sequence identifier
+ *            (`reference`)
  * @param reference
  * @param start
  * @param end

@@ -162,6 +162,11 @@ trie_insert(struct Node* const root,
     if (NULL == root)
     {
         struct Node* const node = node_init(len, key, data);
+        if (NULL == node)
+        {
+            return NULL;
+        } // if
+
         node->base.count = 1;
         return node;
     } // if
@@ -198,8 +203,7 @@ trie_insert(struct Node* const root,
         sub = node;
     } // if
 
-    struct Node* const node =
-        trie_insert(sub->link, len - k, &key[k], data);
+    struct Node* const node = trie_insert(sub->link, len - k, &key[k], data);
     if (NULL == node)
     {
         return NULL;
@@ -257,7 +261,7 @@ trie_remove(struct Node* const root,
 
     if (len == k)
     {
-        root->base.count -= 1;
+        root->base.count -= 1;  // UNDERFLOW
         if (0 == root->base.count)
         {
             *deleted = true;
@@ -367,6 +371,7 @@ trie_key(struct Node const* const node, char** key)
     } // if
     *key = ret;
     (void) strncpy(&(*key)[len], node->key, node->len);
+
     return len + node->len;
 } // trie_key
 
@@ -375,8 +380,7 @@ size_t
 vrd_trie_key(vrd_Trie_Node const* const ptr, char** key)
 {
     size_t const len = trie_key((struct Node*) ptr, key);
-
-    void* const ret = realloc(*key, len + 1);
+    void* const ret = realloc(*key, len + 1);  // OVERFLOW
     if (NULL == ret)
     {
         free(*key);
