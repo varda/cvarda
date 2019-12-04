@@ -22,6 +22,7 @@ typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Tree) VRD_TEMPLATE(VRD_TYPENAME, _Tre
 int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const position,
+                                         size_t const count,
                                          size_t const sample_id,
                                          size_t const phase,
                                          size_t const inserted);

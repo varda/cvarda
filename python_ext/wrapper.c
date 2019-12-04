@@ -268,6 +268,10 @@ PyInit_cvarda(void)
     {
         return NULL;
     } // if
+    if (0 > PyModule_AddIntConstant(mod, "MAX_ALLELE_COUNT", VRD_MAX_ALLELE_COUNT))
+    {
+        return NULL;
+    } // if
     if (0 > PyModule_AddIntConstant(mod, "MAX_SAMPLE_ID", VRD_MAX_SAMPLE_ID))
     {
         return NULL;

@@ -23,6 +23,7 @@ int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const start,
                                          size_t const end,
+                                         size_t const count,
                                          size_t const sample_id);
 
 

@@ -5,6 +5,7 @@
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/template.h"    // VRD_TEMPLATE
+#include "tree.h"   // NULLPTR, LEFT, RIGHT
 
 
 #define VRD_TYPENAME AVL
@@ -40,7 +41,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     self->nodes[ptr].child[RIGHT] = NULLPTR;
     self->nodes[ptr].key = key;
     self->nodes[ptr].balance = 0;
-    self->nodes[ptr].sample_id = 0;
+    self->nodes[ptr].sample_id = 0;  // unused
 
     insert(self, ptr);
 

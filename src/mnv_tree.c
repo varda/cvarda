@@ -3,7 +3,6 @@
 #include <stdint.h>     // int32_t, uint32_t
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
-#include "../include/constants.h"   // VRD_SIZE_SAMPLE_ID, VRD_HOMOZYGOUS
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
@@ -15,11 +14,16 @@
 struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t key;  // start
+
+    uint32_t key       : 28;    // start
+    uint32_t count     :  4;
+
     uint32_t end;
     uint32_t max;
-    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+
+    int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
+
     uint32_t phase;
     uint32_t inserted;
 }; // vrd_MNV_Node
@@ -34,6 +38,7 @@ int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const start,
                                          size_t const end,
+                                         size_t const count,
                                          size_t const sample_id,
                                          size_t const phase,
                                          size_t const inserted)
@@ -51,6 +56,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     self->nodes[ptr].child[LEFT] = NULLPTR;
     self->nodes[ptr].child[RIGHT] = NULLPTR;
     self->nodes[ptr].key = start;
+    self->nodes[ptr].count = count;
     self->nodes[ptr].end = end;
     self->nodes[ptr].max = end;
     self->nodes[ptr].balance = 0;
@@ -89,11 +95,7 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         inserted == self->nodes[root].inserted &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
-        res = 1;
-        if (VRD_HOMOZYGOUS == self->nodes[root].phase)
-        {
-            res = 2;
-        } // if
+        res = self->nodes[root].count;
     } // if
 
     return res + query_stab(self, self->nodes[root].child[LEFT], start, end, inserted, subset) +

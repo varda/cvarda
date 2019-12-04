@@ -380,7 +380,7 @@ size_t
 vrd_trie_key(vrd_Trie_Node const* const ptr, char** key)
 {
     size_t const len = trie_key((struct Node*) ptr, key);
-    void* const ret = realloc(*key, len + 1);  // OVERFLOW
+    void* const ret = realloc(*key, len + 1);
     if (NULL == ret)
     {
         free(*key);

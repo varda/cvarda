@@ -13,10 +13,14 @@
 struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
-    uint32_t key;  // start
+
+    uint32_t key       : 28;    // start
+    uint32_t count     :  4;
+
     uint32_t end;
     uint32_t max;
-    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
+
+    int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
 }; // vrd_Cov_Node
 
@@ -30,6 +34,7 @@ int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const start,
                                          size_t const end,
+                                         size_t const count,
                                          size_t const sample_id)
 {
     assert(NULL != self);
@@ -45,6 +50,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
     self->nodes[ptr].child[LEFT] = NULLPTR;
     self->nodes[ptr].child[RIGHT] = NULLPTR;
     self->nodes[ptr].key = start;
+    self->nodes[ptr].count = count;
     self->nodes[ptr].end = end;
     self->nodes[ptr].max = end;
     self->nodes[ptr].balance = 0;
@@ -78,7 +84,7 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         end <= self->nodes[root].end &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
-        res = 1;
+        res = self->nodes[root].count;
     } // if
 
     return res + query_stab(self, self->nodes[root].child[LEFT], start, end, subset) +

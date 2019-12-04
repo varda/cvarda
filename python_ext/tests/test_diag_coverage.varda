@@ -1,83 +1,83 @@
-chr1    1   2
-chr10   1   2
-chr11   1   2
-chr11_gl000202_random   1   2
-chr12   1   2
-chr13   1   2
-chr14   1   2
-chr15   1   2
-chr16   1   2
-chr17   1   2
-chr17_gl000203_random   1   2
-chr17_gl000204_random   1   2
-chr17_gl000205_random   1   2
-chr17_gl000206_random   1   2
-chr18   1   2
-chr18_gl000207_random   1   2
-chr19   1   2
-chr19_gl000208_random   1   2
-chr19_gl000209_random   1   2
-chr1_gl000191_random    1   2
-chr1_gl000192_random    1   2
-chr2    1   2
-chr20   1   2
-chr21   1   2
-chr21_gl000210_random   1   2
-chr22   1   2
-chr3    1   2
-chr4    1   2
-chr4_gl000193_random    1   2
-chr4_gl000194_random    1   2
-chr5    1   2
-chr6    1   2
-chr7    1   2
-chr7_gl000195_random    1   2
-chr8    1   2
-chr8_gl000196_random    1   2
-chr8_gl000197_random    1   2
-chr9    1   2
-chr9_gl000198_random    1   2
-chr9_gl000199_random    1   2
-chr9_gl000201_random    1   2
-chrM    1   2
-chrUn_gl000211  1   2
-chrUn_gl000212  1   2
-chrUn_gl000213  1   2
-chrUn_gl000214  1   2
-chrUn_gl000215  1   2
-chrUn_gl000216  1   2
-chrUn_gl000217  1   2
-chrUn_gl000218  1   2
-chrUn_gl000219  1   2
-chrUn_gl000220  1   2
-chrUn_gl000221  1   2
-chrUn_gl000222  1   2
-chrUn_gl000223  1   2
-chrUn_gl000224  1   2
-chrUn_gl000225  1   2
-chrUn_gl000226  1   2
-chrUn_gl000227  1   2
-chrUn_gl000228  1   2
-chrUn_gl000229  1   2
-chrUn_gl000230  1   2
-chrUn_gl000231  1   2
-chrUn_gl000232  1   2
-chrUn_gl000233  1   2
-chrUn_gl000234  1   2
-chrUn_gl000235  1   2
-chrUn_gl000236  1   2
-chrUn_gl000237  1   2
-chrUn_gl000238  1   2
-chrUn_gl000239  1   2
-chrUn_gl000240  1   2
-chrUn_gl000241  1   2
-chrUn_gl000242  1   2
-chrUn_gl000243  1   2
-chrUn_gl000244  1   2
-chrUn_gl000245  1   2
-chrUn_gl000246  1   2
-chrUn_gl000247  1   2
-chrUn_gl000248  1   2
-chrUn_gl000249  1   2
-chrX    1   2
-chrY    1   2
+chr1    1   2   2
+chr10   1   2   2
+chr11   1   2   2
+chr11_gl000202_random   1   2   2
+chr12   1   2   2
+chr13   1   2   2
+chr14   1   2   2
+chr15   1   2   2
+chr16   1   2   2
+chr17   1   2   2
+chr17_gl000203_random   1   2   2
+chr17_gl000204_random   1   2   2
+chr17_gl000205_random   1   2   2
+chr17_gl000206_random   1   2   2
+chr18   1   2   2
+chr18_gl000207_random   1   2   2
+chr19   1   2   2
+chr19_gl000208_random   1   2   2
+chr19_gl000209_random   1   2   2
+chr1_gl000191_random    1   2   2
+chr1_gl000192_random    1   2   2
+chr2    1   2   2
+chr20   1   2   2
+chr21   1   2   2
+chr21_gl000210_random   1   2   2
+chr22   1   2   2
+chr3    1   2   2
+chr4    1   2   2
+chr4_gl000193_random    1   2   2
+chr4_gl000194_random    1   2   2
+chr5    1   2   2
+chr6    1   2   2
+chr7    1   2   2
+chr7_gl000195_random    1   2   2
+chr8    1   2   2
+chr8_gl000196_random    1   2   2
+chr8_gl000197_random    1   2   2
+chr9    1   2   2
+chr9_gl000198_random    1   2   2
+chr9_gl000199_random    1   2   2
+chr9_gl000201_random    1   2   2
+chrM    1   2   2
+chrUn_gl000211  1   2   2
+chrUn_gl000212  1   2   2
+chrUn_gl000213  1   2   2
+chrUn_gl000214  1   2   2
+chrUn_gl000215  1   2   2
+chrUn_gl000216  1   2   2
+chrUn_gl000217  1   2   2
+chrUn_gl000218  1   2   2
+chrUn_gl000219  1   2   2
+chrUn_gl000220  1   2   2
+chrUn_gl000221  1   2   2
+chrUn_gl000222  1   2   2
+chrUn_gl000223  1   2   2
+chrUn_gl000224  1   2   2
+chrUn_gl000225  1   2   2
+chrUn_gl000226  1   2   2
+chrUn_gl000227  1   2   2
+chrUn_gl000228  1   2   2
+chrUn_gl000229  1   2   2
+chrUn_gl000230  1   2   2
+chrUn_gl000231  1   2   2
+chrUn_gl000232  1   2   2
+chrUn_gl000233  1   2   2
+chrUn_gl000234  1   2   2
+chrUn_gl000235  1   2   2
+chrUn_gl000236  1   2   2
+chrUn_gl000237  1   2   2
+chrUn_gl000238  1   2   2
+chrUn_gl000239  1   2   2
+chrUn_gl000240  1   2   2
+chrUn_gl000241  1   2   2
+chrUn_gl000242  1   2   2
+chrUn_gl000243  1   2   2
+chrUn_gl000244  1   2   2
+chrUn_gl000245  1   2   2
+chrUn_gl000246  1   2   2
+chrUn_gl000247  1   2   2
+chrUn_gl000248  1   2   2
+chrUn_gl000249  1   2   2
+chrX    1   2   1
+chrY    1   2   1

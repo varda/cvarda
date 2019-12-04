@@ -19,6 +19,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
                                           char const reference[len],
                                           size_t const start,
                                           size_t const end,
+                                          size_t const count,
                                           size_t const sample_id)
 {
     assert(NULL != self);
@@ -29,7 +30,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
         return errno;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(tree, start, end, sample_id);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(tree, start, end, count, sample_id);
 } // vrd_Cov_table_insert
 
 
@@ -49,7 +50,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
         return 0;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) elem, start, end, subset);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(elem->data, start, end, subset);
 } // vrd_Cov_table_query_stab
 
 

@@ -4,7 +4,6 @@
 #include <string.h>     // strlen
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
-#include "../include/constants.h"   // VRD_HOMOZYGOUS
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_Cov_table_*
 #include "../include/iupac.h"       // vrd_iupac_to_idx
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
@@ -27,15 +26,17 @@ vrd_coverage_from_file(FILE* stream,
     char reference[128] = {'\0'};
     int start = 0;
     int end = 0;
+    int allele_count = 0;
 
     size_t count = 0;
-    while (3 == fscanf(stream, "%127s %d %d", reference, &start, &end))  // UNSAFE
+    while (4 == fscanf(stream, "%127s %d %d %d", reference, &start, &end, &allele_count))  // UNSAFE
     {
         if (0 != vrd_Cov_table_insert(cov,
                                       strlen(reference),
                                       reference,
                                       start,
                                       end,
+                                      allele_count,
                                       sample_id))
         {
             vrd_AVL_Tree* subset = vrd_AVL_tree_init(1);
@@ -74,26 +75,23 @@ vrd_variants_from_file(FILE* stream,
     char reference[128] = {'\0'};
     int start = 0;
     int end = 0;
+    int allele_count = 0;
     int phase = 0;
     int len = 0;
     char inserted[1024] = {'\0'};
 
     size_t count = 0;
-    while (6 == fscanf(stream, "%127s %d %d %d %d %1023s", reference,
-                                                           &start,
-                                                           &end,
-                                                           &phase,
-                                                           &len,
-                                                           inserted))  // UNSAFE
+    while (7 == fscanf(stream, "%127s %d %d %d %d %d %1023s", reference,
+                                                              &start,
+                                                              &end,
+                                                              &allele_count,
+                                                              &phase,
+                                                              &len,
+                                                              inserted))  // UNSAFE
     {
         if (1023 < len)
         {
             goto error;
-        } // if
-
-        if (-1 == phase)
-        {
-            phase = VRD_HOMOZYGOUS;
         } // if
 
         if (1 == len && inserted[0] != '.' && 1 == end - start)
@@ -102,6 +100,7 @@ vrd_variants_from_file(FILE* stream,
                                           strlen(reference),
                                           reference,
                                           start,
+                                          allele_count,
                                           sample_id,
                                           phase,
                                           vrd_iupac_to_idx(inserted[0])))
@@ -122,6 +121,7 @@ vrd_variants_from_file(FILE* stream,
                                            reference,
                                            start,
                                            end,
+                                           allele_count,
                                            sample_id,
                                            phase,
                                            *(size_t*) elem))
@@ -174,17 +174,19 @@ vrd_annotate_from_file(FILE* ostream,
     char reference[128] = {'\0'};
     int start = 0;
     int end = 0;
+    int allele_count = 0;
     int phase = 0;
     int len = 0;
     char inserted[1024] = {'\0'};
 
     size_t count = 0;
-    while (6 == fscanf(istream, "%127s %d %d %d %d %1023s", reference,
-                                                            &start,
-                                                            &end,
-                                                            &phase,
-                                                            &len,
-                                                            inserted))  // UNSAFE
+    while (7 == fscanf(istream, "%127s %d %d %d %d %d %1023s", reference,
+                                                               &start,
+                                                               &end,
+                                                               &allele_count,
+                                                               &phase,
+                                                               &len,
+                                                               inserted))  // UNSAFE
     {
         if (1023 < len)
         {
@@ -225,7 +227,7 @@ vrd_annotate_from_file(FILE* ostream,
                                                     reference,
                                                     start,
                                                     end,
-                                                    subset) * 2;
+                                                    subset);
 
         (void) fprintf(ostream, "%s\t%d\t%d\t%d\t%d\t%s\t%zu:%zu\n",
                        reference,

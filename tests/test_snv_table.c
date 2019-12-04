@@ -15,10 +15,10 @@ main(int argc, char* argv[])
     vrd_SNV_Table* snv = vrd_SNV_table_init(1000, 1 << 24);
     assert(NULL != snv);
 
-    int ret = vrd_SNV_table_insert(snv, 5, "chr1", 10, 20, 0, 0);
+    int ret = vrd_SNV_table_insert(snv, 5, "chr1", 10, 1, 0, 0, 0);
     assert(0 == ret);
 
-    ret = vrd_SNV_table_insert(snv, 5, "chr1", 10, 20, 0, 0);
+    ret = vrd_SNV_table_insert(snv, 5, "chr1", 10, 1, 0, 0, 0);
     assert(0 == ret);
 
     vrd_SNV_table_destroy(&snv);

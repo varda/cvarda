@@ -19,6 +19,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
                                           char const reference[len],
                                           size_t const start,
                                           size_t const end,
+                                          size_t const count,
                                           size_t const sample_id,
                                           size_t const phase,
                                           size_t const inserted)
@@ -31,7 +32,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
         return errno;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(tree, start, end, sample_id, phase, inserted);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(tree, start, end, count, sample_id, phase, inserted);
 } // vrd_MNV_table_insert
 
 
@@ -52,7 +53,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
         return 0;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) elem, start, end, inserted, subset);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(elem->data, start, end, inserted, subset);
 } // vrd_MNV_table_query_stab
 
 
@@ -66,7 +67,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
     size_t count = 0;
     for (size_t i = 0; i < self->next; ++i)
     {
-        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(*(VRD_TEMPLATE(VRD_TYPENAME, _Tree)**) self->trees[i], subset, seq_table);  // OVERFLOW
+        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(self->trees[i]->data, subset, seq_table);  // OVERFLOW
     } // for
 
     return count;

@@ -28,16 +28,17 @@ CoverageTable_insert(CoverageTableObject* const self,
     size_t len = 0;
     int start = 0;
     int end = 0;
+    int allele_count = 0;
     int sample_id = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iii:CoverageTable.insert", &reference, &len, &start, &end, &sample_id))
+    if (!PyArg_ParseTuple(args, "s#iiii:CoverageTable.insert", &reference, &len, &start, &end, &allele_count, &sample_id))
     {
         return NULL;
     } // if
 
     int ret = 0;
     Py_BEGIN_ALLOW_THREADS
-    ret = vrd_Cov_table_insert(self->table, len + 1, reference, start, end, sample_id);
+    ret = vrd_Cov_table_insert(self->table, len + 1, reference, start, end, allele_count, sample_id);
     Py_END_ALLOW_THREADS
 
     if (0 != ret)
@@ -120,6 +121,7 @@ static PyMethodDef CoverageTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the region (included)\n"
      ":param integer end: The end position of the region (excluded)\n"
+     ":param integer count: The allele count of the region\n"
      ":param integer sample_id: The sample ID\n"},
 
     {"query", (PyCFunction) CoverageTable_query, METH_VARARGS,
@@ -148,12 +150,12 @@ static PyMethodDef CoverageTable_methods[] =
     {"read", (PyCFunction) CoverageTable_read, METH_VARARGS,
      "read(path)\n"
      "Read a :py:class:`CoverageTable` from files\n\n"
-     ":param string path: A path including a prefix that identifies the files.\n"},
+     ":param string path: A path including a prefix that identifies the files\n"},
 
     {"write", (PyCFunction) CoverageTable_write, METH_VARARGS,
      "write(path)\n"
      "Write a :py:class:`CoverageTable` to files\n\n"
-     ":param string path: A path including a prefix that identifies the files.\n"},
+     ":param string path: A path including a prefix that identifies the files\n"},
 
     {"diagnostics", (PyCFunction) CoverageTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"

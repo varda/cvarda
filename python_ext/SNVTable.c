@@ -27,12 +27,13 @@ SNVTable_insert(SNVTableObject* const self,
     char const* reference = NULL;
     size_t len = 0;
     int position = 0;
+    int allele_count = 0;
     int sample_id = 0;
     char const* inserted = NULL;
     size_t len_inserted = 0;
     int phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iis#|i:SNVTable.insert", &reference, &len, &position, &sample_id, &inserted, &len_inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#iiis#|i:SNVTable.insert", &reference, &len, &position, &allele_count, &sample_id, &inserted, &len_inserted, &phase))
     {
         return NULL;
     } // if
@@ -43,7 +44,7 @@ SNVTable_insert(SNVTableObject* const self,
         return NULL;
     } // if
 
-    if (0 != vrd_SNV_table_insert(self->table, len + 1, reference, position, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
+    if (0 != vrd_SNV_table_insert(self->table, len + 1, reference, position, allele_count, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
     {
         PyErr_SetString(PyExc_RuntimeError, "SNVTable.insert: vrd_SNV_table_insert() failed");
         return NULL;
@@ -128,7 +129,8 @@ static PyMethodDef SNVTable_methods[] =
      "insert(reference, position, sample_id, type[, phase])\n"
      "Insert a region in the :py:class:`SNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
-     ":param integer position: The start position of the SNV.\n"
+     ":param integer position: The start position of the SNV\n"
+     ":param integer count: The allele count of the SNV\n"
      ":param integer sample_id: The sample ID\n"
      ":param string inserted: The inserted nucleotide from IUPAC\n"
      ":param phase: The phase group (position based)\n"
@@ -160,12 +162,12 @@ static PyMethodDef SNVTable_methods[] =
     {"read", (PyCFunction) SNVTable_read, METH_VARARGS,
      "read(path)\n"
      "Read a :py:class:`SNVTable` from files\n\n"
-     ":param string path: A path including a prefix that identifies the files.\n"},
+     ":param string path: A path including a prefix that identifies the files\n"},
 
     {"write", (PyCFunction) SNVTable_write, METH_VARARGS,
      "write(path)\n"
      "Write a :py:class:`SNVTable` to files\n\n"
-     ":param string path: A path including a prefix that identifies the files.\n"},
+     ":param string path: A path including a prefix that identifies the files\n"},
 
     {"diagnostics", (PyCFunction) SNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"

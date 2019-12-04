@@ -12,11 +12,11 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_MINOR
-#define VRD_VERSION_MINOR 1
+#define VRD_VERSION_MINOR 2
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 1
+#define VRD_VERSION_PATCH 0
 #endif
 
 
@@ -31,18 +31,18 @@ vrd_version(int* const major,
 } // vrd_version
 
 
-#include "avl_tree.h"   // vrd_AVL_Tree, vrd_AVL_tree_*
-#include "constants.h"  // VRD_MAX_*, VRD_HOMOZYGOUS
-#include "cov_table.h"  // vrd_Cov_Table, vrd_Cov_table_*
+#include "avl_tree.h"       // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "constants.h"      // VRD_MAX_*
+#include "cov_table.h"      // vrd_Cov_Table, vrd_Cov_table_*
 #include "diagnostics.h"    // vrd_Diagnostics
-#include "iupac.h"      // VRD_IUPAC_SIZE, vrd_iupac_to_idx
-#include "mnv_table.h"  // vrd_MNV_Table, vrd_MNV_table_*
-#include "seq_table.h"  // vrd_Seq_Table, vrd_Seq_table_*
-#include "snv_table.h"  // vrd_SNV_Table, vrd_SNV_table_*
-#include "trie.h"       // vrd_Trie_Node, vrd_Trie, vrd_trie_*
-#include "utils.h"      // vrd_coverage_from_file,
-                        // vrd_variants_from_file,
-                        // vrd_annotate_from_file
+#include "iupac.h"          // VRD_IUPAC_SIZE, vrd_iupac_to_idx
+#include "mnv_table.h"      // vrd_MNV_Table, vrd_MNV_table_*
+#include "seq_table.h"      // vrd_Seq_Table, vrd_Seq_table_*
+#include "snv_table.h"      // vrd_SNV_Table, vrd_SNV_table_*
+#include "trie.h"           // vrd_Trie_Node, vrd_Trie, vrd_trie_*
+#include "utils.h"          // vrd_coverage_from_file,
+                            // vrd_variants_from_file,
+                            // vrd_annotate_from_file
 
 
 #ifdef __cplusplus

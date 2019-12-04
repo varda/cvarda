@@ -12,10 +12,9 @@ extern "C"
 
 
 static size_t const VRD_MAX_POSITION  = (1 << 28) - 1;
+static size_t const VRD_MAX_ALLELE_COUNT = (1 << 4) - 1;
+
 static size_t const VRD_MAX_SAMPLE_ID = (1 << 29) - 1;
-
-
-static uint32_t const VRD_HOMOZYGOUS = (1 << 28) - 1;
 
 
 #ifdef __cplusplus

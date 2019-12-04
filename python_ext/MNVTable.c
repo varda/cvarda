@@ -29,16 +29,17 @@ MNVTable_insert(MNVTableObject* const self,
     size_t len = 0;
     int start = 0;
     int end = 0;
+    int allele_count = 0;
     int sample_id = 0;
     int inserted = 0;
     int phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iii|ii:MNVTable.insert", &reference, &len, &start, &end, &sample_id, &inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#iiii|ii:MNVTable.insert", &reference, &len, &start, &end, &allele_count, &sample_id, &inserted, &phase))
     {
         return NULL;
     } // if
 
-    if (0 != vrd_MNV_table_insert(self->table, len + 1, reference, start, end, sample_id, phase, inserted))
+    if (0 != vrd_MNV_table_insert(self->table, len + 1, reference, start, end, allele_count, sample_id, phase, inserted))
     {
         PyErr_SetString(PyExc_RuntimeError, "MNVTable.insert: vrd_MNV_table_insert() failed");
         return NULL;
@@ -120,6 +121,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
+     ":param integer count: The allele count of the MNV\n"
      ":param integer sample_id: The sample ID\n"
      ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
      ":param phase: The phase group (position based)\n"
@@ -154,12 +156,12 @@ static PyMethodDef MNVTable_methods[] =
     {"read", (PyCFunction) MNVTable_read, METH_VARARGS,
      "read(path)\n"
      "Read a :py:class:`MNVTable` from files\n\n"
-     ":param string path: A path including a prefix that identifies the files.\n"},
+     ":param string path: A path including a prefix that identifies the files\n"},
 
     {"write", (PyCFunction) MNVTable_write, METH_VARARGS,
      "write(path)\n"
      "Write a :py:class:`MNVTable` to files\n\n"
-     ":param string path: A path including a prefix that identifies the files.\n"},
+     ":param string path: A path including a prefix that identifies the files\n"},
 
     {"diagnostics", (PyCFunction) MNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"
