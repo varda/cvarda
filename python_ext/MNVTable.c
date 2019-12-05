@@ -113,7 +113,7 @@ MNVTable_remove(MNVTableObject* const self, PyObject* const args)
 static PyMethodDef MNVTable_methods[] =
 {
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
-     "insert(reference, start, end, sample_id, type [, phase])\n"
+     "insert(reference, start, end, allele_count, sample_id, type [, phase])\n"
      "Insert a region in the :py:class:`MNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the deleted part of the MNV\n"

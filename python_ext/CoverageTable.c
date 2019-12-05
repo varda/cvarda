@@ -113,7 +113,7 @@ CoverageTable_remove(CoverageTableObject* const self, PyObject* const args)
 static PyMethodDef CoverageTable_methods[] =
 {
     {"insert", (PyCFunction) CoverageTable_insert, METH_VARARGS,
-     "insert(reference, start, end, sample_id)\n"
+     "insert(reference, start, end, allele_count, sample_id)\n"
      "Insert a region in the :py:class:`CoverageTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the region (included)\n"

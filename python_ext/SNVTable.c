@@ -123,7 +123,7 @@ SNVTable_remove(SNVTableObject* const self, PyObject* const args)
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
-     "insert(reference, position, sample_id, type[, phase])\n"
+     "insert(reference, position, allele_count, sample_id, type[, phase])\n"
      "Insert a region in the :py:class:`SNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer position: The start position of the SNV\n"
