@@ -13,6 +13,7 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
+
     vrd_SNV_Table* snv = vrd_SNV_table_init(10000, 1 << 24);
     if (NULL == snv)
     {

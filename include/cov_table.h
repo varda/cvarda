@@ -57,7 +57,7 @@ extern "C"
  * @param reference
  * @param start
  * @param end
- * @param count
+ * @param allele_count
  * @param sample_id
  */
 int
@@ -66,7 +66,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
                                           char const reference[len],
                                           size_t const start,
                                           size_t const end,
-                                          size_t const count,
+                                          size_t const allele_count,
                                           size_t const sample_id);
 
 

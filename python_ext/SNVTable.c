@@ -21,19 +21,18 @@
 
 
 static PyObject*
-SNVTable_insert(SNVTableObject* const self,
-                PyObject* const args)
+SNVTable_insert(SNVTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
-    int position = 0;
-    int allele_count = 0;
-    int sample_id = 0;
+    size_t position = 0;
+    size_t allele_count = 0;
+    size_t sample_id = 0;
     char const* inserted = NULL;
     size_t len_inserted = 0;
-    int phase = 0;
+    size_t phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iiis#|i:SNVTable.insert", &reference, &len, &position, &allele_count, &sample_id, &inserted, &len_inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#nnns#|n:SNVTable.insert", &reference, &len, &position, &allele_count, &sample_id, &inserted, &len_inserted, &phase))
     {
         return NULL;
     } // if
@@ -55,17 +54,16 @@ SNVTable_insert(SNVTableObject* const self,
 
 
 static PyObject*
-SNVTable_query(SNVTableObject* const self,
-               PyObject* const args)
+SNVTable_query(SNVTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
-    int position = 0;
+    size_t position = 0;
     char const* inserted = NULL;
     size_t len_inserted = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#is#|O!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ns#|O!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -97,8 +95,7 @@ SNVTable_query(SNVTableObject* const self,
 
 
 static PyObject*
-SNVTable_remove(SNVTableObject* const self,
-                PyObject* const args)
+SNVTable_remove(SNVTableObject* const self, PyObject* const args)
 {
     PyObject* list = NULL;
 
@@ -113,7 +110,7 @@ SNVTable_remove(SNVTableObject* const self,
         return NULL;
     } // if
 
-    int result = 0;
+    size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
     result = vrd_SNV_table_remove(self->table, subset);
     vrd_AVL_tree_destroy(&subset);

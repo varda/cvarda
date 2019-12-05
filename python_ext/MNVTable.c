@@ -22,19 +22,18 @@
 
 
 static PyObject*
-MNVTable_insert(MNVTableObject* const self,
-                PyObject* const args)
+MNVTable_insert(MNVTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
-    int start = 0;
-    int end = 0;
-    int allele_count = 0;
-    int sample_id = 0;
-    int inserted = 0;
-    int phase = 0;
+    size_t start = 0;
+    size_t end = 0;
+    size_t allele_count = 0;
+    size_t sample_id = 0;
+    size_t inserted = 0;
+    size_t phase = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iiii|ii:MNVTable.insert", &reference, &len, &start, &end, &allele_count, &sample_id, &inserted, &phase))
+    if (!PyArg_ParseTuple(args, "s#nnnn|nn:MNVTable.insert", &reference, &len, &start, &end, &allele_count, &sample_id, &inserted, &phase))
     {
         return NULL;
     } // if
@@ -50,17 +49,16 @@ MNVTable_insert(MNVTableObject* const self,
 
 
 static PyObject*
-MNVTable_query(MNVTableObject* const self,
-               PyObject* const args)
+MNVTable_query(MNVTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
-    int start = 0;
-    int end = 0;
-    int inserted = 0;
+    size_t start = 0;
+    size_t end = 0;
+    size_t inserted = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ii|iO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|nO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -86,8 +84,7 @@ MNVTable_query(MNVTableObject* const self,
 
 
 static PyObject*
-MNVTable_remove(MNVTableObject* const self,
-                PyObject* const args)
+MNVTable_remove(MNVTableObject* const self, PyObject* const args)
 {
     PyObject* list = NULL;
     SequenceTableObject* seq = NULL;
@@ -103,7 +100,7 @@ MNVTable_remove(MNVTableObject* const self,
         return NULL;
     } // if
 
-    int result = 0;
+    size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
     result = vrd_MNV_table_remove_seq(self->table, subset, seq->table);
     vrd_AVL_tree_destroy(&subset);

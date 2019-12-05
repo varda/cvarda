@@ -41,8 +41,7 @@ vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem);
 
 
 int
-vrd_Seq_table_read(vrd_Seq_Table* const self,
-                   char const* const path);
+vrd_Seq_table_read(vrd_Seq_Table* const self, char const* const path);
 
 
 int

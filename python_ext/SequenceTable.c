@@ -46,8 +46,7 @@ SequenceTable_dealloc(SequenceTableObject* const self)
 
 
 static PyObject*
-SequenceTable_insert(SequenceTableObject* const self,
-                     PyObject* const args)
+SequenceTable_insert(SequenceTableObject* const self, PyObject* const args)
 {
     char const* sequence = NULL;
     size_t len = 0;
@@ -69,8 +68,7 @@ SequenceTable_insert(SequenceTableObject* const self,
 
 
 static PyObject*
-SequenceTable_query(SequenceTableObject* const self,
-                    PyObject* const args)
+SequenceTable_query(SequenceTableObject* const self, PyObject* const args)
 {
     char const* sequence = NULL;
     size_t len = 0;
@@ -91,12 +89,11 @@ SequenceTable_query(SequenceTableObject* const self,
 
 
 static PyObject*
-SequenceTable_remove(SequenceTableObject* const self,
-                     PyObject* const args)
+SequenceTable_remove(SequenceTableObject* const self, PyObject* const args)
 {
-    int elem = 0;
+    size_t elem = 0;
 
-    if (!PyArg_ParseTuple(args, "i:SequenceTable.remove", &elem))
+    if (!PyArg_ParseTuple(args, "n:SequenceTable.remove", &elem))
     {
         return NULL;
     } // if
@@ -112,8 +109,7 @@ SequenceTable_remove(SequenceTableObject* const self,
 
 
 static PyObject*
-SequenceTable_read(SequenceTableObject* const self,
-                   PyObject* const args)
+SequenceTable_read(SequenceTableObject* const self, PyObject* const args)
 {
     char const* path = NULL;
 
@@ -133,8 +129,7 @@ SequenceTable_read(SequenceTableObject* const self,
 
 
 static PyObject*
-SequenceTable_write(SequenceTableObject* const self,
-                    PyObject* const args)
+SequenceTable_write(SequenceTableObject* const self, PyObject* const args)
 {
     char const* path = NULL;
 
@@ -154,8 +149,7 @@ SequenceTable_write(SequenceTableObject* const self,
 
 
 static PyObject*
-SequenceTable_diagnostics(SequenceTableObject* const self,
-                          PyObject* const args)
+SequenceTable_diagnostics(SequenceTableObject* const self, PyObject* const args)
 {
     (void) args;
 
@@ -168,7 +162,6 @@ SequenceTable_diagnostics(SequenceTableObject* const self,
     } // if
 
     PyObject* const entry = Py_BuildValue("{s:i}", "entries", diag[0].entries);
-
     free(diag);
 
     if (NULL == entry)
@@ -179,6 +172,7 @@ SequenceTable_diagnostics(SequenceTableObject* const self,
 
     return entry;
 } // *_diagnostics
+
 
 static PyMethodDef SequenceTable_methods[] =
 {

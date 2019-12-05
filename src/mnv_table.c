@@ -19,7 +19,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
                                           char const reference[len],
                                           size_t const start,
                                           size_t const end,
-                                          size_t const count,
+                                          size_t const allele_count,
                                           size_t const sample_id,
                                           size_t const phase,
                                           size_t const inserted)
@@ -32,7 +32,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
         return errno;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(tree, start, end, count, sample_id, phase, inserted);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(tree, start, end, allele_count, sample_id, phase, inserted);
 } // vrd_MNV_table_insert
 
 

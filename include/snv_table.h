@@ -24,7 +24,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
                                           size_t const len,
                                           char const reference[len],
                                           size_t const position,
-                                          size_t const count,
+                                          size_t const allele_count,
                                           size_t const sample_id,
                                           size_t const phase,
                                           size_t const inserted);

@@ -21,17 +21,16 @@
 
 
 static PyObject*
-CoverageTable_insert(CoverageTableObject* const self,
-                     PyObject* const args)
+CoverageTable_insert(CoverageTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
-    int start = 0;
-    int end = 0;
-    int allele_count = 0;
-    int sample_id = 0;
+    size_t start = 0;
+    size_t end = 0;
+    size_t allele_count = 0;
+    size_t sample_id = 0;
 
-    if (!PyArg_ParseTuple(args, "s#iiii:CoverageTable.insert", &reference, &len, &start, &end, &allele_count, &sample_id))
+    if (!PyArg_ParseTuple(args, "s#nnnn:CoverageTable.insert", &reference, &len, &start, &end, &allele_count, &sample_id))
     {
         return NULL;
     } // if
@@ -52,16 +51,15 @@ CoverageTable_insert(CoverageTableObject* const self,
 
 
 static PyObject*
-CoverageTable_query(CoverageTableObject* const self,
-                    PyObject* const args)
+CoverageTable_query(CoverageTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
-    int start = 0;
-    int end = 0;
+    size_t start = 0;
+    size_t end = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ii|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -87,8 +85,7 @@ CoverageTable_query(CoverageTableObject* const self,
 
 
 static PyObject*
-CoverageTable_remove(CoverageTableObject* const self,
-                     PyObject* const args)
+CoverageTable_remove(CoverageTableObject* const self, PyObject* const args)
 {
     PyObject* list = NULL;
 
@@ -103,7 +100,7 @@ CoverageTable_remove(CoverageTableObject* const self,
         return NULL;
     } // if
 
-    int result = 0;
+    size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
     result = vrd_Cov_table_remove(self->table, subset);
     vrd_AVL_tree_destroy(&subset);

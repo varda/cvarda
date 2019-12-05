@@ -15,8 +15,8 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 {
     uint32_t child[2];
     uint32_t key;
-    int32_t  balance   :  3;  // [-4, ..., 3], we use [-2, ..., 2]
-    uint32_t sample_id : 29;  // unused
+    int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
+    uint32_t sample_id : 29;    // unused
 }; // vrd_AVL_Node
 
 
