@@ -118,7 +118,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
-     ":param integer count: The allele count of the MNV\n"
+     ":param integer allele_count: The allele count of the MNV\n"
      ":param integer sample_id: The sample ID\n"
      ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
      ":param phase: The phase group (position based)\n"

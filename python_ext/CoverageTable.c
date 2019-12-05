@@ -118,7 +118,7 @@ static PyMethodDef CoverageTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the region (included)\n"
      ":param integer end: The end position of the region (excluded)\n"
-     ":param integer count: The allele count of the region\n"
+     ":param integer allele_count: The allele count of the region\n"
      ":param integer sample_id: The sample ID\n"},
 
     {"query", (PyCFunction) CoverageTable_query, METH_VARARGS,

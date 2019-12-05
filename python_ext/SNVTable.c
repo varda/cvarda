@@ -127,7 +127,7 @@ static PyMethodDef SNVTable_methods[] =
      "Insert a region in the :py:class:`SNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer position: The start position of the SNV\n"
-     ":param integer count: The allele count of the SNV\n"
+     ":param integer allele_count: The allele count of the SNV\n"
      ":param integer sample_id: The sample ID\n"
      ":param string inserted: The inserted nucleotide from IUPAC\n"
      ":param phase: The phase group (position based)\n"
