@@ -118,7 +118,6 @@ tree_from_reference(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
                     size_t const len,
                     char const reference[len])
 {
-
     vrd_Trie_Node* elem = vrd_trie_find(self->trie, len, reference);
     if (NULL != elem)
     {

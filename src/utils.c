@@ -4,6 +4,7 @@
 #include <string.h>     // strlen
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/constants.h"   // VRD_HOMOZYGOUS
 #include "../include/cov_table.h"   // vrd_Cov_Table, vrd_Cov_table_*
 #include "../include/iupac.h"       // vrd_iupac_to_idx
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
@@ -80,6 +81,11 @@ vrd_variants_from_file(FILE* stream,
         if (1023 < len)
         {
             goto error;
+        } // if
+
+        if ((size_t) -1 == phase)
+        {
+            phase = VRD_HOMOZYGOUS;
         } // if
 
         if (1 == len && inserted[0] != '.' && 1 == end - start)
