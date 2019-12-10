@@ -97,17 +97,12 @@ vrd_variants_from_file(FILE* stream,
         } // if
         else
         {
-            vrd_Trie_Node* elem = NULL;
-
             if (0 == len)
             {
-                elem = vrd_Seq_table_insert(seq, 1, "");
+                inserted[0] = '\0';
             } // if
-            else
-            {
-                elem = vrd_Seq_table_insert(seq, len + 1, inserted);
-            } // else
 
+            vrd_Trie_Node* const elem = vrd_Seq_table_insert(seq, len + 1, inserted);
             if (NULL == elem)
             {
                 goto error;
@@ -183,17 +178,12 @@ vrd_annotate_from_file(FILE* ostream,
         } // if
         else
         {
-            vrd_Trie_Node* elem = NULL;
-
             if (0 == len)
             {
-                elem = vrd_Seq_table_query(seq, 1, "");
+                inserted[0] = '\0';
             } // if
-            else
-            {
-                elem = vrd_Seq_table_query(seq, len + 1, inserted);
-            } // else
 
+            vrd_Trie_Node* const elem = vrd_Seq_table_query(seq, len + 1, inserted);
             if (NULL == elem)
             {
                 num = 0;
