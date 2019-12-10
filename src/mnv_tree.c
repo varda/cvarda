@@ -90,8 +90,8 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
     size_t res = 0;
     // TODO: match inserted; IUPAC, overlap, ...
-    if (start >= self->nodes[root].key &&
-        end <= self->nodes[root].end &&
+    if (start == self->nodes[root].key &&
+        end == self->nodes[root].end &&
         inserted == self->nodes[root].inserted &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
