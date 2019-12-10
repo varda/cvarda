@@ -32,7 +32,7 @@ vrd_coverage_from_file(FILE* stream,
     size_t line_count = 0;
     while (4 == fscanf(stream, "%127s %zu %zu %zu", reference, &start, &end, &allele_count))  // UNSAFE
     {
-        if (0 != vrd_Cov_table_insert(cov, strlen(reference), reference, start, end, allele_count, sample_id))
+        if (0 != vrd_Cov_table_insert(cov, strlen(reference) + 1, reference, start, end, allele_count, sample_id))
         {
             vrd_AVL_Tree* subset = vrd_AVL_tree_init(1);
             if (NULL == subset)
@@ -90,7 +90,7 @@ vrd_variants_from_file(FILE* stream,
 
         if (1 == len && inserted[0] != '.' && 1 == end - start)
         {
-            if (0 != vrd_SNV_table_insert(snv, strlen(reference), reference, start, allele_count, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
+            if (0 != vrd_SNV_table_insert(snv, strlen(reference) + 1, reference, start, allele_count, sample_id, phase, vrd_iupac_to_idx(inserted[0])))
             {
                 goto error;
             } // if
@@ -103,7 +103,7 @@ vrd_variants_from_file(FILE* stream,
                 goto error;
             } // if
 
-            if (0 != vrd_MNV_table_insert(mnv, strlen(reference), reference, start, end, allele_count, sample_id, phase, *(size_t*) elem))
+            if (0 != vrd_MNV_table_insert(mnv, strlen(reference) + 1, reference, start, end, allele_count, sample_id, phase, *(size_t*) elem))
             {
                 goto error;
             } // if
@@ -169,7 +169,7 @@ vrd_annotate_from_file(FILE* ostream,
         size_t num = 0;
         if (1 == len && inserted[0] != '.' && 1 == end - start)
         {
-            num = vrd_SNV_table_query_stab(snv, strlen(reference), reference, start, vrd_iupac_to_idx(inserted[0]), subset);
+            num = vrd_SNV_table_query_stab(snv, strlen(reference) + 1, reference, start, vrd_iupac_to_idx(inserted[0]), subset);
         } // if
         else
         {
@@ -180,11 +180,11 @@ vrd_annotate_from_file(FILE* ostream,
             } // if
             else
             {
-                num = vrd_MNV_table_query_stab(mnv, strlen(reference), reference, start, end, *(size_t*) elem, subset);
+                num = vrd_MNV_table_query_stab(mnv, strlen(reference) + 1, reference, start, end, *(size_t*) elem, subset);
             } // else
         } // else
 
-        size_t const den = vrd_Cov_table_query_stab(cov, strlen(reference), reference, start, end, subset);
+        size_t const den = vrd_Cov_table_query_stab(cov, strlen(reference) + 1, reference, start, end, subset);
 
         (void) fprintf(ostream, "%s\t%zu\t%zu\t%zu\t%s\t%zu:%zu\n", reference, start, end, len, inserted, num, den);  // UNCHECKED
 
