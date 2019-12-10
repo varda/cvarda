@@ -43,6 +43,9 @@ main(int argc, char* argv[])
     c = vrd_Seq_table_query(seq, 4, "ACGT");
     assert(NULL == c);
 
+    vrd_Trie_Node* const e = vrd_Seq_table_insert(seq, 1, "");
+    assert(NULL != e);
+
     vrd_Seq_table_destroy(&seq);
     assert(NULL == seq);
 
