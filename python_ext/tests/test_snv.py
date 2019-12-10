@@ -22,7 +22,7 @@ def test_snv_entries():
     ret = cvarda.variants_from_file(variants_filename, 1, snv_table, mnv_table, seq_table)
     assert ret == 3
     diag = snv_table.diagnostics()
-    assert diag == {'chr1': {'height': 2, 'entry_size': 20, 'entries': 2}}
+    assert diag == {'chr1': {'height': 3, 'entry_size': 20, 'entries': 4}}
 
     diag = mnv_table.diagnostics()
-    assert diag == {'chr1': {'height': 3, 'entry_size': 32, 'entries': 3}}
+    assert diag == {'chr1': {'height': 1, 'entry_size': 32, 'entries': 1}}
