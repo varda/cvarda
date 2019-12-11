@@ -31,11 +31,11 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
-                                             size_t const start,
-                                             size_t const end,
-                                             size_t const inserted,
-                                             vrd_AVL_Tree const* const subset);
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                        size_t const start,
+                                        size_t const end,
+                                        size_t const inserted,
+                                        vrd_AVL_Tree const* const subset);
 
 
 size_t

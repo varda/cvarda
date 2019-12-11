@@ -75,7 +75,7 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_MNV_table_query_stab(self->table, len + 1, reference, start, end, inserted, subset);
+    result = vrd_MNV_table_query(self->table, len + 1, reference, start, end, inserted, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 

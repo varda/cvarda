@@ -37,13 +37,13 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
-                                              size_t const len,
-                                              char const reference[len],
-                                              size_t const start,
-                                              size_t const end,
-                                              size_t const inserted,
-                                              vrd_AVL_Tree const* const subset)
+VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                         size_t const len,
+                                         char const reference[len],
+                                         size_t const start,
+                                         size_t const end,
+                                         size_t const inserted,
+                                         vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
 
@@ -53,8 +53,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
         return 0;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(elem->data, start, end, inserted, subset);
-} // vrd_MNV_table_query_stab
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, start, end, inserted, subset);
+} // vrd_MNV_table_query
 
 
 size_t

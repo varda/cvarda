@@ -71,12 +71,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 
 
 static size_t
-query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
-           size_t const root,
-           size_t const start,
-           size_t const end,
-           size_t const inserted,
-           vrd_AVL_Tree const* const subset)
+query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+      size_t const root,
+      size_t const start,
+      size_t const end,
+      size_t const inserted,
+      vrd_AVL_Tree const* const subset)
 {
     if (NULLPTR == root || self->nodes[root].max < start)
     {
@@ -85,7 +85,7 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
     if (self->nodes[root].key > start)
     {
-        return query_stab(self, self->nodes[root].child[LEFT], start, end, inserted, subset);
+        return query(self, self->nodes[root].child[LEFT], start, end, inserted, subset);
     } // if
 
     size_t res = 0;
@@ -98,22 +98,22 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         res = self->nodes[root].count;
     } // if
 
-    return res + query_stab(self, self->nodes[root].child[LEFT], start, end, inserted, subset) +
-                 query_stab(self, self->nodes[root].child[RIGHT], start, end, inserted, subset);
-} // query_stab
+    return res + query(self, self->nodes[root].child[LEFT], start, end, inserted, subset) +
+                 query(self, self->nodes[root].child[RIGHT], start, end, inserted, subset);
+} // query
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
-                                             size_t const start,
-                                             size_t const end,
-                                             size_t const inserted,
-                                             vrd_AVL_Tree const* const subset)
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+                                        size_t const start,
+                                        size_t const end,
+                                        size_t const inserted,
+                                        vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
 
-    return query_stab(self, self->root, start, end, inserted, subset);
-} // vrd_MNV_tree_query_stab
+    return query(self, self->root, start, end, inserted, subset);
+} // vrd_MNV_tree_query
 
 
 static size_t
