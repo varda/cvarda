@@ -57,9 +57,11 @@ main(int argc, char* argv[])
     elem = vrd_trie_find(trie, 11, "rubicundus");
     assert(NULL != elem && (void*) 7 == elem->data);
 
-
     elem = vrd_trie_find(trie, 4, "rom");
     assert(NULL == elem);
+
+    elem = vrd_trie_find(trie, 3, "rom");
+    assert(NULL != elem);
 
     vrd_trie_destroy(&trie);
 
