@@ -51,7 +51,7 @@ CoverageTable_insert(CoverageTableObject* const self, PyObject* const args)
 
 
 static PyObject*
-CoverageTable_query(CoverageTableObject* const self, PyObject* const args)
+CoverageTable_query_stab(CoverageTableObject* const self, PyObject* const args)
 {
     char const* reference = NULL;
     size_t len = 0;
@@ -59,7 +59,7 @@ CoverageTable_query(CoverageTableObject* const self, PyObject* const args)
     size_t end = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#nn|O!:CoverageTable.query", &reference, &len, &start, &end, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|O!:CoverageTable.query_stab", &reference, &len, &start, &end, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -81,7 +81,7 @@ CoverageTable_query(CoverageTableObject* const self, PyObject* const args)
     Py_END_ALLOW_THREADS
 
     return Py_BuildValue("i", result);
-} // CoverageTable_query
+} // CoverageTable_query_stab
 
 
 static PyObject*
@@ -121,8 +121,8 @@ static PyMethodDef CoverageTable_methods[] =
      ":param integer allele_count: The allele count of the region\n"
      ":param integer sample_id: The sample ID\n"},
 
-    {"query", (PyCFunction) CoverageTable_query, METH_VARARGS,
-     "query(reference, start, end [, subset])\n"
+    {"query_stab", (PyCFunction) CoverageTable_query_stab, METH_VARARGS,
+     "query_stab(reference, start, end [, subset])\n"
      "Query for covered regions in the :py:class:`CoverageTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the region (included)\n"
