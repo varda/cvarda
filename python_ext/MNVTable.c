@@ -2,6 +2,7 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
+#include <stdio.h>      // FILE, fopen fclose
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
@@ -110,6 +111,36 @@ MNVTable_remove(MNVTableObject* const self, PyObject* const args)
 } // MNVTable_remove
 
 
+static PyObject*
+MNVTable_export(MNVTableObject* const self, PyObject* const args)
+{
+    char const* path = NULL;
+    SequenceTableObject* seq = NULL;
+
+    if (!PyArg_ParseTuple(args, "sO!:MNVTable.export", &path, &SequenceTable, &seq))
+    {
+        return NULL;
+    } // if
+
+    FILE* stream = fopen(path, "w");
+    if (NULL == stream)
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // if
+
+    vrd_MNV_table_export(self->table, stream, seq->table);
+
+    if (0 != fclose(stream))
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // MNVTable_export
+
+
 static PyMethodDef MNVTable_methods[] =
 {
     {"insert", (PyCFunction) MNVTable_insert, METH_VARARGS,
@@ -159,6 +190,13 @@ static PyMethodDef MNVTable_methods[] =
      "write(path)\n"
      "Write a :py:class:`MNVTable` to files\n\n"
      ":param string path: A path including a prefix that identifies the files\n"},
+
+    {"export", (PyCFunction) MNVTable_export, METH_VARARGS,
+     "export(path, seq_table)\n"
+     "Export a :py:class:`MNVTable`\n\n"
+     ":param string path: A path including a prefix that identifies the file\n"
+     ":param seq_table: The sequence table\n"
+     ":type seq_table: :py:class:`SequenceTable`\n"},
 
     {"diagnostics", (PyCFunction) MNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"

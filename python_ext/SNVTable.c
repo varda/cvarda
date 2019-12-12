@@ -120,6 +120,35 @@ SNVTable_remove(SNVTableObject* const self, PyObject* const args)
 } // SNVTable_remove
 
 
+static PyObject*
+SNVTable_export(SNVTableObject* const self, PyObject* const args)
+{
+    char const* path = NULL;
+
+    if (!PyArg_ParseTuple(args, "s:SNVTable.export", &path))
+    {
+        return NULL;
+    } // if
+
+    FILE* stream = fopen(path, "w");
+    if (NULL == stream)
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // if
+
+    vrd_SNV_table_export(self->table, stream);
+
+    if (0 != fclose(stream))
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // SNVTable_export
+
+
 static PyMethodDef SNVTable_methods[] =
 {
     {"insert", (PyCFunction) SNVTable_insert, METH_VARARGS,
@@ -165,6 +194,11 @@ static PyMethodDef SNVTable_methods[] =
      "write(path)\n"
      "Write a :py:class:`SNVTable` to files\n\n"
      ":param string path: A path including a prefix that identifies the files\n"},
+
+    {"export", (PyCFunction) SNVTable_export, METH_VARARGS,
+     "export(path, seq_table)\n"
+     "Export a :py:class:`SNVTable`\n\n"
+     ":param string path: A path including a prefix that identifies the file\n"},
 
     {"diagnostics", (PyCFunction) SNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"
