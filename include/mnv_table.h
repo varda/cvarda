@@ -8,6 +8,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 #include "seq_table.h"  // vrd_Seq_Table
@@ -46,6 +47,12 @@ size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
                                               vrd_AVL_Tree const* const subset,
                                               vrd_Seq_Table* const seq_table);
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                          FILE* stream,
+                                          vrd_Seq_Table const* const seq_table);
 
 
 #undef VRD_TYPENAME

@@ -1,10 +1,13 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // int32_t, uint32_t
+#include <stdio.h>      // FILE, fprintf
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
+#include "../include/iupac.h"       // vrd_idx_to_iupac
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "snv_tree.h"   // vrd_SNV_Tree, vrd_SNV_tree_*
+#include "tree.h"       // NULLPTR, LEFT, RIGHT
 
 
 #define VRD_TYPENAME SNV
@@ -106,6 +109,39 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
 
     return query(self, self->root, position, inserted, subset);
 } // vrd_SNV_tree_query
+
+
+static void
+export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+       uint32_t const root,
+       FILE* stream,
+       size_t const len,
+       char const reference[len])
+{
+    if (NULLPTR == root)
+    {
+        return;
+    } // if
+
+    export(self, self->nodes[root].child[LEFT], stream, len, reference);
+
+    (void) fprintf(stream, "%s\t%u\t%u\t%u\t%u\t1\t%c\n", reference, self->nodes[root].key, self->nodes[root].key + 1, self->nodes[root].count, self->nodes[root].phase, vrd_idx_to_iupac(self->nodes[root].inserted));
+
+    export(self, self->nodes[root].child[RIGHT], stream, len, reference);
+} // export
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                         FILE* stream,
+                                         size_t const len,
+                                         char const reference[len])
+{
+    assert(NULL != self);
+    assert(NULL != stream);
+
+    export(self, self->root, stream, len, reference);
+} // vrd_SNV_export
 
 
 #undef VRD_TYPENAME

@@ -5,6 +5,7 @@
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "cov_tree.h"   // vrd_Cov_Tree, vrd_Cov_tree_*
+#include "tree.h"       // NULLPTR, LEFT, RIGHT
 
 
 #define VRD_TYPENAME Cov

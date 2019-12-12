@@ -8,6 +8,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
 #include "../include/template.h"    // VRD_TEMPLATE
@@ -33,6 +34,13 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
                                         size_t const position,
                                         size_t const inserted,
                                         vrd_AVL_Tree const* const subset);
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                         FILE* stream,
+                                         size_t const len,
+                                         char const reference[len]);
 
 
 #include "template_tree.h"  // vrd_SNV_tree_*

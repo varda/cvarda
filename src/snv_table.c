@@ -1,6 +1,7 @@
 #include <assert.h>     // assert
 #include <errno.h>      // errno
 #include <stddef.h>     // NULL, size_t
+#include <stdlib.h>     // free
 
 #include "../include/snv_table.h"   // vrd_SNV_Table, vrd_SNV_table_*
 #include "../include/trie.h"        // vrd_Trie_Node, vrd_trie_*
@@ -53,6 +54,24 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 
     return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, position, inserted, subset);
 } // vrd_SNV_table_query
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                          FILE* stream)
+{
+    assert(NULL != self);
+
+    for (size_t i = 0; i < self->next; ++i)
+    {
+        char* reference = NULL;
+        size_t const len = vrd_trie_key(self->trees[i], &reference);
+
+        VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(self->trees[i]->data, stream, len, reference);
+
+        free(reference);
+    } // for
+} // vrd_SNV_table_export
 
 
 #undef VRD_TYPENAME

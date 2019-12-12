@@ -1,11 +1,13 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
 #include <stdint.h>     // int32_t, uint32_t
+#include <stdio.h>      // FILE, fprintf
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
+#include "tree.h"       // NULLPTR, LEFT, RIGHT
 
 
 #define VRD_TYPENAME MNV
@@ -157,6 +159,47 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* 
 
     return count;
 } // vrd_MNV_tree_remove_seq
+
+
+static void
+export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+       uint32_t const root,
+       FILE* stream,
+       size_t const len,
+       char const reference[len],
+       vrd_Seq_Table const* const seq_table)
+{
+    if (NULLPTR == root)
+    {
+        return;
+    } // if
+
+    export(self, self->nodes[root].child[LEFT], stream, len, reference, seq_table);
+
+    char* inserted = NULL;
+    size_t const inserted_len = vrd_Seq_table_key(seq_table, self->nodes[root].inserted, &inserted);
+
+    (void) fprintf(stream, "%s\t%u\t%u\t%u\t%u\t%zu\t%s\n", reference, self->nodes[root].key, self->nodes[root].end, self->nodes[root].count, self->nodes[root].phase, inserted_len - 1, inserted);
+
+    free(inserted);
+
+    export(self, self->nodes[root].child[RIGHT], stream, len, reference, seq_table);
+} // export
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                         FILE* stream,
+                                         size_t const len,
+                                         char const reference[len],
+                                         vrd_Seq_Table const* const seq_table)
+{
+    assert(NULL != self);
+    assert(NULL != stream);
+    assert(NULL != seq_table);
+
+    export(self, self->root, stream, len, reference, seq_table);
+} // vrd_MNV_export
 
 
 #undef VRD_TYPENAME

@@ -8,6 +8,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdio.h>      // FILE
 
 #include "avl_tree.h"   // vrd_AVL_Tree
 #include "template.h"   // VRD_TEMPLATE
@@ -37,6 +38,11 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
                                          size_t const position,
                                          size_t const inserted,
                                          vrd_AVL_Tree const* const subset);
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                          FILE* stream);
 
 
 #undef VRD_TYPENAME

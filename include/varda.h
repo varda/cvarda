@@ -16,7 +16,7 @@ extern "C"
 #endif
 
 #ifndef VRD_VERSION_PATCH
-#define VRD_VERSION_PATCH 0
+#define VRD_VERSION_PATCH 1
 #endif
 
 
@@ -35,7 +35,8 @@ vrd_version(int* const major,
 #include "constants.h"      // VRD_MAX_*
 #include "cov_table.h"      // vrd_Cov_Table, vrd_Cov_table_*
 #include "diagnostics.h"    // vrd_Diagnostics
-#include "iupac.h"          // VRD_IUPAC_SIZE, vrd_iupac_to_idx
+#include "iupac.h"          // VRD_IUPAC_SIZE, vrd_iupac_to_idx,
+                            // vrd_idx_to_iupac
 #include "mnv_table.h"      // vrd_MNV_Table, vrd_MNV_table_*
 #include "seq_table.h"      // vrd_Seq_Table, vrd_Seq_table_*
 #include "snv_table.h"      // vrd_SNV_Table, vrd_SNV_table_*

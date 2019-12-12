@@ -599,7 +599,7 @@ van_emde_boas(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
 
 
 static int
-height(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
+height(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self, uint32_t const root)
 {
     if (NULLPTR == root)
     {

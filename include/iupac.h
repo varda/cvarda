@@ -74,6 +74,19 @@ vrd_iupac_to_idx(char const ch)
 } // vrd_iupac_to_idx
 
 
+static inline char
+vrd_idx_to_iupac(size_t const idx)
+{
+    char const iupac[] = ".ACMGRSVTUWYHKDBN";
+
+    if (idx < VRD_IUPAC_SIZE)
+    {
+        return iupac[idx];
+    } // if
+    return '\0';
+} // vrd_to_iupac
+
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

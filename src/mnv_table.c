@@ -1,6 +1,7 @@
 #include <assert.h>     // assert
 #include <errno.h>      // errno
 #include <stddef.h>     // NULL, size_t
+#include <stdlib.h>     // free
 
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
 #include "../include/trie.h"        // vrd_Trie_Node, vrd_trie_*
@@ -72,6 +73,26 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
 
     return count;
 } // vrd_MNV_table_remove_seq
+
+
+void
+VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                          FILE* stream,
+                                          vrd_Seq_Table const* const seq_table)
+{
+    assert(NULL != self);
+    assert(NULL != seq_table);
+
+    for (size_t i = 0; i < self->next; ++i)
+    {
+        char* reference = NULL;
+        size_t const len = vrd_trie_key(self->trees[i], &reference);
+
+        VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(self->trees[i]->data, stream, len, reference, seq_table);
+
+        free(reference);
+    } // for
+} // vrd_MNV_table_export
 
 
 #undef VRD_TYPENAME

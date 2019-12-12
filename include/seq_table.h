@@ -36,6 +36,12 @@ vrd_Seq_table_query(vrd_Seq_Table const* const self,
                     char const sequence[len]);
 
 
+size_t
+vrd_Seq_table_key(vrd_Seq_Table const* const self,
+                  size_t const elem,
+                  char** key);
+
+
 int
 vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem);
 

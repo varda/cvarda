@@ -270,6 +270,22 @@ vrd_Seq_table_query(vrd_Seq_Table const* const self,
 } // vrd_Seq_table_query
 
 
+size_t
+vrd_Seq_table_key(vrd_Seq_Table const* const self,
+                  size_t const elem,
+                  char** key)
+{
+    assert(NULL != self);
+
+    if (self->capacity <= elem)
+    {
+        return 0;
+    } // if
+
+    return vrd_trie_key(self->sequences[elem], key);
+} // vrd_Seq_table_key
+
+
 int
 vrd_Seq_table_remove(vrd_Seq_Table* const self, size_t const elem)
 {
