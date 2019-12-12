@@ -93,7 +93,7 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                              size_t const start,
                                              size_t const end,
                                              vrd_AVL_Tree const* const subset)

@@ -97,7 +97,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
 
 size_t
-VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                         size_t const position,
                                         size_t const inserted,
                                         vrd_AVL_Tree const* const subset)
