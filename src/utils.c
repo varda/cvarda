@@ -196,13 +196,7 @@ vrd_annotate_from_file(FILE* ostream,
 
         size_t const den = vrd_Cov_table_query_stab(cov, strlen(reference) + 1, reference, start, end, subset);
 
-        if (0 == len)
-        {
-            inserted[0] = '.';
-            inserted[1] = '\0';
-        } // if
-
-        (void) fprintf(ostream, "%s\t%zu\t%zu\t%s\t%zu:%zu\n", reference, start, end, inserted, num, den);  // UNCHECKED
+        (void) fprintf(ostream, "%s\t%zu\t%zu\t%s\t%zu:%zu\n", reference, start, end, len == 0 ? "." : inserted, num, den);  // UNCHECKED
 
         line_count += 1;  // OVERFLOW
     } // while

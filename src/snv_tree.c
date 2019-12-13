@@ -4,6 +4,7 @@
 #include <stdio.h>      // FILE, fprintf
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
+#include "../include/constants.h"   // VRD_HOMOZYGOUS
 #include "../include/iupac.h"       // vrd_idx_to_iupac
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "snv_tree.h"   // vrd_SNV_Tree, vrd_SNV_tree_*
@@ -125,7 +126,9 @@ export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
     export(self, self->nodes[root].child[LEFT], stream, len, reference);
 
-    (void) fprintf(stream, "%s\t%u\t%u\t%u\t%u\t1\t%c\n", reference, self->nodes[root].key, self->nodes[root].key + 1, self->nodes[root].count, self->nodes[root].phase, vrd_idx_to_iupac(self->nodes[root].inserted));
+    int const phase = self->nodes[root].phase == VRD_HOMOZYGOUS ? -1 : (int) self->nodes[root].phase;
+
+    (void) fprintf(stream, "%s\t%u\t%u\t%u\t%d\t1\t%c\n", reference, self->nodes[root].key, self->nodes[root].key + 1, self->nodes[root].count, phase, vrd_idx_to_iupac(self->nodes[root].inserted));
 
     export(self, self->nodes[root].child[RIGHT], stream, len, reference);
 } // export

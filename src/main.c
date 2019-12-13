@@ -13,109 +13,126 @@ main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
+    vrd_Cov_Table* cov = NULL;
+    vrd_Seq_Table* seq = NULL;
+    vrd_SNV_Table* snv = NULL;
+    vrd_MNV_Table* mnv = NULL;
+    FILE* stream = NULL;
 
-    vrd_SNV_Table* snv = vrd_SNV_table_init(10000, 1 << 24);
-    if (NULL == snv)
+    cov = vrd_Cov_table_init(100, 1 << 20);
+    if (NULL == cov)
     {
-        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
+        (void) fprintf(stderr, "vrd_Cov_table_init() failed\n");
         goto error;
     } // if
 
-    vrd_SNV_table_write(snv, "store/snv");
-
-    vrd_SNV_table_destroy(&snv);
-
-    snv = vrd_SNV_table_init(10000, 1 << 24);
-    if (NULL == snv)
-    {
-        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
-        goto error;
-    } // if
-
-    vrd_SNV_table_read(snv, "store/snv");
-
-/*
-    vrd_Seq_Table* seq = vrd_Seq_table_init(100);
+    seq = vrd_Seq_table_init(100000);
     if (NULL == seq)
     {
         (void) fprintf(stderr, "vrd_Seq_table_init() failed\n");
         goto error;
     } // if
 
-    vrd_Seq_table_write(seq, "seq");
-
-
-    vrd_Seq_table_free_list_print(seq);
-
-    if (NULL == vrd_Seq_table_insert(seq, 7, "romane"))
+    snv = vrd_SNV_table_init(100, 1 << 20);
+    if (NULL == cov)
     {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-    if (NULL == vrd_Seq_table_insert(seq, 8, "romanus"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-    if (NULL == vrd_Seq_table_insert(seq, 8, "romulus"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-    if (NULL == vrd_Seq_table_insert(seq, 7, "rubens"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-    if (NULL == vrd_Seq_table_insert(seq, 6, "ruber"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-    if (NULL == vrd_Seq_table_insert(seq, 8, "rubicon"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
-        goto error;
-    } // if
-    if (NULL == vrd_Seq_table_insert(seq, 11, "rubicundus"))
-    {
-        (void) fprintf(stderr, "vrd_Seq_table_insert() failed\n");
+        (void) fprintf(stderr, "vrd_SNV_table_init() failed\n");
         goto error;
     } // if
 
-    vrd_Seq_table_free_list_print(seq);
+    mnv = vrd_MNV_table_init(100, 1 << 20);
+    if (NULL == cov)
+    {
+        (void) fprintf(stderr, "vrd_MNV_table_init() failed\n");
+        goto error;
+    } // if
 
-    void* q = NULL;
+    stream = fopen("../data/CGND-HDA-02336_coverage.varda", "r");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
 
-    q = vrd_Seq_table_query(seq, 7, "romane");
-    (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
+    if (929381 != vrd_coverage_from_file(stream, cov, 1))
+    {
+        (void) fprintf(stderr, "vrd_coverage_from_file() failed\n");
+        goto error;
+    } // if
 
-    vrd_Seq_table_remove(seq, 0);
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
 
-    q = vrd_Seq_table_query(seq, 7, "romane");
-    (void) fprintf(stderr, "query: %p (%zu)\n", q, NULL != q ? *(size_t*) q : -1);
+    stream = fopen("../data/CGND-HDA-02336_variants.varda", "r");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
 
-    vrd_Seq_table_free_list_print(seq);
+    if (5091015 != vrd_variants_from_file(stream, snv, mnv, seq, 1))
+    {
+        (void) fprintf(stderr, "vrd_variants_from_file() failed\n");
+        goto error;
+    } // if
 
-    vrd_Seq_table_write(seq, "seq");
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
 
+    stream = fopen("snv_table_export.varda", "w");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
+
+    vrd_SNV_table_export(snv, stream);
+
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
+
+    stream = fopen("mnv_table_export.varda", "w");
+    if (NULL == stream)
+    {
+        perror("fopen()");
+        goto error;
+    } // if
+
+    vrd_MNV_table_export(mnv, stream, seq);
+
+    if (0 != fclose(stream))
+    {
+        perror("fclose()");
+        goto error;
+    } // if
+
+    vrd_Cov_table_destroy(&cov);
     vrd_Seq_table_destroy(&seq);
-
-    seq = vrd_Seq_table_init(100);
-
-    vrd_Seq_table_free_list_print(seq);
-
-    (void) fprintf(stderr, "read: %d\n", vrd_Seq_table_read(seq, "seq"));
-
-    vrd_Seq_table_free_list_print(seq);
-*/
     vrd_SNV_table_destroy(&snv);
+    vrd_MNV_table_destroy(&mnv);
 
     return EXIT_SUCCESS;
 
 error:
     {
+        if (0 != fclose(stream))
+        {
+            perror("fclose()");
+        } // if
+
+        vrd_Cov_table_destroy(&cov);
+        vrd_Seq_table_destroy(&seq);
         vrd_SNV_table_destroy(&snv);
+        vrd_MNV_table_destroy(&mnv);
 
         return EXIT_FAILURE;
     }

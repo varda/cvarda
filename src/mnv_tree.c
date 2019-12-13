@@ -4,6 +4,7 @@
 #include <stdio.h>      // FILE, fprintf
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
+#include "../include/constants.h"   // VRD_HOMOZYGOUS
 #include "../include/seq_table.h"   // vrd_Seq_Table, vrd_Seq_table_*
 #include "../include/template.h"    // VRD_TEMPLATE
 #include "mnv_tree.h"   // vrd_MNV_Tree, vrd_MNV_tree_*
@@ -179,7 +180,9 @@ export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
     char* inserted = NULL;
     size_t const inserted_len = vrd_Seq_table_key(seq_table, self->nodes[root].inserted, &inserted);
 
-    (void) fprintf(stream, "%s\t%u\t%u\t%u\t%u\t%zu\t%s\n", reference, self->nodes[root].key, self->nodes[root].end, self->nodes[root].count, self->nodes[root].phase, inserted_len - 1, inserted);
+    int const phase = self->nodes[root].phase == VRD_HOMOZYGOUS ? -1 : (int) self->nodes[root].phase;
+
+    (void) fprintf(stream, "%s\t%u\t%u\t%u\t%d\t%zu\t%s\n", reference, self->nodes[root].key, self->nodes[root].end, self->nodes[root].count, phase, inserted_len - 1, inserted_len == 1 ? "." : inserted);
 
     free(inserted);
 
