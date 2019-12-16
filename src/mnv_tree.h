@@ -45,7 +45,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* 
                                              vrd_Seq_Table* const seq_table);
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                          FILE* stream,
                                          size_t const len,

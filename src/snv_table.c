@@ -56,21 +56,24 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 } // vrd_SNV_table_query
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                           FILE* stream)
 {
     assert(NULL != self);
 
+    size_t count = 0;
     for (size_t i = 0; i < self->next; ++i)
     {
         char* reference = NULL;
         size_t const len = vrd_trie_key(self->trees[i], &reference);
 
-        VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(self->trees[i]->data, stream, len, reference);
+        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(self->trees[i]->data, stream, len, reference);  // OVERFLOW
 
         free(reference);
     } // for
+
+    return count;
 } // vrd_SNV_table_export
 
 

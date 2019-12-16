@@ -75,7 +75,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
 } // vrd_MNV_table_remove_seq
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                           FILE* stream,
                                           vrd_Seq_Table const* const seq_table)
@@ -83,15 +83,18 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) con
     assert(NULL != self);
     assert(NULL != seq_table);
 
+    size_t count = 0;
     for (size_t i = 0; i < self->next; ++i)
     {
         char* reference = NULL;
         size_t const len = vrd_trie_key(self->trees[i], &reference);
 
-        VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(self->trees[i]->data, stream, len, reference, seq_table);
+        count += VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(self->trees[i]->data, stream, len, reference, seq_table); // OVERFLOW
 
         free(reference);
     } // for
+
+    return count;
 } // vrd_MNV_table_export
 
 

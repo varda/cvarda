@@ -49,7 +49,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
                                               vrd_Seq_Table* const seq_table);
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                           FILE* stream,
                                           vrd_Seq_Table const* const seq_table);

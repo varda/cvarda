@@ -94,7 +94,11 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    vrd_SNV_table_export(snv, ostream);
+    if (4094652 != vrd_SNV_table_export(snv, ostream))
+    {
+        (void) fprintf(stderr, "vrd_SNV_table_export failed\n");
+        goto error;
+    } // if
 
     if (0 != fclose(ostream))
     {
@@ -109,7 +113,11 @@ main(int argc, char* argv[])
         goto error;
     } // if
 
-    vrd_MNV_table_export(mnv, ostream, seq);
+    if (996363 != vrd_MNV_table_export(mnv, ostream, seq))
+    {
+        (void) fprintf(stderr, "vrd_MNV_table_export failed\n");
+        goto error;
+    } // if
 
     if (0 != fclose(ostream))
     {

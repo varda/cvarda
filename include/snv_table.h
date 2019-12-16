@@ -40,7 +40,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
                                          vrd_AVL_Tree const* const subset);
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                           FILE* stream);
 

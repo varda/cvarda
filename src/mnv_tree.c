@@ -162,7 +162,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_remove_seq)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* 
 } // vrd_MNV_tree_remove_seq
 
 
-static void
+static size_t
 export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
        uint32_t const root,
        FILE* stream,
@@ -172,10 +172,10 @@ export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 {
     if (NULLPTR == root)
     {
-        return;
+        return 0;
     } // if
 
-    export(self, self->nodes[root].child[LEFT], stream, len, reference, seq_table);
+    size_t count = export(self, self->nodes[root].child[LEFT], stream, len, reference, seq_table);
 
     char* inserted = NULL;
     size_t const inserted_len = vrd_Seq_table_key(seq_table, self->nodes[root].inserted, &inserted);
@@ -186,11 +186,13 @@ export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
     free(inserted);
 
-    export(self, self->nodes[root].child[RIGHT], stream, len, reference, seq_table);
+    count += export(self, self->nodes[root].child[RIGHT], stream, len, reference, seq_table);
+
+    return count + 1;
 } // export
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                          FILE* stream,
                                          size_t const len,
@@ -201,7 +203,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const
     assert(NULL != stream);
     assert(NULL != seq_table);
 
-    export(self, self->root, stream, len, reference, seq_table);
+    return export(self, self->root, stream, len, reference, seq_table);
 } // vrd_MNV_export
 
 

@@ -112,7 +112,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
 } // vrd_SNV_tree_query
 
 
-static void
+static size_t
 export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
        uint32_t const root,
        FILE* stream,
@@ -121,20 +121,21 @@ export(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 {
     if (NULLPTR == root)
     {
-        return;
+        return 0;
     } // if
 
-    export(self, self->nodes[root].child[LEFT], stream, len, reference);
+    size_t count = export(self, self->nodes[root].child[LEFT], stream, len, reference);
 
     int const phase = self->nodes[root].phase == VRD_HOMOZYGOUS ? -1 : (int) self->nodes[root].phase;
 
     (void) fprintf(stream, "%s\t%u\t%u\t%u\t%d\t1\t%c\n", reference, self->nodes[root].key, self->nodes[root].key + 1, self->nodes[root].count, phase, vrd_idx_to_iupac(self->nodes[root].inserted));
 
-    export(self, self->nodes[root].child[RIGHT], stream, len, reference);
+    count += export(self, self->nodes[root].child[RIGHT], stream, len, reference);
+    return count + 1;
 } // export
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                          FILE* stream,
                                          size_t const len,
@@ -143,7 +144,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const
     assert(NULL != self);
     assert(NULL != stream);
 
-    export(self, self->root, stream, len, reference);
+    return export(self, self->root, stream, len, reference);
 } // vrd_SNV_export
 
 

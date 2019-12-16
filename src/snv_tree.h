@@ -36,7 +36,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
                                         vrd_AVL_Tree const* const subset);
 
 
-void
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_export)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                          FILE* stream,
                                          size_t const len,
