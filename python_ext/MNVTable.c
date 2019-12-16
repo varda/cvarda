@@ -129,7 +129,10 @@ MNVTable_export(MNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
+    size_t result = 0;
+    Py_BEGIN_ALLOW_THREADS
     vrd_MNV_table_export(self->table, stream, seq->table);
+    Py_END_ALLOW_THREADS
 
     if (0 != fclose(stream))
     {
@@ -137,7 +140,7 @@ MNVTable_export(MNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
-    Py_RETURN_NONE;
+    return Py_BuildValue("i", result);
 } // MNVTable_export
 
 
@@ -196,7 +199,9 @@ static PyMethodDef MNVTable_methods[] =
      "Export a :py:class:`MNVTable`\n\n"
      ":param string path: A path including a prefix that identifies the file\n"
      ":param seq_table: The sequence table\n"
-     ":type seq_table: :py:class:`SequenceTable`\n"},
+     ":type seq_table: :py:class:`SequenceTable`\n"
+     ":return: The number of exported MNVs\n"
+     ":rtype: integer\n"},
 
     {"diagnostics", (PyCFunction) MNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"

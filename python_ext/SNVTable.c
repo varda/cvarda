@@ -137,7 +137,10 @@ SNVTable_export(SNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
+    size_t result = 0;
+    Py_BEGIN_ALLOW_THREADS
     vrd_SNV_table_export(self->table, stream);
+    Py_END_ALLOW_THREADS
 
     if (0 != fclose(stream))
     {
@@ -145,7 +148,7 @@ SNVTable_export(SNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
-    Py_RETURN_NONE;
+    return Py_BuildValue("i", result);
 } // SNVTable_export
 
 
@@ -198,7 +201,9 @@ static PyMethodDef SNVTable_methods[] =
     {"export", (PyCFunction) SNVTable_export, METH_VARARGS,
      "export(path, seq_table)\n"
      "Export a :py:class:`SNVTable`\n\n"
-     ":param string path: A path including a prefix that identifies the file\n"},
+     ":param string path: A path including a prefix that identifies the file\n"
+     ":return: The number of exported SNVs\n"
+     ":rtype: integer\n"},
 
     {"diagnostics", (PyCFunction) SNVTable_diagnostics, METH_NOARGS,
      "diagnostics()\n"
