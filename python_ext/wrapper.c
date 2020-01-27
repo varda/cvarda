@@ -126,7 +126,7 @@ annotate_from_file(PyObject* const self,
     } // if
 
     vrd_AVL_Tree* subset = NULL;
-    if (NULL != list && list != Py_None)
+    if (NULL != list)
     {
         subset = sample_set(list);
         if (NULL == subset)
