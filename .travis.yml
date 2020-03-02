@@ -3,7 +3,7 @@ language: c
 dist: ubuntu-18.04
 
 before_install:
-    - uname -a
+    - sudo apt update
     - sudo apt install valgrind
 
 script:
