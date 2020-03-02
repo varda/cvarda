@@ -16,8 +16,7 @@
 
 
 static PyObject*
-coverage_from_file(PyObject* const self,
-                   PyObject* const args)
+coverage_from_file(PyObject* const self, PyObject* const args)
 {
     (void) self;
 
@@ -53,8 +52,7 @@ coverage_from_file(PyObject* const self,
 
 
 static PyObject*
-variants_from_file(PyObject* const self,
-                   PyObject* const args)
+variants_from_file(PyObject* const self, PyObject* const args)
 {
     (void) self;
 
@@ -92,8 +90,7 @@ variants_from_file(PyObject* const self,
 
 
 static PyObject*
-annotate_from_file(PyObject* const self,
-                   PyObject* const args)
+annotate_from_file(PyObject* const self, PyObject* const args)
 {
     (void) self;
 
