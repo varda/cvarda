@@ -4,6 +4,7 @@ dist: ubuntu-18.04
 
 python:
     - "3.6"
+    - "pypy3"
 
 before_install:
     - sudo apt update
