@@ -692,6 +692,9 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_read)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const 
         return errno;
     } // if
 
+    self->base.entries = self->next - 1;
+    self->base.height = height(self, self->root);
+
     return 0;
 } // vrd_*_tree_read
 
