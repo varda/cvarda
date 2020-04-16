@@ -217,9 +217,8 @@ PyTypeObject MNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.MNVTable",
-    .tp_doc = "MNVTable([ref_capacity[, ref_size_capacity[, tree_capacity]]])\n"
-              "This class is a conceptual representation of a database"
-              "table containing multi nucleotide variants (MNV).\n\n"
+    .tp_doc = "MNVTable([ref_capacity[, tree_capacity]]])\n"
+              "Table containing multi nucleotide variants (MNV).\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
               ":type ref_capacity: integer, optional\n"
               ":param tree_capacity:  defaults to :c:data:`CFG_REF_TREE_CAPACITY`\n"

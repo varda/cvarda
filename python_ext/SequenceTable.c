@@ -219,9 +219,8 @@ PyTypeObject SequenceTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.SequenceTable",
-    .tp_doc = "SequenceTable([ref_capacity[, ref_size_capacity]])\n"
-              "This class is a conceptual representation of a database"
-              "table containing (inserted) sequences.\n\n"
+    .tp_doc = "SequenceTable([ref_capacity])\n"
+              "Table containing (inserted) sequences.\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_SEQ_CAPACITY`\n"
               ":type ref_capacity: integer, optional\n",
     .tp_basicsize = sizeof(SequenceTableObject),

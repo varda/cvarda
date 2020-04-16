@@ -219,9 +219,8 @@ PyTypeObject SNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "cvarda.SNVTable",
-    .tp_doc = "SNVTable([ref_capacity[, ref_size_capacity[, tree_capacity]]])\n"
-              "This class is a conceptual representation of a database"
-              "table containing single nucleotide variants (SNV).\n\n"
+    .tp_doc = "SNVTable([ref_capacity[, tree_capacity]]])\n"
+              "Table containing single nucleotide variants (SNV).\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
               ":type ref_capacity: integer, optional\n"
               ":param tree_capacity:  defaults to :c:data:`CFG_REF_TREE_CAPACITY`\n"
