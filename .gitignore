@@ -2,6 +2,11 @@
 *.o
 *.out
 *.dSYM
+
 .idea/
 build/
 venv/
+
+*.varda
+
+store/

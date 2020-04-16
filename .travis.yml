@@ -1,0 +1,19 @@
+language: c
+os: linux
+
+jobs:
+    include:
+        - language: c
+          before_install:
+            - sudo apt update
+            - sudo apt install valgrind
+          script:
+            - make check MEMCHECK=TRUE
+
+        - language: python
+          python: 3.6
+          install:
+            - pip install --upgrade -v .
+            - pip install -r requirements-dev.txt
+          script:
+            - pytest -sv
