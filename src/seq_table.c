@@ -434,7 +434,10 @@ vrd_Seq_table_read(vrd_Seq_Table* const self,
 error:
     {
         int const err = errno;
-        (void) fclose(stream);
+        if (NULL != stream)
+        {
+            (void) fclose(stream);
+        } // if
         free(sequence);
 
         return err;
@@ -515,7 +518,10 @@ vrd_Seq_table_write(vrd_Seq_Table const* const self,
 error:
     {
         int const err = errno;
-        (void) fclose(stream);
+        if (NULL != stream)
+        {
+            (void) fclose(stream);
+        } // if
         free(sequence);
 
         return err;
