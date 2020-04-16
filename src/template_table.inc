@@ -191,7 +191,10 @@ tree_read(char const* const path,
 
 error:
     {
-        (void) fclose(stream);
+        if (NULL != stream)
+        {
+            (void) fclose(stream);
+        } // if
         VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(&tree);
 
         return NULL;
@@ -293,7 +296,10 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
 error:
     {
         int const err = errno;
-        (void) fclose(stream);
+        if (NULL != stream)
+        {
+            (void) fclose(stream);
+        } // if
         free(reference);
 
         return err;
@@ -390,7 +396,10 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 error:
     {
         int const err = errno;
-        (void) fclose(stream);
+        if (NULL != stream)
+        {
+            (void) fclose(stream);
+        } // if
         free(reference);
 
         return err;
