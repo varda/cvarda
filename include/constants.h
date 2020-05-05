@@ -8,7 +8,6 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
-#include <stdint.h>     // uint32_t
 
 
 static size_t const VRD_MAX_POSITION  = (1 << 28) - 1;
