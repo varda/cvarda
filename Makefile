@@ -35,7 +35,7 @@ docs:
 	$(MAKE) html -C doc
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(TARGET) $(OBJECTS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ $^
 
 -include $(DEPS)
 
