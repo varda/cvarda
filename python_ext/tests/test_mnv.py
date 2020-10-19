@@ -2,7 +2,6 @@ import cvarda
 
 
 def test_mnv_common_end():
-    snv_table = cvarda.SNVTable()
     mnv_table = cvarda.MNVTable()
     seq_table = cvarda.SequenceTable()
 
