@@ -724,3 +724,19 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_write)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
 
     return 0;
 } // vrd_*_tree_write
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _tree_sample_count)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                               size_t count[])
+{
+    assert(NULL != self);
+
+    size_t max_sample_id = 0;
+    for (size_t i = 1; i < self->next; ++i)
+    {
+        count[self->nodes[i].sample_id] += 1;
+        max_sample_id = umax(max_sample_id, self->nodes[i].sample_id);
+    } // for
+    return max_sample_id;
+} // vrd_*_tree_sample_count

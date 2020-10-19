@@ -33,3 +33,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_read)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const 
 int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_write)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                         FILE* stream);
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _tree_sample_count)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                               size_t count[]);

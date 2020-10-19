@@ -44,3 +44,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_write)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                                vrd_Diagnostics** diag);
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _table_sample_count)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                                size_t count[]);

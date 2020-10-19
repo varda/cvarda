@@ -432,3 +432,22 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table
     } // for
     return self->next;
 } // vrd_*_table_diagnostics
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _table_sample_count)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                                size_t count[])
+{
+    assert(NULL != self);
+
+    size_t max_sample_id = 0;
+    for (size_t i = 0; i < self->next; ++i)
+    {
+        size_t const tree_max_sample_id = VRD_TEMPLATE(VRD_TYPENAME, _tree_sample_count)(self->trees[i]->data, count);
+        if (tree_max_sample_id > max_sample_id)
+        {
+            max_sample_id = tree_max_sample_id;
+        } // if
+    } // for
+    return max_sample_id;
+} // vrd_*_table_sample_count

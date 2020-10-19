@@ -4,7 +4,7 @@
 #include <errno.h>      // errno
 #include <stddef.h>     // NULL
 #include <stdio.h>      // FILE, fclose, fopen, fprintf, stderr
-#include <stdlib.h>     // EXIT_*
+#include <stdlib.h>     // EXIT_*, calloc, free
 
 #include "../include/varda.h"   // vrd_*
 
@@ -156,6 +156,80 @@ annotate_from_file(PyObject* const self, PyObject* const args)
 } // annotate_from_file
 
 
+static PyObject*
+sample_count(PyObject* const self, PyObject* const args)
+{
+    (void) self;
+
+    CoverageTableObject* cov = NULL;
+    SNVTableObject* snv = NULL;
+    MNVTableObject* mnv = NULL;
+
+    if (!PyArg_ParseTuple(args, "O!O!O!:sample_count", &CoverageTable, &cov, &SNVTable, &snv, &MNVTable, &mnv))
+    {
+        return NULL;
+    } // if
+
+    size_t* const count = calloc(VRD_MAX_SAMPLE_ID, sizeof(*count));
+    if (NULL == count)
+    {
+        return PyErr_NoMemory();
+    } // if
+
+    size_t max_sample_id = 0;
+    {
+        size_t const table_max_sample_id = vrd_Cov_table_sample_count(cov->table, count);
+        if (table_max_sample_id > max_sample_id)
+        {
+            max_sample_id = table_max_sample_id;
+        } // if
+    }
+    {
+        size_t const table_max_sample_id = vrd_SNV_table_sample_count(snv->table, count);
+        if (table_max_sample_id > max_sample_id)
+        {
+            max_sample_id = table_max_sample_id;
+        } // if
+    }
+    {
+        size_t const table_max_sample_id = vrd_MNV_table_sample_count(mnv->table, count);
+        if (table_max_sample_id > max_sample_id)
+        {
+            max_sample_id = table_max_sample_id;
+        } // if
+    }
+
+    PyObject* result = PyList_New(0);
+    if (NULL == result)
+    {
+        free(count);
+        return PyErr_NoMemory();
+    } // if
+
+    for (size_t i = 0; i < max_sample_id; ++i)
+    {
+        PyObject* const item = Py_BuildValue("i", count[i]);
+        if (NULL == item)
+        {
+            Py_DECREF(result);
+            free(count);
+            return PyErr_NoMemory();
+        } // if
+
+        if (0 != PyList_Append(result, item))
+        {
+            Py_DECREF(item);
+            Py_DECREF(result);
+            free(count);
+            return PyErr_NoMemory();
+        } // if
+    } // for
+
+    free(count);
+    return result;
+} // sample_count
+
+
 static PyMethodDef methods[] =
 {
     {"coverage_from_file", (PyCFunction) coverage_from_file, METH_VARARGS,
@@ -199,6 +273,18 @@ static PyMethodDef methods[] =
      ":type subset: list, optional\n"
      ":return: The number of annotated variants\n"
      ":rtype: integer\n"},
+
+    {"sample_count", (PyCFunction) sample_count, METH_VARARGS,
+     "sample_count(cov_table, snv_table, mnv_table)\n"
+     "Count the number of entries (coverage regions and variants) for each sample ID in the database\n\n"
+     ":param cov_table: The coverage table\n"
+     ":type cov_table: :py:class:`CoverageTable`\n"
+     ":param snv_table: The SNV table\n"
+     ":type snv_table: :py:class:`SNVTable`\n"
+     ":param mnv_table: The MNV table\n"
+     ":type mnv_table: :py:class:`MNVTable`\n"
+     ":return: A list of entry counts per sample ID\n"
+     ":rtype: list of integers\n"},
 
     {NULL, NULL, 0, NULL}  // sentinel
 }; // methods
@@ -314,8 +400,7 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
-    int const ret = PyImport_AppendInittab("cvarda", PyInit_cvarda);
-    if (-1 == ret)
+    if (-1 == PyImport_AppendInittab("cvarda", PyInit_cvarda))
     {
         PyMem_RawFree(program);
         fprintf(stderr, "PyImport_AppendInittab() failed\n");
