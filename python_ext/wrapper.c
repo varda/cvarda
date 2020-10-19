@@ -206,7 +206,7 @@ sample_count(PyObject* const self, PyObject* const args)
         return PyErr_NoMemory();
     } // if
 
-    for (size_t i = 0; i < max_sample_id; ++i)
+    for (size_t i = 0; i <= max_sample_id; ++i)
     {
         PyObject* const item = Py_BuildValue("i", count[i]);
         if (NULL == item)
