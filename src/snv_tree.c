@@ -44,7 +44,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _unpack)(void* const ptr,
     *position = node->key;
     *count = node->count;
     *sample_id = node->sample_id;
-    *phase = node->phase;
+    *phase = node->phase == VRD_HOMOZYGOUS ? -1 : node->phase;
     *inserted = vrd_idx_to_iupac(node->inserted);
 } // vrd_SNV_unpack
 
