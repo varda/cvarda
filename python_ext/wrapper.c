@@ -199,7 +199,7 @@ sample_count(PyObject* const self, PyObject* const args)
         } // if
     }
 
-    PyObject* result = PyList_New(0);
+    PyObject* const result = PyList_New(max_sample_id + 1);
     if (NULL == result)
     {
         free(count);
@@ -216,7 +216,7 @@ sample_count(PyObject* const self, PyObject* const args)
             return PyErr_NoMemory();
         } // if
 
-        if (0 != PyList_Append(result, item))
+        if (0 != PyList_SetItem(result, i, item))
         {
             Py_DECREF(item);
             Py_DECREF(result);
