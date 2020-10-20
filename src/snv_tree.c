@@ -32,6 +32,23 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
 #include "template_tree.inc"    // vrd_SNV_tree_*
 
 
+void
+VRD_TEMPLATE(VRD_TYPENAME, _unpack)(void* const ptr,
+                                    size_t* const position,
+                                    size_t* const count,
+                                    size_t* const sample_id,
+                                    size_t* const phase,
+                                    char* const inserted)
+{
+    struct vrd_SNV_Node const* const node = ptr;
+    *position = node->key;
+    *count = node->count;
+    *sample_id = node->sample_id;
+    *phase = node->phase;
+    *inserted = vrd_idx_to_iupac(node->inserted);
+} // vrd_SNV_unpack
+
+
 int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const position,
@@ -110,6 +127,55 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
 
     return query(self, self->root, position, inserted, subset);
 } // vrd_SNV_tree_query
+
+
+static size_t
+query_region(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+             size_t const root,
+             size_t const start,
+             size_t const end,
+             vrd_AVL_Tree const* const subset,
+             size_t const next,
+             size_t const len,
+             void* result[len])
+{
+    if (NULLPTR == root || next >= len)
+    {
+        return next;
+    } // if
+
+    if (self->nodes[root].key < start)
+    {
+        return query_region(self, self->nodes[root].child[LEFT], start, end, subset, next, len, result);
+    } // if
+
+    if (self->nodes[root].key >= end)
+    {
+        return query_region(self, self->nodes[root].child[RIGHT], start, end, subset, next, len, result);
+    } // if
+
+    if (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
+    {
+        result[next] = (void*) &self->nodes[root];
+    } // if
+
+    size_t const count = query_region(self, self->nodes[root].child[LEFT], start, end, subset, next + 1, len, result);
+    return query_region(self, self->nodes[root].child[RIGHT], start, end, subset, count, len, result);
+} // query_region
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_region)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                               size_t const start,
+                                               size_t const end,
+                                               vrd_AVL_Tree const* const subset,
+                                               size_t const len,
+                                               void* result[len])
+{
+    assert(NULL != self);
+
+    return query_region(self, self->root, start, end, subset, 0, len, result);
+} // vrd_SNV_tree_query_region
 
 
 static size_t

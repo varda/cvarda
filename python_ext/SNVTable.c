@@ -2,6 +2,7 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
+#include <stdlib.h>     // free, malloc
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/iupac.h"       // vrd_iuapc_to_idx
@@ -14,7 +15,7 @@
 #define VRD_OBJNAME SNVTable
 
 #include "template_table.inc"   // SNVTable_*
-
+#include "../src/snv_tree.h"    // vrd_SNV_unpack
 
 #undef VRD_TYPENAME
 #undef VRD_OBJNAME
@@ -92,6 +93,89 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
 
     return Py_BuildValue("i", result);
 } // SNVTable_query
+
+
+static PyObject*
+SNVTable_query_region(SNVTableObject* const self, PyObject* const args)
+{
+    char const* reference = NULL;
+    size_t len = 0;
+    size_t start = 0;
+    size_t end = 0;
+    size_t size = 0;
+    PyObject* list = NULL;
+
+    if (!PyArg_ParseTuple(args, "s#nnn|O!:SNVTable.query_region", &reference, &len, &start, &end, &size, &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    vrd_AVL_Tree* subset = NULL;
+    if (NULL != list)
+    {
+        subset = sample_set(list);
+        if (NULL == subset)
+        {
+            return NULL;
+        } // if
+    } // if
+
+    // FIXME: overflow
+    void** const variant = malloc(size * sizeof(*variant));
+    if (NULL == variant)
+    {
+        vrd_AVL_tree_destroy(&subset);
+        return PyErr_NoMemory();
+    } // if
+
+    size_t count = 0;
+    Py_BEGIN_ALLOW_THREADS
+    count = vrd_SNV_table_query_region(self->table, len + 1, reference, start, end, subset, size, variant);
+    Py_END_ALLOW_THREADS
+
+    vrd_AVL_tree_destroy(&subset);
+
+    PyObject* const result = PyList_New(count);
+    if (NULL == result)
+    {
+        free(variant);
+        return PyErr_NoMemory();
+    } // if
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        size_t position = 0;
+        size_t allele_count = 0;
+        size_t sample_id = 0;
+        size_t phase = 0;
+        char inserted = '\0';
+
+        vrd_SNV_unpack(variant[i], &position, &allele_count, &sample_id, &phase, &inserted);
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:s}", "position", position,
+                                                                      "allele_count", allele_count,
+                                                                      "sample_id", sample_id,
+                                                                      "phase", phase,
+                                                                      "inserted", inserted);
+        if (NULL == item)
+        {
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+
+        if (0 != PyList_SetItem(result, i, item))
+        {
+            Py_DECREF(item);
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+    } // for
+
+    free(variant);
+
+    return result;
+} // SNVTable_query_region
 
 
 static PyObject*
@@ -175,6 +259,17 @@ static PyMethodDef SNVTable_methods[] =
      ":type subset: list, optional\n"
      ":return: The number of contained SNVs\n"
      ":rtype: integer\n"},
+
+    {"query_region", (PyCFunction) SNVTable_query_region, METH_VARARGS,
+     "query_region(reference, start, end[, subset])\n"
+     "Query for SNVs in a region [start, end) in the :py:class:`SNVTable`\n\n"
+     ":param string reference: The reference sequence ID\n"
+     ":param integer start: The position of the SNV\n"
+     ":param integer end: The inserted nucleotide from IUPAC\n"
+     ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
+     ":type subset: list, optional\n"
+     ":return: A list of SNVs containted in the query interval\n"
+     ":rtype: list of dictionaries\n"},
 
     {"remove", (PyCFunction) SNVTable_remove, METH_VARARGS,
      "remove(subset)\n"
