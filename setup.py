@@ -37,4 +37,7 @@ cvarda = Extension('cvarda',
 setup(name='cvarda',
       version=VERSION,
       description='Varda2 Variant frequency database C library',
+      packages=['varda.utils'],
+      package_dir={'varda.utils': './utils'},
+      ext_package='varda',
       ext_modules=[cvarda])
