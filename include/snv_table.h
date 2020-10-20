@@ -41,6 +41,17 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
 
 
 size_t
+VRD_TEMPLATE(VRD_TYPENAME, _table_query_region)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                                size_t const len_ref,
+                                                char const reference[len_ref],
+                                                size_t const start,
+                                                size_t const end,
+                                                vrd_AVL_Tree const* const subset,
+                                                size_t const len_res,
+                                                void* result[len_res]);
+
+
+size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_export)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                           FILE* stream);
 

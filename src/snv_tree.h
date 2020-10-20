@@ -20,6 +20,15 @@ extern "C"
 typedef struct VRD_TEMPLATE(VRD_TYPENAME, _Tree) VRD_TEMPLATE(VRD_TYPENAME, _Tree);
 
 
+void
+VRD_TEMPLATE(VRD_TYPENAME, _unpack)(void* const ptr,
+                                    size_t* const position,
+                                    size_t* const count,
+                                    size_t* const sample_id,
+                                    size_t* const phase,
+                                    char* const inserted);
+
+
 int
 VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
                                          size_t const position,
@@ -34,6 +43,15 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
                                         size_t const position,
                                         size_t const inserted,
                                         vrd_AVL_Tree const* const subset);
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_region)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                               size_t const start,
+                                               size_t const end,
+                                               vrd_AVL_Tree const* const subset,
+                                               size_t const len,
+                                               void* result[len]);
 
 
 size_t
