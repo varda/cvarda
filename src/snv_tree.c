@@ -144,22 +144,25 @@ query_region(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         return next;
     } // if
 
-    if (self->nodes[root].key < start)
+    if (self->nodes[root].key > end)
     {
         return query_region(self, self->nodes[root].child[LEFT], start, end, subset, next, len, result);
     } // if
 
-    if (self->nodes[root].key >= end)
+    if (self->nodes[root].key < start)
     {
         return query_region(self, self->nodes[root].child[RIGHT], start, end, subset, next, len, result);
     } // if
 
-    if (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
+    size_t match = 0;
+    if (self->nodes[root].key >= start && self->nodes[root].key < end &&
+        (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
         result[next] = (void*) &self->nodes[root];
+        match = 1;
     } // if
 
-    size_t const count = query_region(self, self->nodes[root].child[LEFT], start, end, subset, next + 1, len, result);
+    size_t const count = query_region(self, self->nodes[root].child[LEFT], start, end, subset, next + match, len, result);
     return query_region(self, self->nodes[root].child[RIGHT], start, end, subset, count, len, result);
 } // query_region
 
