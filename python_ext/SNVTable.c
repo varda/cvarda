@@ -261,11 +261,12 @@ static PyMethodDef SNVTable_methods[] =
      ":rtype: integer\n"},
 
     {"query_region", (PyCFunction) SNVTable_query_region, METH_VARARGS,
-     "query_region(reference, start, end[, subset])\n"
+     "query_region(reference, start, end, size[, subset])\n"
      "Query for SNVs in a region [start, end) in the :py:class:`SNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The position of the SNV\n"
      ":param integer end: The inserted nucleotide from IUPAC\n"
+     ":param integer size: The maximum size of the result vector\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: A list of SNVs containted in the query interval\n"

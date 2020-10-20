@@ -396,14 +396,14 @@ main(int argc, char* argv[])
     wchar_t* const program = Py_DecodeLocale(argv[0], NULL);
     if (NULL == program)
     {
-        fprintf(stderr, "Py_DecodeLocale(): cannot decode argv[0]\n");
+        (void) fprintf(stderr, "Py_DecodeLocale(): cannot decode argv[0]\n");
         return EXIT_FAILURE;
     } // if
 
     if (-1 == PyImport_AppendInittab("cvarda.ext", PyInit_ext))
     {
         PyMem_RawFree(program);
-        fprintf(stderr, "PyImport_AppendInittab() failed\n");
+        (void) fprintf(stderr, "PyImport_AppendInittab() failed\n");
         return EXIT_FAILURE;
     } // if
 
