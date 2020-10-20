@@ -151,7 +151,7 @@ SNVTable_query_region(SNVTableObject* const self, PyObject* const args)
         char inserted = '\0';
 
         vrd_SNV_unpack(variant[i], &position, &allele_count, &sample_id, &phase, &inserted);
-        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:s}", "position", position,
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:C}", "position", position,
                                                                       "allele_count", allele_count,
                                                                       "sample_id", sample_id,
                                                                       "phase", phase,
