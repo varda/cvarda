@@ -216,7 +216,7 @@ static PyMethodDef MNVTable_methods[] =
 PyTypeObject MNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "cvarda.MNVTable",
+    .tp_name = "cvarda.ext.MNVTable",
     .tp_doc = "MNVTable([ref_capacity[, tree_capacity]]])\n"
               "Table containing multi nucleotide variants (MNV).\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"

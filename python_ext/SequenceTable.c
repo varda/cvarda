@@ -218,7 +218,7 @@ static PyMethodDef SequenceTable_methods[] =
 PyTypeObject SequenceTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "cvarda.SequenceTable",
+    .tp_name = "cvarda.ext.SequenceTable",
     .tp_doc = "SequenceTable([ref_capacity])\n"
               "Table containing (inserted) sequences.\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_SEQ_CAPACITY`\n"

@@ -293,7 +293,7 @@ static PyMethodDef methods[] =
 static struct PyModuleDef module =
 {
     .m_base = PyModuleDef_HEAD_INIT,
-    .m_name = "cvarda",
+    .m_name = "cvarda.ext",
     .m_doc = "Python module around the Varda2 C library",
     .m_size = -1,
     .m_methods = methods
@@ -301,7 +301,7 @@ static struct PyModuleDef module =
 
 
 PyMODINIT_FUNC
-PyInit_cvarda(void)
+PyInit_ext(void)
 {
     if (0 > PyType_Ready(&CoverageTable))
     {
@@ -385,7 +385,7 @@ PyInit_cvarda(void)
     } // if
 
     return mod;
-} // PyInit_cvarda
+} // PyInit_ext
 
 
 int
@@ -400,7 +400,7 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     } // if
 
-    if (-1 == PyImport_AppendInittab("cvarda", PyInit_cvarda))
+    if (-1 == PyImport_AppendInittab("cvarda.ext", PyInit_ext))
     {
         PyMem_RawFree(program);
         fprintf(stderr, "PyImport_AppendInittab() failed\n");

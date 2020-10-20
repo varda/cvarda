@@ -218,7 +218,7 @@ static PyMethodDef SNVTable_methods[] =
 PyTypeObject SNVTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "cvarda.SNVTable",
+    .tp_name = "cvarda.ext.SNVTable",
     .tp_doc = "SNVTable([ref_capacity[, tree_capacity]]])\n"
               "Table containing single nucleotide variants (SNV).\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"

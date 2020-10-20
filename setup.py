@@ -9,7 +9,7 @@ VERSION = '.'.join(map(str, [VERSION_MAJOR,
                              VERSION_PATCH]))
 
 
-cvarda = Extension('cvarda',
+cvarda = Extension('ext',
                    sources=['python_ext/utils.c',
                             'python_ext/wrapper.c',
                             'python_ext/CoverageTable.c',
@@ -37,7 +37,7 @@ cvarda = Extension('cvarda',
 setup(name='cvarda',
       version=VERSION,
       description='Varda2 Variant frequency database C library',
-      packages=['varda.utils'],
-      package_dir={'varda.utils': './utils'},
-      ext_package='varda',
+      packages=['cvarda.utils'],
+      package_dir={'cvarda.utils': './utils'},
+      ext_package='cvarda',
       ext_modules=[cvarda])

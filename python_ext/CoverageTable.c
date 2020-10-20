@@ -167,7 +167,7 @@ static PyMethodDef CoverageTable_methods[] =
 PyTypeObject CoverageTable =
 {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "cvarda.CoverageTable",
+    .tp_name = "cvarda.ext.CoverageTable",
     .tp_doc = "CoverageTable([ref_capacity[, tree_capacity]]])\n"
               "Table containing covered regions on a reference sequence.\n\n"
               ":param ref_capacity:  defaults to :c:data:`CFG_REF_CAPACITY`\n"
