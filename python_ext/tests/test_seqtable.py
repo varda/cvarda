@@ -1,4 +1,4 @@
-import cvarda
+import varda.cvarda as cvarda
 
 
 def test_seq_table_index():

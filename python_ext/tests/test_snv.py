@@ -1,4 +1,4 @@
-import cvarda
+import varda.cvarda as cvarda
 
 
 def test_snv_entries():
