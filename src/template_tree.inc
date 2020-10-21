@@ -415,7 +415,6 @@ node_remove(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self,
             } // else
             dir[len] = RIGHT;
             nodes[len] = right;
-            len += 1;
         } // if
         else
         {
