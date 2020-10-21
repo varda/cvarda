@@ -140,13 +140,13 @@ query_region(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         return next;
     } // if
 
-    if (self->nodes[root].key < end)
+    if (self->nodes[root].key > end)
     {
         return query_region(self, self->nodes[root].child[LEFT], start, end, subset, next, len, result);
     } // if
 
     size_t match = 0;
-    if (start >= self->nodes[root].key && end < self->nodes[root].end &&
+    if (start <= self->nodes[root].key && end > self->nodes[root].end &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
         result[next] = (void*) &self->nodes[root];
