@@ -6,6 +6,7 @@
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
+#include "../include/seq_table.h"   // vrd_Seq_table_key
 #include "utils.h"          // CFG_*, sample_set
 #include "MNVTable.h"       // MNVTable*
 #include "SequenceTable.h"  // SequenceTable*
@@ -120,9 +121,10 @@ MNVTable_query_region(MNVTableObject* const self, PyObject* const args)
     size_t start = 0;
     size_t end = 0;
     size_t size = 0;
+    SequenceTableObject* seq = NULL;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#nnn|O!:MNVTable.query_region", &reference, &len, &start, &end, &size, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nnnO!|O!:MNVTable.query_region", &reference, &len, &start, &end, &size, &SequenceTable, &seq, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -169,12 +171,15 @@ MNVTable_query_region(MNVTableObject* const self, PyObject* const args)
         size_t inserted = 0;
 
         vrd_MNV_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id, &phase, &inserted);
-        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:i}", "start", v_start,
+        char* seq_inserted = NULL;
+        (void) vrd_Seq_table_key(seq->table, inserted, &seq_inserted);
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:s}", "start", v_start,
                                                                           "end", v_end,
                                                                           "allele_count", allele_count,
                                                                           "sample_id", sample_id,
                                                                           "phase", phase,
-                                                                          "inserted", inserted);
+                                                                          "inserted", seq_inserted);
+        free(seq_inserted);
         if (NULL == item)
         {
             Py_DECREF(result);
@@ -257,12 +262,14 @@ static PyMethodDef MNVTable_methods[] =
      ":rtype: integer\n"},
 
     {"query_region", (PyCFunction) MNVTable_query_region, METH_VARARGS,
-     "query_region(reference, start, end, size[, subset])\n"
+     "query_region(reference, start, end, size, seq_table[, subset])\n"
      "Query for MNVs in a region [start, end) in the :py:class:`MNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start of the region\n"
      ":param integer end: The end of the region\n"
      ":param integer size: The maximum size of the result vector\n"
+     ":param seq_table: The sequence table\n"
+     ":type seq_table: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: A list of MNVs containted in the query interval\n"
