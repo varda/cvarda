@@ -12,6 +12,7 @@ class app(object):
             'SNV_TREE_CAPACITY': 268435456,
             'MNV_REF_CAPACITY': 10000,
             'MNV_TREE_CAPACITY': 134217728,
+            'SEQ_CAPACITY': 10000000,
     }
 
 
@@ -36,21 +37,30 @@ def _init_mnv_table():
     return table
 
 
+def _init_seq_table():
+    seq_capacity = app.config["SEQ_CAPACITY"]
+    table = cvarda.SequenceTable(seq_capacity)
+    return table
+
+
 cov_table = _init_cov_table()
 snv_table = _init_snv_table()
-#mnv_table = _init_mnv_table()
+mnv_table = _init_mnv_table()
+seq_table = _init_seq_table()
 
 # checkpoint_dir = "/home/masantcroos/sync/checkpoints"
 checkpoint_dir = "/data/varda/checkpoints"
 
 cov_table.read(os.path.join(checkpoint_dir, "cov"))
 snv_table.read(os.path.join(checkpoint_dir, "snv"))
-#mnv_table.read(os.path.join(checkpoint_dir, "mnv"))
+mnv_table.read(os.path.join(checkpoint_dir, "mnv"))
+seq_table.read(os.path.join(checkpoint_dir, "seq"))
 
 
-def var2cov(r):
+def snv2cov(snvs):
     coverage = {}
-    for e in r:
+
+    for e in snvs:
         position = e['position'] 
         if position not in coverage:
             coverage[position] = cov_table.query_stab(ref, position, position)
@@ -58,16 +68,33 @@ def var2cov(r):
     return coverage
 
 
+def mnv2cov(mnvs):
+    coverage = {}
+
+    for e in mnvs:
+        start = e['start']
+        end = e['end']
+        key = f'{start}_{end}'
+        if key not in coverage:
+            coverage[key] = cov_table.query_stab(ref, start, end)
+
+    return coverage
+
+
 def dump_region(ref, start, end, filename, coverage=False):
     size = 100000
-    output = {'snvs': snv_table.query_region(ref, start, end, size)}
+    output = {}
+    output['snvs'] = snv_table.query_region(ref, start, end, size)
+    output['mnvs'] = mnv_table.query_region(ref, start, end, size, seq_table)
     assert len(output['snvs']) < size
+    assert len(output['mnvs']) < size
 
     if coverage:
-        output['coverage'] = var2cov(output['snvs'])
-        print(f"Dumping {len(output['snvs'])} variant and {len(output['coverage'])} coverage entries ...")
+        output['snv_coverage'] = snv2cov(output['snvs'])
+        output['mnv_coverage'] = mnv2cov(output['mnvs'])
+        print(f"Dumping {len(output['snvs'])} snvs, {len(output['mnvs'])} mnvs, {len(output['snv_coverage'])} snv coverage and {len(output['mnv_coverage'])} mnv coverage entries ...")
     else:
-        print(f"Dumping {len(output['snvs'])} variant entries ...")
+        print(f"Dumping {len(output['snvs'])} snv and {len(output['mnvs'])} mnv entries ...")
 
     with open(filename, 'w') as fp:
         json.dump(output, fp, indent=4, sort_keys=True)
