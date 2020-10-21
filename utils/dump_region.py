@@ -81,9 +81,9 @@ def mnv2cov(mnvs):
     return coverage
 
 
-def dump_region(ref, start, end, filename, coverage=False):
+def dump_region(ref_id, start, end, filename, coverage=False):
     size = 100000
-    output = {}
+    output = {'meta': {'reference': ref_id, 'start': start, 'end': end}}
     output['snvs'] = snv_table.query_region(ref, start, end, size)
     output['mnvs'] = mnv_table.query_region(ref, start, end, size, seq_table)
     assert len(output['snvs']) < size
