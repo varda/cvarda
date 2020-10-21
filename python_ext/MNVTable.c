@@ -178,7 +178,7 @@ MNVTable_query_region(MNVTableObject* const self, PyObject* const args)
                                                                           "allele_count", allele_count,
                                                                           "sample_id", sample_id,
                                                                           "phase", phase,
-                                                                          "inserted", len == 0 ? "." : seq_inserted);
+                                                                          "inserted", len == 1 ? "." : seq_inserted);
         free(seq_inserted);
         if (NULL == item)
         {
