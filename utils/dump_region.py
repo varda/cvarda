@@ -1,6 +1,5 @@
 import os
 import cvarda.ext as cvarda
-from pprint import pprint
 import json
 
 class app(object):
@@ -57,19 +56,13 @@ mnv_table.read(os.path.join(checkpoint_dir, "mnv"))
 seq_table.read(os.path.join(checkpoint_dir, "seq"))
 
 
-def snv2cov(snvs):
+def var2cov(snvs, mnvs):
     coverage = {}
 
     for e in snvs:
-        position = e['position'] 
+        position = e['position']
         if position not in coverage:
-            coverage[position] = cov_table.query_stab(ref, position, position)
-
-    return coverage
-
-
-def mnv2cov(mnvs):
-    coverage = {}
+            coverage[str(position)] = cov_table.query_stab(ref, position, position)
 
     for e in mnvs:
         start = e['start']
@@ -81,20 +74,21 @@ def mnv2cov(mnvs):
     return coverage
 
 
-def dump_region(ref, start, end, filename, coverage=False):
+def dump_region(ref_id, start, end, filename, coverage=False):
     size = 100000
-    output = {}
-    output['snvs'] = snv_table.query_region(ref, start, end, size)
-    output['mnvs'] = mnv_table.query_region(ref, start, end, size, seq_table)
-    assert len(output['snvs']) < size
-    assert len(output['mnvs']) < size
+    output = {'meta': {'reference': ref_id, 'start': start, 'end': end}}
+    snv_variants = snv_table.query_region(ref, start, end, size)
+    mnv_variants  = mnv_table.query_region(ref, start, end, size, seq_table)
+    assert len(snv_variants) < size
+    assert len(mnv_variants) < size
+
+    output['variants'] = snv_variants + mnv_variants
 
     if coverage:
-        output['snv_coverage'] = snv2cov(output['snvs'])
-        output['mnv_coverage'] = mnv2cov(output['mnvs'])
-        print(f"Dumping {len(output['snvs'])} snvs, {len(output['mnvs'])} mnvs, {len(output['snv_coverage'])} snv coverage and {len(output['mnv_coverage'])} mnv coverage entries ...")
+        output['coverage'] = var2cov(snv_variants, mnv_variants)
+        print(f"Dumping {len(output['variants'])} variant {len(output['coverage'])} coverage entries ...")
     else:
-        print(f"Dumping {len(output['snvs'])} snv and {len(output['mnvs'])} mnv entries ...")
+        print(f"Dumping {len(output['variants'])} variant entries ...")
 
     with open(filename, 'w') as fp:
         json.dump(output, fp, indent=4, sort_keys=True)
