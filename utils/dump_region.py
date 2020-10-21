@@ -1,6 +1,5 @@
 import os
 import cvarda.ext as cvarda
-from pprint import pprint
 import json
 
 class app(object):
