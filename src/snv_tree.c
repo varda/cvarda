@@ -144,7 +144,7 @@ query_region(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         return next;
     } // if
 
-    if (self->nodes[root].key > end)
+    if (self->nodes[root].key >= end)
     {
         return query_region(self, self->nodes[root].child[LEFT], start, end, subset, next, len, result);
     } // if
@@ -155,8 +155,7 @@ query_region(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
     } // if
 
     size_t match = 0;
-    if (self->nodes[root].key >= start && self->nodes[root].key < end &&
-        (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
+    if (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id))
     {
         result[next] = (void*) &self->nodes[root];
         match = 1;
