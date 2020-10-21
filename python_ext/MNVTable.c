@@ -169,12 +169,12 @@ MNVTable_query_region(MNVTableObject* const self, PyObject* const args)
         size_t inserted = 0;
 
         vrd_MNV_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id, &phase, &inserted);
-        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i}", "start", v_start,
-                                                                      "end", v_end,
-                                                                      "allele_count", allele_count,
-                                                                      "sample_id", sample_id,
-                                                                      "phase", phase,
-                                                                      "inserted", inserted);
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:i}", "start", v_start,
+                                                                          "end", v_end,
+                                                                          "allele_count", allele_count,
+                                                                          "sample_id", sample_id,
+                                                                          "phase", phase,
+                                                                          "inserted", inserted);
         if (NULL == item)
         {
             Py_DECREF(result);
