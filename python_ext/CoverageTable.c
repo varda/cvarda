@@ -14,6 +14,7 @@
 
 
 #include "template_table.inc"   // CoverageTable_*
+#include "../src/cov_tree.h"    // vrd_Cov_unpack
 
 
 #undef VRD_TYPENAME
@@ -85,6 +86,88 @@ CoverageTable_query_stab(CoverageTableObject* const self, PyObject* const args)
 
 
 static PyObject*
+CoverageTable_query_region(CoverageTableObject* const self, PyObject* const args)
+{
+    char const* reference = NULL;
+    size_t len = 0;
+    size_t start = 0;
+    size_t end = 0;
+    size_t size = 0;
+    PyObject* list = NULL;
+
+    if (!PyArg_ParseTuple(args, "s#nnn|O!:CoverageTable.query_region", &reference, &len, &start, &end, &size, &PyList_Type, &list))
+    {
+        return NULL;
+    } // if
+
+    vrd_AVL_Tree* subset = NULL;
+    if (NULL != list)
+    {
+        subset = sample_set(list);
+        if (NULL == subset)
+        {
+            return NULL;
+        } // if
+    } // if
+
+    // FIXME: overflow
+    void** const variant = malloc(size * sizeof(*variant));
+    if (NULL == variant)
+    {
+        vrd_AVL_tree_destroy(&subset);
+        return PyErr_NoMemory();
+    } // if
+
+    size_t count = 0;
+    Py_BEGIN_ALLOW_THREADS
+    count = vrd_Cov_table_query_region(self->table, len + 1, reference, start, end, subset, size, variant);
+    Py_END_ALLOW_THREADS
+
+    vrd_AVL_tree_destroy(&subset);
+
+    PyObject* const result = PyList_New(count);
+    if (NULL == result)
+    {
+        free(variant);
+        return PyErr_NoMemory();
+    } // if
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        size_t v_start = 0;
+        size_t v_end = 0;
+        size_t allele_count = 0;
+        size_t sample_id = 0;
+
+        vrd_Cov_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id);
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i}",
+                                             "start", v_start,
+                                             "end", v_end,
+                                             "allele_count", allele_count,
+                                             "sample_id", sample_id);
+        if (NULL == item)
+        {
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+
+        if (0 != PyList_SetItem(result, i, item))
+        {
+            Py_DECREF(item);
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+    } // for
+
+    free(variant);
+
+    return result;
+} // CoverageTable_query_region
+
+
+static PyObject*
 CoverageTable_remove(CoverageTableObject* const self, PyObject* const args)
 {
     PyObject* list = NULL;
@@ -131,6 +214,18 @@ static PyMethodDef CoverageTable_methods[] =
      ":type subset: list, optional\n"
      ":return: The number of contained covered regions\n"
      ":rtype: integer\n"},
+
+    {"query_region", (PyCFunction) CoverageTable_query_region, METH_VARARGS,
+     "query_region(reference, start, end, size, seq_table[, subset])\n"
+     "Query for coverage regions in a region [start, end) in the :py:class:`CoverageTable`\n\n"
+     ":param string reference: The reference sequence ID\n"
+     ":param integer start: The start of the region\n"
+     ":param integer end: The end of the region\n"
+     ":param integer size: The maximum size of the result vector\n"
+     ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
+     ":type subset: list, optional\n"
+     ":return: A list of MNVs containted in the query interval\n"
+     ":rtype: list of dictionaries\n"},
 
     {"remove", (PyCFunction) CoverageTable_remove, METH_VARARGS,
      "remove(subset)\n"
