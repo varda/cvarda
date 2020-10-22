@@ -49,12 +49,10 @@ def varfreqs(input):
                 if seq == 'coverage':
                     continue
 
-                coverage = val['coverage']
-
                 allele_count = len(val[seq])
+                allele_coverage = val['coverage']
                 sample_count = len(set(val[seq]))
-                allele_freq = f"{allele_count}/{coverage}"
-                sample_freq = f"{sample_count}/{int(coverage / 2)}"  # TODO: sample coverage should be data driven
+                sample_coverage = int(allele_coverage / 2)  # TODO: sample coverage should be data driven
 
                 # TODO: are these conditionals fool proof?
                 if '_' not in key:
@@ -64,7 +62,7 @@ def varfreqs(input):
                 else:
                     var = f"{refseqid}:g.{key}delins{seq}"
 
-                result.append((var, zygosity, allele_freq, sample_freq))
+                result.append((var, zygosity, allele_count, allele_coverage, sample_count, sample_coverage))
 
     return sorted(result)
 
@@ -73,5 +71,6 @@ with open('region.json') as fp:
     input = json.load(fp)
 
 ret = varfreqs(input)
+print("var, zygosity, allele_count, allele_coverage, sample_count, sample_coverage")
 for r in ret:
-    print(r[0], r[1], r[2], r[3])
+    print(','.join(str(x) for x in r))
