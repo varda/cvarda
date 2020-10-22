@@ -5,13 +5,16 @@ from pprint import pprint
 
 def varfreqs(input):
 
+    #
+    # Group variants by zygosity and sample id
+    #
     variants = {}
     for e in input['variants']:
         allele_count = e['allele_count']
         sample_id = e['sample_id']
         inserted = e['inserted']
-        phase = e['phase']
 
+        # Switch for SNV/MNV
         try:
             position = str(e['position'])
         except KeyError:
@@ -33,10 +36,14 @@ def varfreqs(input):
 
         variants[allele_count][position][inserted].extend(allele_count * [sample_id])
 
+    #
+    # Extract frequencies and output as HGVS
+    #
     refseqid = input['meta']['reference']
     result = []
     for zygosity in variants:
         for key, val in variants[zygosity].items():
+            # TODO: lookup real reference nucleotide
             ref = ''
             for seq in val:
                 if seq == 'coverage':
@@ -47,8 +54,9 @@ def varfreqs(input):
                 allele_count = len(val[seq])
                 sample_count = len(set(val[seq]))
                 allele_freq = f"{allele_count}/{coverage}"
-                sample_freq = f"{sample_count}/{coverage}"
+                sample_freq = f"{sample_count}/{coverage / 2}"  # TODO: sample coverage should be data driven
 
+                # TODO: are these conditionals fool proof?
                 if '_' not in key:
                     var = f"{refseqid}:g.{key}{ref}>{seq}"
                 elif seq == ".":
