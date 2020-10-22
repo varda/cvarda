@@ -86,7 +86,7 @@ def dump_region(ref_id, start, end, filename, coverage=False):
 
     if coverage:
         output['coverage'] = var2cov(snv_variants, mnv_variants)
-        print(f"Dumping {len(output['variants'])} variant {len(output['coverage'])} coverage entries ...")
+        print(f"Dumping {len(output['variants'])} variant and {len(output['coverage'])} coverage entries ...")
     else:
         print(f"Dumping {len(output['variants'])} variant entries ...")
 
