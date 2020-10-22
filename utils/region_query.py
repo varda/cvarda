@@ -54,7 +54,7 @@ def varfreqs(input):
                 allele_count = len(val[seq])
                 sample_count = len(set(val[seq]))
                 allele_freq = f"{allele_count}/{coverage}"
-                sample_freq = f"{sample_count}/{coverage / 2}"  # TODO: sample coverage should be data driven
+                sample_freq = f"{sample_count}/{int(coverage / 2)}"  # TODO: sample coverage should be data driven
 
                 # TODO: are these conditionals fool proof?
                 if '_' not in key:
