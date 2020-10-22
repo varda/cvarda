@@ -34,6 +34,15 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) c
                                              vrd_AVL_Tree const* const subset);
 
 
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _tree_query_region)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
+                                               size_t const start,
+                                               size_t const end,
+                                               vrd_AVL_Tree const* const subset,
+                                               size_t const len,
+                                               void* result[len]);
+
+
 #include "template_tree.h"  // vrd_Cov_tree_*
 
 

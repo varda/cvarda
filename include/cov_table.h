@@ -47,6 +47,14 @@ extern "C"
 #include "../src/template_table.h"  // vrd_Cov_table_*
 
 
+void
+VRD_TEMPLATE(VRD_TYPENAME, _unpack)(void* const ptr,
+                                    size_t* const start,
+                                    size_t* const end,
+                                    size_t* const count,
+                                    size_t* const sample_id);
+
+
 /**
  * Insert a covered region into the coverage table.
  *
@@ -77,6 +85,17 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query_stab)(VRD_TEMPLATE(VRD_TYPENAME, _Table)
                                               size_t const start,
                                               size_t const end,
                                               vrd_AVL_Tree const* const subset);
+
+
+size_t
+VRD_TEMPLATE(VRD_TYPENAME, _table_query_region)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
+                                                size_t const len_ref,
+                                                char const reference[len_ref],
+                                                size_t const start,
+                                                size_t const end,
+                                                vrd_AVL_Tree const* const subset,
+                                                size_t const len_res,
+                                                void* result[len_res]);
 
 
 #undef VRD_TYPENAME
