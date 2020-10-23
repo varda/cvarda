@@ -90,13 +90,13 @@ query_stab(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         return 0;
     } // if
 
-    if (self->nodes[root].key > end)
+    if (self->nodes[root].key > start)
     {
         return query_stab(self, self->nodes[root].child[LEFT], start, end, subset);
     } // if
 
     size_t res = 0;
-    if (start <= self->nodes[root].key && end > self->nodes[root].end &&
+    if (start >= self->nodes[root].key && end <= self->nodes[root].end &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
         res = self->nodes[root].count;
