@@ -87,6 +87,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
       size_t const root,
       size_t const position,
       size_t const inserted,
+      int const homozygous,
       vrd_AVL_Tree const* const subset)
 {
     if (NULLPTR == root)
@@ -96,24 +97,25 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
     if (self->nodes[root].key > position)
     {
-        return query(self, self->nodes[root].child[LEFT], position, inserted, subset);
+        return query(self, self->nodes[root].child[LEFT], position, inserted, homozygous, subset);
     } // if
 
     if (self->nodes[root].key < position)
     {
-        return query(self, self->nodes[root].child[RIGHT], position, inserted, subset);
+        return query(self, self->nodes[root].child[RIGHT], position, inserted, homozygous, subset);
     } // if
 
     size_t res = 0;
     // TODO: IUPAC match on inserted
     if (inserted == self->nodes[root].inserted &&
+        (!homozygous || (homozygous && self->nodes[root].phase == VRD_HOMOZYGOUS)) &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
         res = self->nodes[root].count;
     } // if
 
-    return res + query(self, self->nodes[root].child[LEFT], position, inserted, subset) +
-                 query(self, self->nodes[root].child[RIGHT], position, inserted, subset);
+    return res + query(self, self->nodes[root].child[LEFT], position, inserted, homozygous, subset) +
+                 query(self, self->nodes[root].child[RIGHT], position, inserted, homozygous, subset);
 } // query
 
 
@@ -121,11 +123,12 @@ size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                         size_t const position,
                                         size_t const inserted,
+                                        int const homozygous,
                                         vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
 
-    return query(self, self->root, position, inserted, subset);
+    return query(self, self->root, position, inserted, homozygous, subset);
 } // vrd_SNV_tree_query
 
 

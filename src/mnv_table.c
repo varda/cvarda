@@ -44,6 +44,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
                                          size_t const start,
                                          size_t const end,
                                          size_t const inserted,
+                                         int const homozygous,
                                          vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
@@ -54,7 +55,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
         return 0;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, start, end, inserted, subset);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, start, end, inserted, homozygous, subset);
 } // vrd_MNV_table_query
 
 

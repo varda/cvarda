@@ -62,9 +62,10 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
     size_t position = 0;
     char const* inserted = NULL;
     size_t len_inserted = 0;
+    int homozygous = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ns#|O!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ns#|pO!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &homozygous, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -87,7 +88,7 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_SNV_table_query(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), subset);
+    result = vrd_SNV_table_query(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), homozygous, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
@@ -256,6 +257,7 @@ static PyMethodDef SNVTable_methods[] =
      ":param string reference: The reference sequence ID\n"
      ":param integer position: The position of the SNV\n"
      ":param string inserted: The inserted nucleotide from IUPAC\n"
+     ":param bool homozygous: Toggle to only count homozygous variants\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained SNVs\n"

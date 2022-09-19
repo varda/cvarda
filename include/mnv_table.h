@@ -40,6 +40,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
                                          size_t const start,
                                          size_t const end,
                                          size_t const inserted,
+                                         int const homozygous,
                                          vrd_AVL_Tree const* const subset);
 
 

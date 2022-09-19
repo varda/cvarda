@@ -59,9 +59,10 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
     size_t start = 0;
     size_t end = 0;
     size_t inserted = 0;
+    int homozygous = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#nn|nO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|npO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -78,7 +79,7 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_MNV_table_query(self->table, len + 1, reference, start, end, inserted, subset);
+    result = vrd_MNV_table_query(self->table, len + 1, reference, start, end, inserted, homozygous, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
@@ -257,6 +258,7 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer start: The start position of the deleted part of the MNV\n"
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
+     ":param bool homozygous: Toggle to only count homozygous variants\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The number of contained MNVs\n"
