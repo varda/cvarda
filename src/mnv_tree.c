@@ -27,7 +27,7 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
     int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
 
-    uint32_t phase;
+    uint32_t phase     : 28;    // For consistency with SNVs, we don't need the remaining bits (yet)
     uint32_t inserted;
 }; // vrd_MNV_Node
 
