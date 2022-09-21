@@ -1,6 +1,7 @@
 #include <assert.h>     // assert
 #include <errno.h>      // errno
 #include <stddef.h>     // NULL, size_t
+#include <stdbool.h>    // bool
 #include <stdlib.h>     // free
 
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
@@ -44,7 +45,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
                                          size_t const start,
                                          size_t const end,
                                          size_t const inserted,
-                                         int const homozygous,
+                                         bool const homozygous,
                                          vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);

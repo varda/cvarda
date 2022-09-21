@@ -88,7 +88,7 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
 
     size_t result = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_SNV_table_query(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), homozygous, subset);
+    result = vrd_SNV_table_query(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), homozygous != 0, subset);
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 

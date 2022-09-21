@@ -1,5 +1,6 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
+#include <stdbool.h>    // bool
 #include <stdint.h>     // int32_t, uint32_t
 #include <stdio.h>      // FILE, fprintf
 
@@ -27,7 +28,9 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Node)
     int32_t  balance   :  3;    // [-4, ..., 3], we use [-2, ..., 2]
     uint32_t sample_id : 29;
 
-    uint32_t phase     : 28;    // For consistency with SNVs, we don't need the remaining bits (yet)
+    uint32_t phase     : 28;
+    uint32_t unused    :  4;    // For consistency with SNVs, we don't need the remaining bits (yet)
+
     uint32_t inserted;
 }; // vrd_MNV_Node
 
@@ -98,7 +101,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
       size_t const start,
       size_t const end,
       size_t const inserted,
-      int const homozygous,
+      bool const homozygous,
       vrd_AVL_Tree const* const subset)
 {
     if (NULLPTR == root || self->nodes[root].max < start)
@@ -179,7 +182,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
                                         size_t const start,
                                         size_t const end,
                                         size_t const inserted,
-                                        int const homozygous,
+                                        bool const homozygous,
                                         vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);

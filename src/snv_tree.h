@@ -8,6 +8,7 @@ extern "C"
 
 
 #include <stddef.h>     // size_t
+#include <stdbool.h>    // bool
 #include <stdio.h>      // FILE
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree
@@ -42,7 +43,7 @@ size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                         size_t const position,
                                         size_t const inserted,
-                                        int const homozygous,
+                                        bool const homozygous,
                                         vrd_AVL_Tree const* const subset);
 
 

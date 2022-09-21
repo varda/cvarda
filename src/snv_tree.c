@@ -1,5 +1,6 @@
 #include <assert.h>     // assert
 #include <stddef.h>     // NULL, size_t
+#include <stdbool.h>    // bool
 #include <stdint.h>     // int32_t, uint32_t
 #include <stdio.h>      // FILE, fprintf
 
@@ -87,7 +88,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
       size_t const root,
       size_t const position,
       size_t const inserted,
-      int const homozygous,
+      bool const homozygous,
       vrd_AVL_Tree const* const subset)
 {
     if (NULLPTR == root)
@@ -123,7 +124,7 @@ size_t
 VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
                                         size_t const position,
                                         size_t const inserted,
-                                        int const homozygous,
+                                        bool const homozygous,
                                         vrd_AVL_Tree const* const subset)
 {
     assert(NULL != self);
