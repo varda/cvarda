@@ -12,7 +12,7 @@ CFLAGS   = -std=c99 -march=native -Wall -Wextra -Wpedantic \
            -Wformat=2 -Wshadow -Wwrite-strings -Wstrict-prototypes \
            -Wold-style-definition -Wredundant-decls -Wnested-externs \
            -Wmissing-include-dirs $(addprefix -D, $(OPTIONS))
-CPPFLAGS = $(addprefix -I, $(INC_DIR))
+CPPFLAGS =
 
 .PHONY: all check clean debug docs release
 
