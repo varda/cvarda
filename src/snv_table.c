@@ -12,7 +12,7 @@
 #define VRD_TYPENAME SNV
 
 
-#include "template_table.inc"   // reference_tree, vrd_SNV_table_*
+#include "template_table.inc"   // tree_from_reference, vrd_SNV_table_*
 
 
 int
@@ -51,7 +51,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) cons
     vrd_Trie_Node* const elem = vrd_trie_find(self->trie, len, reference);
     if (NULL == elem)
     {
-        return 0;
+        return -1;
     } // if
 
     return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, position, inserted, homozygous, subset);
@@ -73,7 +73,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_query_region)(VRD_TEMPLATE(VRD_TYPENAME, _Tabl
     vrd_Trie_Node* const elem = vrd_trie_find(self->trie, len_ref, reference);
     if (NULL == elem)
     {
-        return 0;
+        return -1;
     } // if
 
     return VRD_TEMPLATE(VRD_TYPENAME, _tree_query_region)(elem->data, start, end, subset, len_res, result);

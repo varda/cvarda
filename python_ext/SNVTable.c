@@ -92,6 +92,12 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
     vrd_AVL_tree_destroy(&subset);
     Py_END_ALLOW_THREADS
 
+    if ((size_t) -1 == result)
+    {
+        PyErr_SetString(PyExc_ValueError, "SNVTable.query: reference not found");
+        return NULL;
+    } // if
+
     return Py_BuildValue("i", result);
 } // SNVTable_query
 
@@ -135,6 +141,13 @@ SNVTable_query_region(SNVTableObject* const self, PyObject* const args)
     Py_END_ALLOW_THREADS
 
     vrd_AVL_tree_destroy(&subset);
+
+    if ((size_t) -1 == count)
+    {
+        free(variant);
+        PyErr_SetString(PyExc_ValueError, "SNVTable.query_region: reference not found");
+        return NULL;
+    } // if
 
     PyObject* const result = PyList_New(count);
     if (NULL == result)
