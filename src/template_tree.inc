@@ -71,7 +71,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_destroy)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)** co
 static inline uint32_t
 update_max(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const self, uint32_t const root)
 {
-    uint32_t res = self->nodes[root].max;
+    uint32_t res = self->nodes[root].end;
     if (NULLPTR != self->nodes[root].child[LEFT])
     {
         res = umax(res, self->nodes[self->nodes[root].child[LEFT]].max);
