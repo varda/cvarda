@@ -117,6 +117,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         return query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset, next, len, result);
     } // if
 
+    size_t match = 0;
     size_t res = 0;
     // TODO: match inserted; IUPAC, overlap, ...
     if (start == self->nodes[root].key &&
@@ -125,12 +126,16 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         (!homozygous || (homozygous && self->nodes[root].phase == VRD_HOMOZYGOUS)) &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
-        result[next] = (void*) &self->nodes[root];
+        if (NULL != result)
+        {
+            result[next] = (void*) &self->nodes[root];
+            match = 1;
+        } // if
         res = self->nodes[root].count;
     } // if
 
-    return res + query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset, next + (res > 0), len, result) +
-                 query(self, self->nodes[root].child[RIGHT], start, end, inserted, homozygous, subset, next + (res > 0), len, result);
+    return res + query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset, next + match, len, result) +
+                 query(self, self->nodes[root].child[RIGHT], start, end, inserted, homozygous, subset, next + match, len, result);
 } // query
 
 

@@ -87,12 +87,11 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
         } // if
     } // if
 
-    // FIXME: overflow
-    void** const variant = malloc(size * sizeof(*variant));
-    if (NULL == variant)
+    void** variant = NULL;
+    if (size > 0)
     {
-        vrd_AVL_tree_destroy(&subset);
-        return PyErr_NoMemory();
+        // FIXME: overflow
+        variant = malloc(size * sizeof(*variant));
     } // if
 
     size_t count = 0;
@@ -116,40 +115,45 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
         return PyErr_NoMemory();
     } // if
 
-    for (size_t i = 0; i < count; ++i)
+    if (NULL != variant)
     {
-        size_t position = 0;
-        size_t allele_count = 0;
-        size_t sample_id = 0;
-        size_t phase = 0;
-        char inserted = '\0';
-
-        vrd_SNV_unpack(variant[i], &position, &allele_count, &sample_id, &phase, &inserted);
-        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:C}",
-                                             "position", position,
-                                             "allele_count", allele_count,
-                                             "sample_id", sample_id,
-                                             "phase", phase,
-                                             "inserted", inserted);
-        if (NULL == item)
+        for (size_t i = 0; i < count; ++i)
         {
-            Py_DECREF(result);
-            free(variant);
-            return PyErr_NoMemory();
-        } // if
+            size_t position = 0;
+            size_t allele_count = 0;
+            size_t sample_id = 0;
+            size_t phase = 0;
+            char inserted = '\0';
 
-        if (0 != PyList_SetItem(result, i, item))
-        {
-            Py_DECREF(item);
-            Py_DECREF(result);
-            free(variant);
-            return PyErr_NoMemory();
-        } // if
-    } // for
+            vrd_SNV_unpack(variant[i], &position, &allele_count, &sample_id, &phase, &inserted);
+            PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:C}",
+                                                 "position", position,
+                                                 "allele_count", allele_count,
+                                                 "sample_id", sample_id,
+                                                 "phase", phase,
+                                                 "inserted", inserted);
+            if (NULL == item)
+            {
+                Py_DECREF(result);
+                free(variant);
+                return PyErr_NoMemory();
+            } // if
 
-    free(variant);
+            if (0 != PyList_SetItem(result, i, item))
+            {
+                Py_DECREF(item);
+                Py_DECREF(result);
+                free(variant);
+                return PyErr_NoMemory();
+            } // if
+        } // for
 
-    return result;
+        free(variant);
+
+        return result;
+    } // if
+
+    return Py_BuildValue("i", count);
 } // SNVTable_query
 
 

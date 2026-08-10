@@ -79,12 +79,11 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
         } // if
     } // if
 
-    // FIXME: overflow
-    void** const variant = malloc(size * sizeof(*variant));
-    if (NULL == variant)
+    void** variant = NULL;
+    if (size > 0)
     {
-        vrd_AVL_tree_destroy(&subset);
-        return PyErr_NoMemory();
+        // FIXME: overflow
+        variant = malloc(size * sizeof(*variant));
     } // if
 
     size_t count = 0;
@@ -108,45 +107,49 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
         return PyErr_NoMemory();
     } // if
 
-    for (size_t i = 0; i < count; ++i)
+    if (NULL != variant)
     {
-        size_t v_start = 0;
-        size_t v_end = 0;
-        size_t allele_count = 0;
-        size_t sample_id = 0;
-        size_t phase = 0;
-        size_t inserted = 0;
-
-        vrd_MNV_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id, &phase, &inserted);
-        char* seq_inserted = NULL;
-        size_t const len = vrd_Seq_table_key(seq->table, inserted, &seq_inserted);
-        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:s}",
-                                             "start", v_start,
-                                             "end", v_end,
-                                             "allele_count", allele_count,
-                                             "sample_id", sample_id,
-                                             "phase", phase,
-                                             "inserted", len == 1 ? "." : seq_inserted);
-        free(seq_inserted);
-        if (NULL == item)
+        for (size_t i = 0; i < count; ++i)
         {
-            Py_DECREF(result);
-            free(variant);
-            return PyErr_NoMemory();
-        } // if
+            size_t v_start = 0;
+            size_t v_end = 0;
+            size_t allele_count = 0;
+            size_t sample_id = 0;
+            size_t phase = 0;
+            size_t inserted = 0;
 
-        if (0 != PyList_SetItem(result, i, item))
-        {
-            Py_DECREF(item);
-            Py_DECREF(result);
-            free(variant);
-            return PyErr_NoMemory();
-        } // if
-    } // for
+            vrd_MNV_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id, &phase, &inserted);
+            char* seq_inserted = NULL;
+            size_t const len = vrd_Seq_table_key(seq->table, inserted, &seq_inserted);
+            PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:s}",
+                                                 "start", v_start,
+                                                 "end", v_end,
+                                                 "allele_count", allele_count,
+                                                 "sample_id", sample_id,
+                                                 "phase", phase,
+                                                 "inserted", len == 1 ? "." : seq_inserted);
+            free(seq_inserted);
+            if (NULL == item)
+            {
+                Py_DECREF(result);
+                free(variant);
+                return PyErr_NoMemory();
+            } // if
 
-    free(variant);
+            if (0 != PyList_SetItem(result, i, item))
+            {
+                Py_DECREF(item);
+                Py_DECREF(result);
+                free(variant);
+                return PyErr_NoMemory();
+            } // if
+        } // for
 
-    return result;
+        free(variant);
+        return result;
+    } // if
+
+    return Py_BuildValue("i", count);
 } // MNVTable_query
 
 
