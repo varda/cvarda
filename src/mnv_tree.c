@@ -102,7 +102,10 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
       size_t const end,
       size_t const inserted,
       bool const homozygous,
-      vrd_AVL_Tree const* const subset)
+      vrd_AVL_Tree const* const subset,
+      size_t const next,
+      size_t const len,
+      void* result[len])
 {
     if (NULLPTR == root || self->nodes[root].max < start)
     {
@@ -111,7 +114,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
 
     if (self->nodes[root].key > start)
     {
-        return query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset);
+        return query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset, next, len, result);
     } // if
 
     size_t res = 0;
@@ -122,11 +125,12 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         (!homozygous || (homozygous && self->nodes[root].phase == VRD_HOMOZYGOUS)) &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
+        result[next] = (void*) &self->nodes[root];
         res = self->nodes[root].count;
     } // if
 
-    return res + query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset) +
-                 query(self, self->nodes[root].child[RIGHT], start, end, inserted, homozygous, subset);
+    return res + query(self, self->nodes[root].child[LEFT], start, end, inserted, homozygous, subset, next + (res > 0), len, result) +
+                 query(self, self->nodes[root].child[RIGHT], start, end, inserted, homozygous, subset, next + (res > 0), len, result);
 } // query
 
 
@@ -183,11 +187,13 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
                                         size_t const end,
                                         size_t const inserted,
                                         bool const homozygous,
-                                        vrd_AVL_Tree const* const subset)
+                                        vrd_AVL_Tree const* const subset,
+                                        size_t const len,
+                                        void* result[len])
 {
     assert(NULL != self);
 
-    return query(self, self->root, start, end, inserted, homozygous, subset);
+    return query(self, self->root, start, end, inserted, homozygous, subset, 0, len, result);
 } // vrd_MNV_tree_query
 
 

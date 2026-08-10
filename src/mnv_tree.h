@@ -48,7 +48,9 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
                                         size_t const end,
                                         size_t const inserted,
                                         bool const homozygous,
-                                        vrd_AVL_Tree const* const subset);
+                                        vrd_AVL_Tree const* const subset,
+                                        size_t const len,
+                                        void* result[len]);
 
 
 size_t

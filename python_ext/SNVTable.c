@@ -63,9 +63,10 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
     char const* inserted = NULL;
     size_t len_inserted = 0;
     int homozygous = 0;
+    size_t size = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ns#|pO!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &homozygous, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ns#|npO!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &homozygous, &size, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -86,19 +87,69 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
         } // if
     } // if
 
-    size_t result = 0;
+    // FIXME: overflow
+    void** const variant = malloc(size * sizeof(*variant));
+    if (NULL == variant)
+    {
+        vrd_AVL_tree_destroy(&subset);
+        return PyErr_NoMemory();
+    } // if
+
+    size_t count = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_SNV_table_query(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), homozygous != 0, subset);
-    vrd_AVL_tree_destroy(&subset);
+    count = vrd_SNV_table_query(self->table, len + 1, reference, position, vrd_iupac_to_idx(inserted[0]), homozygous != 0, subset, size, variant);
     Py_END_ALLOW_THREADS
 
-    if ((size_t) -1 == result)
+    vrd_AVL_tree_destroy(&subset);
+
+    if ((size_t) -1 == count)
     {
+        free(variant);
         PyErr_SetString(PyExc_ValueError, "SNVTable.query: reference not found");
         return NULL;
     } // if
 
-    return Py_BuildValue("i", result);
+    PyObject* const result = PyList_New(count);
+    if (NULL == result)
+    {
+        free(variant);
+        return PyErr_NoMemory();
+    } // if
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        size_t position = 0;
+        size_t allele_count = 0;
+        size_t sample_id = 0;
+        size_t phase = 0;
+        char inserted = '\0';
+
+        vrd_SNV_unpack(variant[i], &position, &allele_count, &sample_id, &phase, &inserted);
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:C}",
+                                             "position", position,
+                                             "allele_count", allele_count,
+                                             "sample_id", sample_id,
+                                             "phase", phase,
+                                             "inserted", inserted);
+        if (NULL == item)
+        {
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+
+        if (0 != PyList_SetItem(result, i, item))
+        {
+            Py_DECREF(item);
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+    } // for
+
+    free(variant);
+
+    return result;
 } // SNVTable_query
 
 
@@ -271,10 +322,11 @@ static PyMethodDef SNVTable_methods[] =
      ":param integer position: The position of the SNV\n"
      ":param string inserted: The inserted nucleotide from IUPAC\n"
      ":param bool homozygous: Toggle to only count homozygous variants\n"
+     ":param integer size: The maximum size of the result vector\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
-     ":return: The number of contained SNVs\n"
-     ":rtype: integer\n"},
+     ":return: The list contained SNVs\n"
+     ":rtype: list of dictionaries\n"},
 
     {"query_region", (PyCFunction) SNVTable_query_region, METH_VARARGS,
      "query_region(reference, start, end, size[, subset])\n"
@@ -285,7 +337,7 @@ static PyMethodDef SNVTable_methods[] =
      ":param integer size: The maximum size of the result vector\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
-     ":return: A list of SNVs containted in the query interval\n"
+     ":return: A list of SNVs contained in the query interval\n"
      ":rtype: list of dictionaries\n"},
 
     {"remove", (PyCFunction) SNVTable_remove, METH_VARARGS,

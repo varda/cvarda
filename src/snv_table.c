@@ -39,22 +39,24 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
 
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
-                                         size_t const len,
-                                         char const reference[len],
+                                         size_t const len_ref,
+                                         char const reference[len_ref],
                                          size_t const position,
                                          size_t const inserted,
                                          bool const homozygous,
-                                         vrd_AVL_Tree const* const subset)
+                                         vrd_AVL_Tree const* const subset,
+                                         size_t const len_res,
+                                         void* result[len_res])
 {
     assert(NULL != self);
 
-    vrd_Trie_Node* const elem = vrd_trie_find(self->trie, len, reference);
+    vrd_Trie_Node* const elem = vrd_trie_find(self->trie, len_ref, reference);
     if (NULL == elem)
     {
         return -1;
     } // if
 
-    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, position, inserted, homozygous, subset);
+    return VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(elem->data, position, inserted, homozygous, subset, len_res, result);
 } // vrd_SNV_table_query
 
 

@@ -175,7 +175,7 @@ vrd_annotate_from_file(FILE* ostream,
         size_t num = 0;
         if (1 == len && inserted[0] != '.' && 1 == end - start)
         {
-            num = vrd_SNV_table_query(snv, strlen(reference) + 1, reference, start, vrd_iupac_to_idx(inserted[0]), false, subset);
+            num = vrd_SNV_table_query(snv, strlen(reference) + 1, reference, start, vrd_iupac_to_idx(inserted[0]), false, subset, 0, NULL);
         } // if
         else
         {
@@ -191,7 +191,7 @@ vrd_annotate_from_file(FILE* ostream,
             } // if
             else
             {
-                num = vrd_MNV_table_query(mnv, strlen(reference) + 1, reference, start, end, *(size_t*) elem, false, subset);
+                num = vrd_MNV_table_query(mnv, strlen(reference) + 1, reference, start, end, *(size_t*) elem, false, subset, 0, NULL);
             } // else
         } // else
 

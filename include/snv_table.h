@@ -34,12 +34,14 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* co
 
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_query)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
-                                         size_t const len,
-                                         char const reference[len],
+                                         size_t const len_ref,
+                                         char const reference[len_ref],
                                          size_t const position,
                                          size_t const inserted,
                                          bool const homozygous,
-                                         vrd_AVL_Tree const* const subset);
+                                         vrd_AVL_Tree const* const subset,
+                                         size_t const len_res,
+                                         void* result[len_res]);
 
 
 size_t

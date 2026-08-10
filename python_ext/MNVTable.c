@@ -60,9 +60,11 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
     size_t end = 0;
     size_t inserted = 0;
     int homozygous = 0;
+    size_t size = 0;
+    SequenceTableObject* seq = NULL;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#nn|npO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|nO!npO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &size, &SequenceTable, &seq, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -77,19 +79,74 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
         } // if
     } // if
 
-    size_t result = 0;
+    // FIXME: overflow
+    void** const variant = malloc(size * sizeof(*variant));
+    if (NULL == variant)
+    {
+        vrd_AVL_tree_destroy(&subset);
+        return PyErr_NoMemory();
+    } // if
+
+    size_t count = 0;
     Py_BEGIN_ALLOW_THREADS
-    result = vrd_MNV_table_query(self->table, len + 1, reference, start, end, inserted, homozygous != 0, subset);
-    vrd_AVL_tree_destroy(&subset);
+    count = vrd_MNV_table_query(self->table, len + 1, reference, start, end, inserted, homozygous != 0, subset, size, variant);
     Py_END_ALLOW_THREADS
 
-    if ((size_t) -1 == result)
+    vrd_AVL_tree_destroy(&subset);
+
+    if ((size_t) -1 == count)
     {
+        free(variant);
         PyErr_SetString(PyExc_ValueError, "MNVTable.query: reference not found");
         return NULL;
     } // if
 
-    return Py_BuildValue("i", result);
+    PyObject* const result = PyList_New(count);
+    if (NULL == result)
+    {
+        free(variant);
+        return PyErr_NoMemory();
+    } // if
+
+    for (size_t i = 0; i < count; ++i)
+    {
+        size_t v_start = 0;
+        size_t v_end = 0;
+        size_t allele_count = 0;
+        size_t sample_id = 0;
+        size_t phase = 0;
+        size_t inserted = 0;
+
+        vrd_MNV_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id, &phase, &inserted);
+        char* seq_inserted = NULL;
+        size_t const len = vrd_Seq_table_key(seq->table, inserted, &seq_inserted);
+        PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:s}",
+                                             "start", v_start,
+                                             "end", v_end,
+                                             "allele_count", allele_count,
+                                             "sample_id", sample_id,
+                                             "phase", phase,
+                                             "inserted", len == 1 ? "." : seq_inserted);
+        free(seq_inserted);
+        if (NULL == item)
+        {
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+
+        if (0 != PyList_SetItem(result, i, item))
+        {
+            Py_DECREF(item);
+            Py_DECREF(result);
+            free(variant);
+            return PyErr_NoMemory();
+        } // if
+    } // for
+
+    free(variant);
+
+    return result;
 } // MNVTable_query
 
 
@@ -272,10 +329,13 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer end: The end position of the deleted part of the MNV\n"
      ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
      ":param bool homozygous: Toggle to only count homozygous variants\n"
+     ":param integer size: The maximum size of the result vector\n"
+     ":param seq_table: The sequence table\n"
+     ":type seq_table: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
-     ":return: The number of contained MNVs\n"
-     ":rtype: integer\n"},
+     ":return: The list of contained MNVs\n"
+     ":rtype: list of dictionaries\n"},
 
     {"query_region", (PyCFunction) MNVTable_query_region, METH_VARARGS,
      "query_region(reference, start, end, size, seq_table[, subset])\n"
@@ -288,7 +348,7 @@ static PyMethodDef MNVTable_methods[] =
      ":type seq_table: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
-     ":return: A list of MNVs containted in the query interval\n"
+     ":return: A list of MNVs contained in the query interval\n"
      ":rtype: list of dictionaries\n"},
 
     {"remove", (PyCFunction) MNVTable_remove, METH_VARARGS,
