@@ -116,7 +116,7 @@ query(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const* const self,
         (!homozygous || (homozygous && self->nodes[root].phase == VRD_HOMOZYGOUS)) &&
         (NULL == subset || vrd_AVL_tree_is_element(subset, self->nodes[root].sample_id)))
     {
-        if (NULL != result)
+        if (NULL != result && next < len)
         {
             result[next] = (void*) &self->nodes[root];
             match = 1;

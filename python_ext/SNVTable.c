@@ -66,7 +66,7 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
     size_t size = 0;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#ns#|npO!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &homozygous, &size, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#ns#|pnO!:SNVTable.query", &reference, &len, &position, &inserted, &len_inserted, &homozygous, &size, &PyList_Type, &list))
     {
         return NULL;
     } // if

@@ -64,7 +64,7 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
     SequenceTableObject* seq = NULL;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#nn|nO!npO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &size, &SequenceTable, &seq, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|nO!pnO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &size, &SequenceTable, &seq, &PyList_Type, &list))
     {
         return NULL;
     } // if
