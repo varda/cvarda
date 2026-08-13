@@ -315,7 +315,7 @@ static PyMethodDef SNVTable_methods[] =
      ":type phase: integer, optional\n"},
 
     {"query", (PyCFunction) SNVTable_query, METH_VARARGS,
-     "query(reference, position, inserted[, subset])\n"
+     "query(reference, position, inserted[, homozygous, size, subset])\n"
      "Query for SNVs in the :py:class:`SNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer position: The position of the SNV\n"
