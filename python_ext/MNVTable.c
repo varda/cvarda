@@ -315,7 +315,7 @@ static PyMethodDef MNVTable_methods[] =
      ":type phase: integer, optional\n"},
 
     {"query", (PyCFunction) MNVTable_query, METH_VARARGS,
-     "query(reference, start, end, inserted[, subset])\n"
+     "query(reference, start, end, inserted[, homozygous, size, subset])\n"
      "Query for MNVs in the :py:class:`MNVTable`\n\n"
      ":param string reference: The reference sequence ID\n"
      ":param integer start: The start position of the deleted part of the MNV\n"
