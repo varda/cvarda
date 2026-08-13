@@ -112,7 +112,7 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
-    PyObject* const result = PyList_New(size);
+    PyObject* const result = PyList_New(0);
     if (NULL == result)
     {
         free(variant);
@@ -143,7 +143,7 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
                 return PyErr_NoMemory();
             } // if
 
-            if (0 != PyList_SetItem(result, i, item))
+            if (0 != PyList_Append(result, item))
             {
                 Py_DECREF(item);
                 Py_DECREF(result);
@@ -207,7 +207,7 @@ SNVTable_query_region(SNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
-    PyObject* const result = PyList_New(0);
+    PyObject* const result = PyList_New(count);
     if (NULL == result)
     {
         free(variant);
@@ -236,7 +236,7 @@ SNVTable_query_region(SNVTableObject* const self, PyObject* const args)
             return PyErr_NoMemory();
         } // if
 
-        if (0 != PyList_Append(result, item))
+        if (0 != PyList_SetItem(result, i, item))
         {
             Py_DECREF(item);
             Py_DECREF(result);
