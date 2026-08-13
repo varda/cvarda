@@ -2,7 +2,7 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
-#include <stdio.h>      // FILE, fopen fclose
+#include <stdio.h>      // FILE, flcose, fopen
 #include <stdlib.h>     // calloc, free
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
@@ -140,6 +140,8 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
                 free(variant);
                 return PyErr_NoMemory();
             } // if
+
+            Py_DECREF(item);
         } // for
 
         free(variant);

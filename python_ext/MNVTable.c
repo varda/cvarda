@@ -2,7 +2,7 @@
 #include <Python.h>     // Py*, METH_VARARGS, destructor
 
 #include <stddef.h>     // NULL, size_t
-#include <stdio.h>      // FILE, fopen fclose
+#include <stdio.h>      // FILE, fclose, fopen
 #include <stdlib.h>     // calloc, free
 
 
@@ -132,6 +132,8 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
                 free(variant);
                 return PyErr_NoMemory();
             } // if
+
+            Py_DECREF(item);
         } // for
 
         free(variant);
