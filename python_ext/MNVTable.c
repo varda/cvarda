@@ -63,10 +63,9 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
     size_t inserted = 0;
     int homozygous = 0;
     size_t size = 0;
-    SequenceTableObject* seq = NULL;
     PyObject* list = NULL;
 
-    if (!PyArg_ParseTuple(args, "s#nn|nO!pnO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &size, &SequenceTable, &seq, &PyList_Type, &list))
+    if (!PyArg_ParseTuple(args, "s#nn|npnO!:MNVTable.query", &reference, &len, &start, &end, &inserted, &homozygous, &size, &PyList_Type, &list))
     {
         return NULL;
     } // if
@@ -116,24 +115,9 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
     {
         for (size_t i = 0; i < size && NULL != variant[i]; ++i)
         {
-            size_t v_start = 0;
-            size_t v_end = 0;
-            size_t allele_count = 0;
             size_t sample_id = 0;
-            size_t phase = 0;
-            size_t inserted = 0;
-
-            vrd_MNV_unpack(variant[i], &v_start, &v_end, &allele_count, &sample_id, &phase, &inserted);
-            char* seq_inserted = NULL;
-            size_t const len = vrd_Seq_table_key(seq->table, inserted, &seq_inserted);
-            PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:i,s:s}",
-                                                 "start", v_start,
-                                                 "end", v_end,
-                                                 "allele_count", allele_count,
-                                                 "sample_id", sample_id,
-                                                 "phase", phase,
-                                                 "inserted", len == 1 ? "." : seq_inserted);
-            free(seq_inserted);
+            vrd_MNV_unpack(variant[i], &(size_t){0}, &(size_t){0}, &(size_t){0}, &sample_id, &(size_t){0}, &(size_t){0});
+            PyObject* const item = Py_BuildValue("i", sample_id);
             if (NULL == item)
             {
                 Py_DECREF(result);
@@ -337,8 +321,6 @@ static PyMethodDef MNVTable_methods[] =
      ":param integer inserted: The index for a sequence stored in :py:class:`SequenceTable`\n"
      ":param bool homozygous: Toggle to only count homozygous variants\n"
      ":param integer size: The maximum size of the result vector\n"
-     ":param seq_table: The sequence table\n"
-     ":type seq_table: :py:class:`SequenceTable`\n"
      ":param subset: A list of sample IDs (`integer`), defaults to `None`\n"
      ":type subset: list, optional\n"
      ":return: The list of contained MNVs\n"

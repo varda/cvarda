@@ -123,19 +123,9 @@ SNVTable_query(SNVTableObject* const self, PyObject* const args)
     {
         for (size_t i = 0; i < size && NULL != variant[i]; ++i)
         {
-            size_t position = 0;
-            size_t allele_count = 0;
             size_t sample_id = 0;
-            size_t phase = 0;
-            char inserted = '\0';
-
-            vrd_SNV_unpack(variant[i], &position, &allele_count, &sample_id, &phase, &inserted);
-            PyObject* const item = Py_BuildValue("{s:i,s:i,s:i,s:i,s:C}",
-                                                 "position", position,
-                                                 "allele_count", allele_count,
-                                                 "sample_id", sample_id,
-                                                 "phase", phase,
-                                                 "inserted", inserted);
+            vrd_SNV_unpack(variant[i], &(size_t){0}, &(size_t){0}, &sample_id, &(size_t){0}, &(char){'\0'});
+            PyObject* const item = Py_BuildValue("i", sample_id);
             if (NULL == item)
             {
                 Py_DECREF(result);
