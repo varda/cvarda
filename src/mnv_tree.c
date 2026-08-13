@@ -197,7 +197,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_query)(VRD_TEMPLATE(VRD_TYPENAME, _Tree) const*
 {
     assert(NULL != self);
 
-    return query(self, self->root, start, end, inserted, homozygous, subset, 0, len, result);
+    return query(self, self->root, start, end, inserted, homozygous, subset, &(size_t){0}, len, result);
 } // vrd_MNV_tree_query
 
 

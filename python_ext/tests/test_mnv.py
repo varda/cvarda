@@ -18,3 +18,19 @@ def test_mnv_common_end():
     assert mnv_table.query("chr1", 2, 4, index) == 1
 
     assert mnv_table.query("chr1", 3, 4, index) == 0
+
+
+def test_mnv_query():
+    mnv_table = cvarda.MNVTable()
+    seq_table = cvarda.SequenceTable()
+
+    index = seq_table.insert("GAG")
+
+    mnv_table.insert("chr1", 1, 4, 1, 0, index, 0)
+    mnv_table.insert("chr1", 1, 4, 1, 1, index, 0)
+    mnv_table.insert("chr1", 2, 4, 1, 2, index, 0)
+    mnv_table.insert("chr1", 1, 4, 1, 4, index, 0)
+
+    assert mnv_table.query("chr1", 1, 4, index, False) == 3
+    assert mnv_table.query("chr1", 1, 4, index, False, 0) == 3
+    assert mnv_table.query("chr1", 1, 4, index, False, 42) == [0, 1, 4]
