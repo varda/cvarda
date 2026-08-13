@@ -3,6 +3,8 @@
 
 #include <stddef.h>     // NULL, size_t
 #include <stdio.h>      // FILE, fopen fclose
+#include <stdlib.h>     // calloc, free
+
 
 #include "../include/avl_tree.h"    // vrd_AVL_Tree, vrd_AVL_tree_*
 #include "../include/mnv_table.h"   // vrd_MNV_Table, vrd_MNV_table_*
@@ -82,8 +84,11 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
     void** variant = NULL;
     if (size > 0)
     {
-        // FIXME: overflow
-        variant = malloc(size * sizeof(*variant));
+        variant = calloc(size, sizeof(*variant));
+        if (NULL == variant)
+        {
+            size = 0;
+        } // if
     } // if
 
     size_t count = 0;
@@ -100,7 +105,7 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
         return NULL;
     } // if
 
-    PyObject* const result = PyList_New(count);
+    PyObject* const result = PyList_New(size);
     if (NULL == result)
     {
         free(variant);
@@ -109,7 +114,7 @@ MNVTable_query(MNVTableObject* const self, PyObject* const args)
 
     if (NULL != variant)
     {
-        for (size_t i = 0; i < count; ++i)
+        for (size_t i = 0; i < size && NULL != variant[i]; ++i)
         {
             size_t v_start = 0;
             size_t v_end = 0;
@@ -206,8 +211,7 @@ MNVTable_query_region(MNVTableObject* const self, PyObject* const args)
         } // if
     } // if
 
-    // FIXME: overflow
-    void** const variant = malloc(size * sizeof(*variant));
+    void** const variant = calloc(size, sizeof(*variant));
     if (NULL == variant)
     {
         vrd_AVL_tree_destroy(&subset);
