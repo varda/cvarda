@@ -152,9 +152,11 @@ tree_from_reference(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
 
 
 static VRD_TEMPLATE(VRD_TYPENAME, _Tree)*
-tree_read(char const* const path,
-          size_t const idx,
-          size_t const capacity)
+tree_read(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+          size_t const len,
+          char const reference[static len],
+          char const* const path,
+          size_t const idx)
 {
     char filename[FILENAME_MAX] = {'\0'};
     size_t const buf_size = FILENAME_MAX;
@@ -163,15 +165,13 @@ tree_read(char const* const path,
         return NULL;
     } // if
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* tree = NULL;
-
     FILE* stream = fopen(filename, "rb");
     if (NULL == stream)
     {
         goto error;
     } // if
 
-    tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(capacity);
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* tree = tree_from_reference(self, len, reference, self->tree_capacity);
     if (NULL == tree)
     {
         goto error;
@@ -252,21 +252,12 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
             goto error;
         } // if
 
-        VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = tree_read(path, i, self->tree_capacity);
+        VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = tree_read(self, len, reference, path, i);
         if (NULL == tree)
         {
             errno = -1;
             goto error;
         } // if
-
-        vrd_Trie_Node* const elem = vrd_trie_insert(self->trie, len, reference, tree);
-        if (NULL == elem)
-        {
-            errno = -1;
-            goto error;
-        } // if
-
-        self->trees[self->next] = elem;
 
         size_t idx = 0;
         count = fread(&idx, sizeof(idx), 1, stream);

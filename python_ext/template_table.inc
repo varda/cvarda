@@ -212,18 +212,16 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _preload)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* con
     } // if
 
     int const err = VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(self->table, len, reference, capacity);
-    if (0 != err)
+    if (err < 0)
     {
-        if (err < 0)
-        {
-            PyErr_SetString(PyExc_RuntimeError, VRD_PY_STRINGIZE(VRD_OBJNAME) ".preload failed");
-        } // if
-        else
-        {
-            PyErr_SetFromErrno(PyExc_OSError);
-        } // else
+        PyErr_SetString(PyExc_RuntimeError, VRD_PY_STRINGIZE(VRD_OBJNAME) ".preload failed");
         return NULL;
     } // if
+    if (err > 0)
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // else
 
     Py_RETURN_NONE;
 } // *_preload
