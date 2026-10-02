@@ -196,3 +196,34 @@ error:
         return NULL;
     }
 } // *_diagnostics
+
+
+static PyObject*
+VRD_PY_TEMPLATE(VRD_OBJNAME, _preload)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self,
+                                       PyObject* const args)
+{
+    char const* reference = NULL;
+    size_t len = 0;
+    size_t capacity = 0;
+
+    if (!PyArg_ParseTuple(args, "s#n:" VRD_PY_STRINGIZE(VRD_OBJNAME), &reference, &len, &capacity))
+    {
+        return NULL;
+    } // if
+
+    int const err = VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(self->table, len, reference, capacity);
+    if (0 != err)
+    {
+        if (err < 0)
+        {
+            PyErr_SetString(PyExc_RuntimeError, VRD_PY_STRINGIZE(VRD_OBJNAME) ".preload failed");
+        } // if
+        else
+        {
+            PyErr_SetFromErrno(PyExc_OSError);
+        } // else
+        return NULL;
+    } // if
+
+    Py_RETURN_NONE;
+} // *_preload

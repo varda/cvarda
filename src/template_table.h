@@ -49,3 +49,10 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_diagnostics)(VRD_TEMPLATE(VRD_TYPENAME, _Table
 size_t
 VRD_TEMPLATE(VRD_TYPENAME, _table_sample_count)(VRD_TEMPLATE(VRD_TYPENAME, _Table) const* const self,
                                                 size_t count[]);
+
+
+int
+VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                                           size_t const len,
+                                           char const reference[static len],
+                                           size_t const capacity);

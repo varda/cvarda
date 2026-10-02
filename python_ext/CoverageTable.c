@@ -268,6 +268,12 @@ static PyMethodDef CoverageTable_methods[] =
      ":return: Diagnostics information\n"
      ":rtype: dictionary\n"},
 
+    {"preload", (PyCFunction) CoverageTable_preload, METH_VARARGS,
+     "preload(reference_id, capacity)\n"
+     "Preload a `reference_id` with a specified `capacity` in the :py:class:`CoverageTable`\n\n"
+     ":param string reference_id: A reference sequence ID\n"
+     ":param integer: The capacity for the reference\n"},
+
     {NULL, NULL, 0, NULL}  // sentinel
 }; // CoverageTable_methods
 

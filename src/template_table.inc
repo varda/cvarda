@@ -116,7 +116,8 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_reorder)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* c
 static VRD_TEMPLATE(VRD_TYPENAME, _Tree)*
 tree_from_reference(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
                     size_t const len,
-                    char const reference[len])
+                    char const reference[len],
+                    size_t const capacity)
 {
     vrd_Trie_Node* elem = vrd_trie_find(self->trie, len, reference);
     if (NULL != elem)
@@ -130,7 +131,7 @@ tree_from_reference(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
         return NULL;
     } // if
 
-    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(self->tree_capacity);
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* tree = VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(capacity);
     if (NULL == tree)
     {
         return NULL;
@@ -451,3 +452,21 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_sample_count)(VRD_TEMPLATE(VRD_TYPENAME, _Tabl
     } // for
     return max_sample_id;
 } // vrd_*_table_sample_count
+
+
+int
+VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* const self,
+                                           size_t const len,
+                                           char const reference[static len],
+                                           size_t const capacity)
+{
+    assert(NULL != self);
+
+    VRD_TEMPLATE(VRD_TYPENAME, _Tree)* const tree = tree_from_reference(self, len, reference, capacity);
+    if (NULL == tree)
+    {
+        return errno;
+    } // if
+
+    return 0;
+} // vrd_*_table_preload
