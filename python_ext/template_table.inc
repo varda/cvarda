@@ -211,7 +211,7 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _preload)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* con
         return NULL;
     } // if
 
-    int const err = VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(self->table, len, reference, capacity);
+    int const err = VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(self->table, len + 1, reference, capacity);
     if (err < 0)
     {
         PyErr_SetString(PyExc_RuntimeError, VRD_PY_STRINGIZE(VRD_OBJNAME) ".preload failed");
