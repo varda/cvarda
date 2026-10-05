@@ -266,14 +266,6 @@ VRD_TEMPLATE(VRD_TYPENAME, _table_read)(VRD_TEMPLATE(VRD_TYPENAME, _Table)* cons
             goto error;
         } // if
 
-        if (idx != self->next)
-        {
-            errno = -1;
-            goto error;
-        } // if
-
-        self->next += 1;
-
         free(reference);
         reference = NULL;
     } // for
