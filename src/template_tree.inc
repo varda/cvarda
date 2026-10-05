@@ -20,8 +20,6 @@ struct VRD_TEMPLATE(VRD_TYPENAME, _Tree)
 {
     vrd_Tree base;
     uint32_t root;
-
-    uint32_t capacity;
     uint32_t next;
     struct VRD_TEMPLATE(VRD_TYPENAME, _Node) nodes[];
 }; // vrd_*_Tree
@@ -44,11 +42,11 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_init)(size_t const capacity)
 
     tree->root = NULLPTR;
     tree->next = 1;  // we skip the 0th element as we use 0 as NULL pointer
-    tree->capacity = capacity;
 
     tree->base.entries = 0;
     tree->base.entry_size = sizeof(tree->nodes[0]);
     tree->base.height = 0;
+    tree->base.capacity = capacity;
 
     return tree;
 } // vrd_*_tree_init
