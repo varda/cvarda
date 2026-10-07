@@ -55,7 +55,7 @@ VRD_TEMPLATE(VRD_TYPENAME, _tree_insert)(VRD_TEMPLATE(VRD_TYPENAME, _Tree)* cons
 {
     assert(NULL != self);
 
-    if (UINT32_MAX == self->next || self->capacity < self->next)
+    if (UINT32_MAX == self->next || self->base.capacity < self->next)
     {
         return -1;
     } // if

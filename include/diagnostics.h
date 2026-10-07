@@ -16,6 +16,7 @@ typedef struct vrd_Diagnostics
     size_t entries;
     size_t entry_size;
     size_t height;
+    size_t capacity;
 } vrd_Diagnostics;
 
 

@@ -374,6 +374,12 @@ static PyMethodDef SNVTable_methods[] =
      ":return: Diagnostics information\n"
      ":rtype: dictionary\n"},
 
+    {"preload", (PyCFunction) SNVTable_preload, METH_VARARGS,
+     "preload(reference_id, capacity)\n"
+     "Preload a `reference_id` with a specified `capacity` in the :py:class:`SNVTable`\n\n"
+     ":param string reference_id: A reference sequence ID\n"
+     ":param integer: The capacity for the reference\n"},
+
     {NULL, NULL, 0, NULL}  // sentinel
 }; // SNVTable_methods
 

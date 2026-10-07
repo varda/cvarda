@@ -163,7 +163,11 @@ VRD_PY_TEMPLATE(VRD_OBJNAME, _diagnostics)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)*
 
     for (size_t i = 0; i < count; ++i)
     {
-        PyObject* const entry = Py_BuildValue("{s:i,s:i,s:i}", "entries", diag[i].entries, "entry_size", diag[i].entry_size, "height", diag[i].height);
+        PyObject* const entry = Py_BuildValue("{s:n,s:n,s:n,s:n}",
+            "entries", diag[i].entries,
+            "entry_size", diag[i].entry_size,
+            "height", diag[i].height,
+            "capacity", diag[i].capacity);
         if (NULL == entry)
         {
             Py_DECREF(dict);
@@ -196,3 +200,32 @@ error:
         return NULL;
     }
 } // *_diagnostics
+
+
+static PyObject*
+VRD_PY_TEMPLATE(VRD_OBJNAME, _preload)(VRD_PY_TEMPLATE(VRD_OBJNAME, Object)* const self,
+                                       PyObject* const args)
+{
+    char const* reference = NULL;
+    size_t len = 0;
+    size_t capacity = 0;
+
+    if (!PyArg_ParseTuple(args, "s#n:" VRD_PY_STRINGIZE(VRD_OBJNAME), &reference, &len, &capacity))
+    {
+        return NULL;
+    } // if
+
+    int const err = VRD_TEMPLATE(VRD_TYPENAME, _table_preload)(self->table, len + 1, reference, capacity);
+    if (err < 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError, VRD_PY_STRINGIZE(VRD_OBJNAME) ".preload failed");
+        return NULL;
+    } // if
+    if (err > 0)
+    {
+        PyErr_SetFromErrno(PyExc_OSError);
+        return NULL;
+    } // else
+
+    Py_RETURN_NONE;
+} // *_preload
