@@ -74,12 +74,12 @@ vrd_variants_from_file(FILE* stream,
     size_t allele_count = 0;
     size_t phase = 0;
     size_t len = 0;
-    char inserted[1024] = {'\0'};
+    char inserted[4096] = {'\0'};
 
     size_t line_count = 0;
-    while (7 == fscanf(stream, "%127s %zu %zu %zu %zu %zu %1023s", reference, &start, &end, &allele_count, &phase, &len, inserted))  // UNSAFE
+    while (7 == fscanf(stream, "%127s %zu %zu %zu %zu %zu %4095s", reference, &start, &end, &allele_count, &phase, &len, inserted))  // UNSAFE
     {
-        if (1023 < len)
+        if (4095 < len)
         {
             goto error;
         } // if
@@ -162,12 +162,12 @@ vrd_annotate_from_file(FILE* ostream,
     size_t allele_count = 0;
     size_t phase = 0;
     size_t len = 0;
-    char inserted[1024] = {'\0'};
+    char inserted[4096] = {'\0'};
 
     size_t line_count = 0;
-    while (7 == fscanf(istream, "%127s %zu %zu %zu %zu %zu %1023s", reference, &start, &end, &allele_count, &phase, &len, inserted))  // UNSAFE
+    while (7 == fscanf(istream, "%127s %zu %zu %zu %zu %zu %4095s", reference, &start, &end, &allele_count, &phase, &len, inserted))  // UNSAFE
     {
-        if (1023 < len)
+        if (4095 < len)
         {
             break;
         } // if
